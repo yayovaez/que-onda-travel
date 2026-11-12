@@ -224,6 +224,10 @@ nav a:hover { color: var(--gold); }
   line-height: 1.5;
 }
 .quote-preview small { display: block; font-weight: 400; color: #52666a; }
+.booking-notice{grid-column:1/-1;padding:15px 17px;border:1px solid #d8c39c;border-left:4px solid var(--gold);border-radius:10px;background:#fffaf0;color:#34464a;font-size:14px;line-height:1.6}
+.booking-notice strong{display:block;color:#173b3b;margin-bottom:4px}
+.booking-notice .airport-note{margin-top:9px;padding-top:9px;border-top:1px solid #e8dcc8}
+.booking-notice .airport-note[hidden]{display:none}
 @media(max-width: 900px) {
   .booking-form { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .booking-form button { grid-column: span 3; }
@@ -2281,7 +2285,7 @@ header,.site-header{border-bottom:0!important;box-shadow:none}
 
     <div class="field">
       <label>Tipo de servicio / Service</label>
-      <select name="service" required>
+      <select name="service" id="serviceType" required>
         <option>Traslado Aeropuerto (SJD)</option>
         <option>Transporte privado</option>
         <option>Tour local</option>
@@ -2343,6 +2347,15 @@ header,.site-header{border-bottom:0!important;box-shadow:none}
       <input name="offer" id="offer" type="number" min="1" step="1" placeholder="Opcional / Optional">
     </div>
 
+    <div class="booking-notice" role="note">
+      <strong>Información importante sobre tu traslado</strong>
+      El pago del servicio se realiza en efectivo al momento de la recogida o la dejada.
+      <div class="airport-note" id="airportNote" hidden>
+        <strong>Traslados al aeropuerto SJD</strong>
+        La recogida y la dejada se realizan en el estacionamiento ubicado frente al aeropuerto.
+      </div>
+    </div>
+
     <div class="quote-preview" id="quotePreview" aria-live="polite">
       Ingresa los kilómetros para ver una tarifa estimada.
     </div>
@@ -2377,6 +2390,14 @@ const distanceInput = document.getElementById('distance');
 const tripTypeSelect = document.getElementById('tripType');
 const offerInput = document.getElementById('offer');
 const quotePreview = document.getElementById('quotePreview');
+const serviceSelect = document.getElementById('serviceType');
+const airportNote = document.getElementById('airportNote');
+
+function updateBookingNotice() {
+  airportNote.hidden = serviceSelect.value !== 'Traslado Aeropuerto (SJD)';
+}
+serviceSelect.addEventListener('change', updateBookingNotice);
+updateBookingNotice();
 
 function getQuote() {
   const distance = Number(distanceInput.value);
