@@ -1279,6 +1279,57 @@ footer .brand-logo { text-shadow: none; }
   }
 }
 
+
+
+/* ICONOS · CÍRCULOS ARTESANALES INSPIRADOS EN LA REFERENCIA */
+.services {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  padding: 34px 5%;
+  background: linear-gradient(135deg,#fff7eb,#f4e5d5);
+  color: #173b46;
+  text-align: center;
+}
+.service {
+  border: 1px solid #ead4b8;
+  border-radius: 22px;
+  padding: 22px 12px 18px;
+  background: #fffdf8;
+  box-shadow: 0 7px 18px rgba(49,35,23,.08);
+  font-size: 14px;
+  line-height: 1.5;
+  font-weight: 700;
+}
+.service:nth-child(1) { border-bottom: 4px solid #ed438b; }
+.service:nth-child(2) { border-bottom: 4px solid #e9b83f; }
+.service:nth-child(3) { border-bottom: 4px solid #28aaa9; }
+.service:nth-child(4) { border-bottom: 4px solid #765b91; }
+.service:last-child { border-right: 1px solid #ead4b8; }
+.service-icon {
+  width: 76px;
+  height: 76px;
+  margin: 0 auto 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 2px solid #f0d9b7;
+  background: radial-gradient(circle at 32% 25%,#fff 0,#fff6e8 72%);
+  color: #e83e87;
+  font-size: 36px;
+  line-height: 1;
+  box-shadow: 0 4px 12px rgba(23,59,70,.12), inset 0 0 0 5px rgba(255,255,255,.65);
+}
+.service:nth-child(2) .service-icon { color: #df8a18; }
+.service:nth-child(3) .service-icon { color: #159b9d; }
+.service:nth-child(4) .service-icon { color: #765b91; }
+@media(max-width:620px) {
+  .services { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; padding: 24px 4%; }
+  .service { border-right: 0; padding: 18px 8px 15px; font-size: 13px; }
+  .service-icon { width: 68px; height: 68px; font-size: 32px; }
+}
+
 </style>
 </head>
 
