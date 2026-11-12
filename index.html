@@ -2112,31 +2112,6 @@ header nav a:hover,header nav a:focus{
  text-shadow:0 0 6px #ffffff,0 0 14px #ffffff,0 0 25px rgba(255,255,255,1)!important;
 }
  
-/* Opiniones de viajeros */
-.reviews-section{max-width:1100px;margin:70px auto;padding:55px 22px;color:#fff;text-align:center}
-.reviews-intro{max-width:720px;margin:14px auto 30px;color:#ddd;line-height:1.7}
-.approved-reviews{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px;margin:25px 0 35px;text-align:left}
-.review-card{border:1px solid rgba(255,65,165,.55);border-radius:16px;padding:20px;background:rgba(15,8,15,.82);box-shadow:0 0 16px rgba(255,40,150,.12)}
-.review-card .review-stars{color:#ff4da6;letter-spacing:3px;font-size:19px}
-.review-card p{line-height:1.6;color:#eee}
-.review-card img,.review-card video{width:100%;max-height:230px;object-fit:cover;border-radius:10px;margin-top:12px}
-.review-form-card{max-width:650px;margin:0 auto;padding:28px;text-align:left;border:1px solid #ff4da6;border-radius:18px;background:#100910;box-shadow:0 0 24px rgba(255,40,150,.16)}
-.review-form-card h3{text-align:center;color:#fff;margin:0 0 22px}
-.review-form-card form{display:grid;gap:11px}
-.review-form-card input:not([type=radio]):not([type=checkbox]),.review-form-card textarea{width:100%;padding:13px;border:1px solid #75405e;border-radius:9px;background:#090609;color:#fff;font:inherit}
-.rating-field{border:0;padding:0;margin:5px 0}
-.rating-field legend{margin-bottom:10px;font-weight:600}
-.rating-options{display:flex;flex-wrap:wrap;gap:9px}
-.rating-options label{cursor:pointer}
-.rating-options input{position:absolute;opacity:0}
-.rating-options span{display:inline-block;padding:9px 11px;border:1px solid #a83c78;border-radius:8px;color:#ff62ad}
-.rating-options input:checked+span{background:#ed168b;color:#fff;box-shadow:0 0 12px #ed168b}
-.review-note{color:#bbb;font-size:12px}
-.review-consent{display:flex;gap:9px;align-items:flex-start;font-size:13px;color:#ddd}
-.review-submit{padding:14px;border:0;border-radius:9px;background:#ed168b;color:#fff;font-weight:800;letter-spacing:.04em;cursor:pointer}
-#reviewStatus{min-height:20px;color:#ff9bc9;text-align:center}
-@media(max-width:600px){.reviews-section{padding:38px 16px;margin:35px auto}.review-form-card{padding:20px 16px}.rating-options{gap:5px}.rating-options span{padding:8px}}
-
 </style>
 </head>
 
@@ -2156,6 +2131,7 @@ header nav a:hover,header nav a:focus{
   <nav aria-label="Navegación principal" class="neon-white-nav">
     <a href="#inicio" style="color:#ffffff!important;text-shadow:0 0 5px #ffffff,0 0 12px #eaf7ff,0 0 22px #bfe8ff;">Inicio</a>
     <a href="#experiencias" style="color:#ffffff!important;text-shadow:0 0 5px #ffffff,0 0 12px #eaf7ff,0 0 22px #bfe8ff;">Experiencias</a>
+    <a href="opiniones.html" style="color:#ffffff!important;text-shadow:0 0 5px #ffffff,0 0 12px #eaf7ff,0 0 22px #bfe8ff;">Opiniones</a>
     <a href="#reservar" style="color:#ffffff!important;text-shadow:0 0 5px #ffffff,0 0 12px #eaf7ff,0 0 22px #bfe8ff;">Reservar</a>
     <a href="#contacto" style="color:#ffffff!important;text-shadow:0 0 5px #ffffff,0 0 12px #eaf7ff,0 0 22px #bfe8ff;">Contacto</a>
   </nav>
@@ -2267,39 +2243,6 @@ header nav a:hover,header nav a:focus{
       </div>
     </article>
 
-  </div>
-</section>
-
-<section class="reviews-section" id="opiniones">
-  <div class="section-kicker">VIAJEROS REALES · EXPERIENCIAS REALES</div>
-  <h2 class="section-title">Tu experiencia nos inspira</h2>
-  <p class="reviews-intro">¿Ya viajaste con nosotros? Cuéntanos cómo te fue y ayuda a otros viajeros a descubrir Los Cabos con confianza.</p>
-  <div id="approvedReviews" class="approved-reviews" aria-live="polite"><p>Pronto compartiremos aquí las experiencias de nuestros viajeros.</p></div>
-  <div class="review-form-card">
-    <h3>Comparte tu experiencia</h3>
-    <form id="reviewForm">
-      <label for="reviewName">Tu nombre</label>
-      <input id="reviewName" name="customer_name" maxlength="80" required placeholder="¿Cómo te llamas?">
-      <fieldset class="rating-field">
-        <legend>¿Cómo calificas tu experiencia?</legend>
-        <div class="rating-options">
-          <label><input type="radio" name="rating" value="0" required><span>0</span></label>
-          <label><input type="radio" name="rating" value="1"><span>★</span></label>
-          <label><input type="radio" name="rating" value="2"><span>★★</span></label>
-          <label><input type="radio" name="rating" value="3"><span>★★★</span></label>
-          <label><input type="radio" name="rating" value="4"><span>★★★★</span></label>
-          <label><input type="radio" name="rating" value="5"><span>★★★★★</span></label>
-        </div>
-      </fieldset>
-      <label for="reviewText">Tu recomendación</label>
-      <textarea id="reviewText" name="review_text" minlength="10" maxlength="2000" rows="4" required placeholder="Cuéntanos qué fue lo que más disfrutaste..."></textarea>
-      <label for="reviewMedia">Agrega una foto o video (opcional)</label>
-      <input id="reviewMedia" name="media" type="file" accept="image/jpeg,image/png,image/webp,image/heic,video/mp4,video/quicktime,video/webm">
-      <small class="review-note">Máximo 50 MB. Tu opinión y archivo serán revisados antes de publicarse.</small>
-      <label class="review-consent"><input type="checkbox" id="reviewConsent" required> Autorizo que mi recomendación y archivo se publiquen en esta página si son aprobados.</label>
-      <button class="review-submit" type="submit">ENVIAR MI RECOMENDACIÓN</button>
-      <p id="reviewStatus" role="status" aria-live="polite"></p>
-    </form>
   </div>
 </section>
 
