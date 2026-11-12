@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Opiniones y experiencias reales de viajeros con Qué Onda Travel en Los Cabos.">
+<title>Opiniones de viajeros | Qué Onda Travel</title>
+<style>
+:root{--pink:#ff3e9d;--pink2:#f01887;--lime:#b7ff4a;--black:#080708;--panel:#151015;--muted:#b9aeb7}
+*{box-sizing:border-box}
+body{margin:0;background:var(--black);color:#fff;font-family:Arial,sans-serif}
+a{text-decoration:none;color:inherit}
+.site-header{padding:17px 5%;display:flex;align-items:center;justify-content:space-between;gap:20px;border-bottom:1px solid #51223d;background:#0d090d}
+.brand{font:italic 32px Georgia,serif;color:#fff;line-height:1}
+.brand span{display:block;text-align:center;font:10px Arial,sans-serif;letter-spacing:7px;color:var(--pink);margin-top:5px}
+nav{display:flex;gap:22px;flex-wrap:wrap;font-size:13px}
+nav a{color:#fff;text-shadow:0 0 9px #ff3e9d}
+nav a:hover{color:var(--lime)}
+main{max-width:1180px;margin:auto;padding:55px 22px 80px}
+.hero{text-align:center;margin-bottom:38px}
+.kicker{color:var(--lime);font-size:11px;letter-spacing:4px;text-transform:uppercase}
+h1{font:italic clamp(38px,6vw,64px) Georgia,serif;margin:13px 0;color:#fff}
+h1 span{color:var(--pink)}
+.intro{max-width:680px;margin:0 auto;color:#d6cbd3;line-height:1.7}
+.feed-heading{display:flex;align-items:center;justify-content:space-between;gap:15px;margin:35px 0 18px}
+.feed-heading h2{font:italic 27px Georgia,serif;margin:0}
+.feed-heading p{color:var(--muted);font-size:12px;margin:0}
+.feed{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}
+.post{background:#100d10;border:1px solid #39202f;border-radius:15px;overflow:hidden;box-shadow:0 8px 30px #0008}
+.post-head{display:flex;align-items:center;gap:11px;padding:13px 14px}
+.avatar{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,var(--pink),#6a1d91);border:2px solid #ff8ac5;font-weight:bold}
+.post-author{font-weight:700;font-size:13px}
+.post-location{font-size:11px;color:#b9aeb7;margin-top:3px}
+.post-media{width:100%;aspect-ratio:1/1;display:block;object-fit:cover;background:#21151f}
+.post-video{width:100%;aspect-ratio:1/1;object-fit:cover;background:#21151f}
+.post-content{padding:14px}
+.post-stars{color:#ffca55;letter-spacing:3px;font-size:17px;margin-bottom:9px}
+.post-caption{font-size:13px;line-height:1.65;color:#eee;margin:0 0 10px;overflow-wrap:anywhere}
+.post-date{font-size:10px;color:#92848f;text-transform:uppercase;letter-spacing:1px}
+.empty-feed{grid-column:1/-1;text-align:center;border:1px dashed #69314f;border-radius:16px;padding:36px 20px;color:#c9b9c4;line-height:1.7}
+.form-wrap{max-width:700px;margin:65px auto 0;padding:30px;border:1px solid #793458;border-radius:20px;background:linear-gradient(145deg,#171017,#0c090c);box-shadow:0 0 30px #f018871c}
+.form-wrap h2{text-align:center;font:italic 30px Georgia,serif;margin:0 0 9px}
+.form-intro{text-align:center;color:#bfb2bc;font-size:13px;line-height:1.6;margin:0 0 25px}
+form{display:grid;gap:11px}
+form>label,.rating-field legend{font-size:13px;font-weight:700;color:#fff}
+input[type=text],textarea,input[type=file]{width:100%;padding:13px;border:1px solid #68415a;border-radius:10px;background:#090709;color:#fff;font:inherit}
+textarea{resize:vertical}
+.rating-field{border:0;padding:0;margin:6px 0}
+.rating-field legend{margin-bottom:10px}
+.rating-options{display:flex;flex-wrap:wrap;gap:8px}
+.rating-options label{cursor:pointer}
+.rating-options input{position:absolute;opacity:0}
+.rating-options span{display:inline-block;padding:9px 12px;border:1px solid #8b3a68;border-radius:9px;color:#ff73b8}
+.rating-options input:checked+span{background:var(--pink2);color:white;box-shadow:0 0 13px #f01887}
+.note{font-size:11px;color:#b7a9b3}
+.consent{display:flex;gap:9px;align-items:flex-start;color:#d7cbd4;font-size:12px;line-height:1.5}
+.submit{border:0;border-radius:30px;padding:15px;background:linear-gradient(100deg,#ff3e9d,#d9117c);color:#fff;font-weight:800;letter-spacing:1px;cursor:pointer;margin-top:6px}
+.submit:disabled{opacity:.6;cursor:wait}
+#reviewStatus{min-height:20px;text-align:center;color:#ff9bc9;font-size:13px}
+footer{text-align:center;padding:28px 15px;border-top:1px solid #3c2031;color:#a99aa5;font-size:12px}
+footer strong{font:italic 22px Georgia,serif;color:white}
+@media(max-width:850px){.feed{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.site-header{align-items:flex-start;flex-direction:column}.brand{font-size:28px}nav{gap:15px}main{padding:38px 14px 60px}.feed{grid-template-columns:1fr;max-width:440px;margin:auto}.feed-heading{align-items:flex-start;flex-direction:column}.form-wrap{padding:23px 17px;margin-top:45px}}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="index.html">Qué Onda<span>TRAVEL</span></a>
+  <nav aria-label="Navegación principal">
+    <a href="index.html">Inicio</a>
+    <a href="index.html#experiencias">Experiencias</a>
+    <a href="opiniones.html" aria-current="page">Opiniones</a>
+    <a href="index.html#reservar">Reservar</a>
+    <a href="index.html#contacto">Contacto</a>
+  </nav>
+</header>
+<main>
+  <section class="hero">
+    <div class="kicker">VIAJEROS REALES · EXPERIENCIAS REALES</div>
+    <h1>La comunidad <span>Qué Onda</span></h1>
+    <p class="intro">Momentos, recomendaciones y recuerdos compartidos por quienes ya descubrieron Los Cabos con nosotros. ¡Tu experiencia también puede estar aquí!</p>
+  </section>
+  <div class="feed-heading">
+    <h2>Experiencias de nuestra comunidad</h2>
+    <p>Un vistazo al estilo de un feed social · Fotos, videos y recomendaciones</p>
+  </div>
+  <section id="approvedReviews" class="feed" aria-live="polite">
+    <div class="empty-feed">Todavía no hay publicaciones aprobadas.<br>¡Sé de los primeros en compartir tu experiencia!</div>
+  </section>
+  <section class="form-wrap">
+    <h2>Comparte tu momento</h2>
+    <p class="form-intro">Sube una foto o video de tu viaje, califica nuestro servicio y cuéntale a la comunidad cómo fue tu experiencia.</p>
+    <form id="reviewForm">
+      <label for="reviewName">Tu nombre</label>
+      <input type="text" id="reviewName" name="customer_name" maxlength="80" required placeholder="¿Cómo te llamas?">
+      <fieldset class="rating-field">
+        <legend>Tu calificación</legend>
+        <div class="rating-options">
+          <label><input type="radio" name="rating" value="0" required><span>0</span></label>
+          <label><input type="radio" name="rating" value="1"><span>★</span></label>
+          <label><input type="radio" name="rating" value="2"><span>★★</span></label>
+          <label><input type="radio" name="rating" value="3"><span>★★★</span></label>
+          <label><input type="radio" name="rating" value="4"><span>★★★★</span></label>
+          <label><input type="radio" name="rating" value="5"><span>★★★★★</span></label>
+        </div>
+      </fieldset>
+      <label for="reviewText">Cuéntanos tu experiencia</label>
+      <textarea id="reviewText" name="review_text" minlength="10" maxlength="2000" rows="4" required placeholder="¿Qué fue lo que más disfrutaste de tu viaje?"></textarea>
+      <label for="reviewMedia">Foto o video (opcional)</label>
+      <input id="reviewMedia" name="media" type="file" accept="image/jpeg,image/png,image/webp,image/heic,video/mp4,video/quicktime,video/webm">
+      <small class="note">Máximo 50 MB. Revisaremos tu publicación antes de mostrarla en la página.</small>
+      <label class="consent"><input type="checkbox" id="reviewConsent" required> Autorizo que mi recomendación y archivo se publiquen en esta página si son aprobados.</label>
+      <button class="submit" type="submit">PUBLICAR MI EXPERIENCIA</button>
+      <p id="reviewStatus" role="status" aria-live="polite"></p>
+    </form>
+  </section>
+</main>
+<footer><strong>Qué Onda Travel</strong><p>Mexican Experiences · Private Transportation · Los Cabos</p></footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(() => {
+  const SUPABASE_URL = "https://iyelnragqgriycdyqowq.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_d-xqUkbQSgzZys3OfXzbiw_iyHzHItE";
+  const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  const form = document.getElementById("reviewForm");
+  const status = document.getElementById("reviewStatus");
+  const list = document.getElementById("approvedReviews");
+  const endpoint = SUPABASE_URL + "/functions/v1/approved-reviews";
+
+  async function loadApprovedReviews() {
+    try {
+      const response = await fetch(endpoint, { headers: { apikey: SUPABASE_KEY } });
+      if (!response.ok) throw new Error("No se pudieron cargar las opiniones.");
+      const payload = await response.json();
+      if (!payload.reviews || !payload.reviews.length) return;
+      list.innerHTML = "";
+      payload.reviews.forEach(review => {
+        const card = document.createElement("article");
+        card.className = "post";
+        const head = document.createElement("div");
+        head.className = "post-head";
+        const avatar = document.createElement("div");
+        avatar.className = "avatar";
+        avatar.textContent = (review.customer_name || "V").trim().charAt(0).toUpperCase();
+        const identity = document.createElement("div");
+        const author = document.createElement("div");
+        author.className = "post-author";
+        author.textContent = review.customer_name;
+        const location = document.createElement("div");
+        location.className = "post-location";
+        location.textContent = "Qué Onda Travel · Los Cabos";
+        identity.append(author, location);
+        head.append(avatar, identity);
+        card.append(head);
+        if (review.media_url) {
+          const media = document.createElement(review.media_type === "video" ? "video" : "img");
+          media.className = review.media_type === "video" ? "post-video" : "post-media";
+          media.src = review.media_url;
+          if (review.media_type === "video") { media.controls = true; media.playsInline = true; }
+          else { media.alt = "Recuerdo compartido por " + review.customer_name; media.loading = "lazy"; }
+          card.append(media);
+        }
+        const content = document.createElement("div");
+        content.className = "post-content";
+        const stars = document.createElement("div");
+        stars.className = "post-stars";
+        stars.textContent = review.rating ? "★".repeat(review.rating) : "0 estrellas";
+        const caption = document.createElement("p");
+        caption.className = "post-caption";
+        caption.textContent = review.review_text;
+        const date = document.createElement("div");
+        date.className = "post-date";
+        date.textContent = "Experiencia verificada por nuestro equipo";
+        content.append(stars, caption, date);
+        card.append(content);
+        list.append(card);
+      });
+    } catch (error) {
+      console.warn(error);
+      list.innerHTML = '<div class="empty-feed">No pudimos cargar las publicaciones en este momento. Intenta de nuevo más tarde.</div>';
+    }
+  }
+
+  form.addEventListener("submit", async event => {
+    event.preventDefault();
+    if (!form.reportValidity()) return;
+    const submit = form.querySelector("button[type=submit]");
+    submit.disabled = true;
+    status.textContent = "Enviando tu experiencia...";
+    try {
+      const data = new FormData(form);
+      const file = document.getElementById("reviewMedia").files[0];
+      let mediaPath = null, mediaType = null;
+      if (file) {
+        if (file.size > 50 * 1024 * 1024) throw new Error("El archivo supera el límite de 50 MB.");
+        const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+        mediaPath = crypto.randomUUID() + "/" + safeName;
+        mediaType = file.type.startsWith("video/") ? "video" : "image";
+        const { error: uploadError } = await client.storage.from("review-media").upload(mediaPath, file, { contentType: file.type, upsert: false });
+        if (uploadError) throw uploadError;
+      }
+      const { error } = await client.from("customer_reviews").insert({
+        customer_name: data.get("customer_name").trim(),
+        rating: Number(data.get("rating")),
+        review_text: data.get("review_text").trim(),
+        media_path: mediaPath,
+        media_type: mediaType
+      });
+      if (error) throw error;
+      form.reset();
+      status.textContent = "¡Gracias! Recibimos tu experiencia. La revisaremos antes de publicarla.";
+    } catch (error) {
+      console.error(error);
+      status.textContent = error.message || "No pudimos enviar tu experiencia. Inténtalo de nuevo.";
+    } finally { submit.disabled = false; }
+  });
+  loadApprovedReviews();
+})();
+</script>
+</body>
+</html>
