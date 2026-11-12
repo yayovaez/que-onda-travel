@@ -396,6 +396,155 @@ footer {
   .fleet-grid, .experience-grid { grid-template-columns: 1fr; }
   .fleet, .experiences { padding: 48px 6%; }
 }
+
+/* IDENTIDAD QUÉ ONDA · DETALLES PREMIUM */
+:root {
+  --green: #123f3a;
+  --green-dark: #092e2b;
+  --gold: #c9a45b;
+  --cream: #fbf6ed;
+  --pink: #d94b86;
+  --ink: #203b36;
+}
+body { background: var(--cream); }
+header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 5px 22px #061d1b25;
+}
+.brand-symbol { color: #e6a2b8; }
+nav a { transition: color .2s ease; }
+.hero {
+  min-height: 650px;
+  background:
+    linear-gradient(90deg, rgba(5,35,32,.94), rgba(5,43,40,.76) 48%, rgba(5,35,32,.20)),
+    url("images/hero-arco.jpg") center 48% / cover no-repeat,
+    #0c4946;
+}
+.hero-copy { grid-column: 2; max-width: 540px; }
+.hero h1 { letter-spacing: -2px; }
+.hero-copy p { max-width: 470px; }
+.hero-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 22px;
+  padding: 15px 23px;
+  border-radius: 30px;
+  background: #c9a45b;
+  color: #102f2b;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .3px;
+  box-shadow: 0 8px 22px #0003;
+  transition: transform .2s ease, background .2s ease;
+}
+.hero-cta:hover { transform: translateY(-2px); background: #e2c27e; }
+.hero-car img { max-height: 365px; }
+.booking {
+  border: 1px solid #d7bd8b;
+  border-radius: 20px;
+  box-shadow: 0 18px 42px #3427191c;
+}
+.booking h2 { letter-spacing: -.5px; }
+.gold-button {
+  background: var(--green);
+  color: white;
+  border: 1px solid var(--green);
+  transition: transform .2s ease, background .2s ease;
+}
+.gold-button:hover { background: #1c5b52; transform: translateY(-2px); }
+.services { background: #103c37; }
+.service { letter-spacing: .15px; }
+.fleet { background: #fbf6ed; }
+.vehicle {
+  border: 1px solid #e4d8c5;
+  border-radius: 16px;
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+.vehicle:hover { transform: translateY(-5px); box-shadow: 0 16px 32px #513c2524; }
+.vehicle-photo { height: 220px; background: #e7dece; }
+.vehicle-info h3 { font-size: 30px; }
+.vehicle-link { color: var(--green); border-color: #c9a45b; }
+.experiences {
+  position: relative;
+  background: #eee5d7;
+  overflow: hidden;
+}
+.experiences:before, .experiences:after {
+  content: "✳";
+  position: absolute;
+  color: #d94b86;
+  opacity: .18;
+  font-size: 180px;
+  pointer-events: none;
+}
+.experiences:before { top: -45px; right: 4%; }
+.experiences:after { bottom: -85px; left: 2%; color: #16877c; }
+.experience {
+  position: relative;
+  isolation: isolate;
+  min-height: 260px;
+  overflow: hidden;
+  border: 1px solid #d4bd96;
+  border-radius: 16px;
+  box-shadow: 0 12px 28px #34271918;
+  background: linear-gradient(145deg, #0d4944, #b77d4d);
+}
+.experience:before {
+  content: attr(data-symbol);
+  position: absolute;
+  z-index: -1;
+  right: 18px;
+  top: 12px;
+  font-size: 82px;
+  opacity: .82;
+  filter: drop-shadow(0 8px 10px #0003);
+}
+.experience:nth-child(2) { background: linear-gradient(145deg, #16545e, #d9a36c); }
+.experience:nth-child(3) { background: linear-gradient(145deg, #593e40, #c28b51); }
+.experience h3 { max-width: 260px; text-shadow: 0 2px 12px #0008; }
+.experience p {
+  margin: 8px 0 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #fff3dc;
+}
+.about { background: #fbf6ed; }
+.reviews { background: #f1e7d8; }
+.contact {
+  background:
+    radial-gradient(circle at 15% 15%, #ffffff12 0 2px, transparent 3px),
+    linear-gradient(130deg, #123f3a, #082e2b);
+}
+.contact-button {
+  display: inline-block;
+  margin-top: 15px;
+  padding: 14px 24px;
+  border-radius: 30px;
+  background: #c9a45b;
+  color: #102f2b;
+  font-weight: 700;
+  font-size: 14px;
+}
+footer { border-top: 1px solid #c9a45b55; }
+@media(max-width: 900px) {
+  .hero { grid-template-columns: 12% 48% 40%; }
+}
+@media(max-width: 620px) {
+  header { position: relative; padding: 15px 4%; }
+  .brand-description { display: none; }
+  nav { padding-top: 8px; }
+  .hero { min-height: 690px; grid-template-columns: 1fr; padding: 52px 7% 30px; }
+  .hero-copy { grid-column: 1; }
+  .hero-car { grid-column: 1; width: 94%; }
+  .hero-car img { max-height: 235px; }
+  .experience { min-height: 220px; }
+  .experience:before { font-size: 68px; }
+}
+
 </style>
 </head>
 
@@ -436,9 +585,10 @@ footer {
     <div class="eyebrow">Los Cabos · México</div>
     <h1>Discover<br><span>Los Cabos</span></h1>
     <p>
-      Experiencias mexicanas con transporte privado,
-      comodidad y hospitalidad local.
+      Descubre Los Cabos con el encanto de México y la comodidad
+      de un servicio privado pensado para disfrutar cada momento.
     </p>
+    <a class="hero-cta" href="#reservar">PLANEA TU EXPERIENCIA <span>↗</span></a>
     <div class="hero-features">
       <span>✧ Seguro y confiable</span>
       <span>✧ Servicio bilingüe</span>
@@ -567,14 +717,23 @@ footer {
   <h2 class="section-title">Experiencias / Experiences</h2>
 
   <div class="experience-grid">
-    <article class="experience">
-      <h3>El Arco de Cabo San Lucas</h3>
+    <article class="experience" data-symbol="🌵">
+      <div>
+        <h3>El Arco de Cabo San Lucas</h3>
+        <p>Un ícono natural que merece ser parte de tu viaje</p>
+      </div>
     </article>
-    <article class="experience">
-      <h3>Playas y atardeceres</h3>
+    <article class="experience" data-symbol="🌊">
+      <div>
+        <h3>Playas y atardeceres</h3>
+        <p>El lado más relajado y espectacular de Baja California Sur</p>
+      </div>
     </article>
-    <article class="experience">
-      <h3>Gastronomía y cultura mexicana</h3>
+    <article class="experience" data-symbol="🪅">
+      <div>
+        <h3>Cultura y sabor mexicano</h3>
+        <p>Colores, artesanía y tradiciones que hacen único a México</p>
+      </div>
     </article>
   </div>
 </section>
@@ -600,6 +759,7 @@ footer {
   <h2>Tu aventura comienza aquí</h2>
   <p>Mexican Experiences · Private Transportation</p>
   <p>Los Cabos · Baja California Sur · México</p>
+  <a class="contact-button" href="https://wa.me/16395255179" target="_blank" rel="noopener">Hablemos por WhatsApp · Let's talk</a>
 </section>
 
 </main>
