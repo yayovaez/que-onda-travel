@@ -1963,6 +1963,74 @@ footer a{color:#ff8bc2!important}
 .service:nth-child(4) .service-icon{border-radius:12px 24px 12px 24px!important}
 @media(max-width:620px){.service-icon{width:66px!important;height:66px!important}.service-icon svg{width:39px;height:39px}}
 
+
+/* RESERVACIÓN FESTIVA · PIÑATA ARTESANAL EN ROSA + NEGRO */
+.booking{
+ overflow:hidden!important;isolation:isolate;
+ position:relative!important;
+ margin-top:-35px!important;
+ padding:28px clamp(18px,3vw,34px) 32px!important;
+ background:
+  radial-gradient(circle at 8% 12%,#ec168814 0 2px,transparent 3px),
+  radial-gradient(circle at 91% 30%,#f5c52f14 0 2px,transparent 3px),
+  linear-gradient(145deg,#211922 0%,#151218 58%,#24151f 100%)!important;
+ border:1.5px solid #ec1688!important;border-radius:26px!important;
+ box-shadow:0 18px 48px #0009,0 0 28px #ec168822!important;
+}
+.booking:before{
+ content:"";position:absolute;inset:0 0 auto;height:9px;z-index:-1;
+ background:repeating-linear-gradient(110deg,#ec1688 0 18px,#f5c52f 18px 36px,#22b9b0 36px 54px,#fff1f7 54px 72px);
+}
+.booking-festive-top{
+ min-height:100px;position:relative;display:flex;align-items:center;
+ padding:8px 130px 8px 4px;margin-bottom:4px;
+}
+.booking-kicker{
+ display:inline-block;color:#ff8dc2;font-size:11px;font-weight:800;
+ letter-spacing:2.2px;text-transform:uppercase;
+}
+.booking-pinata{
+ position:absolute;width:112px;height:112px;right:12px;top:-8px;
+ filter:drop-shadow(0 8px 12px #0008);transform:rotate(9deg);
+ animation:pinata-sway 4s ease-in-out infinite;
+}
+.booking-confetti{position:absolute;font-size:20px;line-height:1}
+.confetti-a{right:120px;top:10px;color:#f5c52f}
+.confetti-b{right:7px;bottom:12px;color:#26b9b0;font-size:12px}
+.confetti-c{right:103px;bottom:8px;color:#ff79b8;font-size:15px}
+@keyframes pinata-sway{0%,100%{transform:rotate(8deg) translateY(0)}50%{transform:rotate(-5deg) translateY(-5px)}}
+.booking h2{
+ position:relative;text-align:left!important;
+ color:#fff7fb!important;font-size:clamp(27px,4vw,42px)!important;
+ line-height:1.12!important;letter-spacing:-1.1px!important;
+ margin:0 0 24px!important;padding:0 0 17px!important;
+ border-bottom:1px solid #ec168855;
+}
+.booking h2 span{color:#ff8dc2;font-size:.72em;white-space:normal}
+.booking .field label{color:#fbeaf2!important}
+.booking .field input,.booking .field select{
+ background:#100e13!important;color:#fff!important;
+ border:1px solid #65445a!important;border-radius:13px!important;
+ min-height:56px;transition:border-color .2s,box-shadow .2s;
+}
+.booking .field input:focus,.booking .field select:focus{
+ border-color:#ec1688!important;box-shadow:0 0 0 3px #ec168833!important;outline:none!important;
+}
+.booking .field select{color-scheme:dark}
+.booking .quote-preview{background:#2b1b28!important;border:1px dashed #ec1688!important;color:#ffe0ef!important}
+.booking .quote-preview small{color:#e8c8d8!important}
+.booking .gold-button{min-height:54px;font-size:14px;letter-spacing:.5px}
+@media(max-width:620px){
+ .booking{margin: -18px 3% 0!important;padding:23px 16px 25px!important;border-radius:22px!important}
+ .booking-festive-top{min-height:82px;padding-right:96px}
+ .booking-pinata{width:86px;height:86px;right:0;top:-3px}
+ .booking-kicker{font-size:9px;letter-spacing:1.3px}
+ .booking h2{font-size:29px!important;line-height:1.15!important}
+ .booking h2 span{display:block;font-size:.72em;margin-top:5px}
+ .booking .field input,.booking .field select{min-height:54px}
+}
+@media(prefers-reduced-motion:reduce){.booking-pinata{animation:none}}
+
 </style>
 </head>
 
@@ -2099,7 +2167,19 @@ footer a{color:#ff8bc2!important}
 </section>
 
 <section class="booking" id="reservar">
-  <h2>✺ Reserva tu Traslado / Book Your Ride ✺</h2>
+  <div class="booking-festive-top" aria-hidden="true">
+    <span class="booking-kicker">¡Vámonos de aventura! · LET'S RIDE</span>
+    <svg class="booking-pinata" viewBox="0 0 150 150" role="img" aria-label="">
+      <path d="M75 9 88 31 115 23 111 51 139 64 116 82 126 109 97 108 83 138 64 116 37 129 39 100 10 86 32 67 20 40 49 42Z" fill="#f3c52f" stroke="#fff1f7" stroke-width="4" stroke-linejoin="round"/>
+      <path d="m75 9 13 22-13 7-13-7Zm40 14-4 28-13-2Zm24 41-23 18-6-13Zm-13 45-29-1 1-14Zm-43 29-19-22 12-9Zm-46-9 2-29 14 4Zm-27-44 22-18 7 13Zm10-46 29 2-3 14Z" fill="#ec1688"/>
+      <path d="m62 38 13-7 13 7 11-2-4 15 12 13-12 12 5 16-17-1-8 14-10-14-17 2 4-17-12-11 13-12-4-15Z" fill="#26b9b0"/>
+      <circle cx="75" cy="72" r="17" fill="#fff7fb" stroke="#181218" stroke-width="3"/>
+      <path d="m75 59 4 9 10 1-7 7 2 10-9-5-9 5 2-10-7-7 10-1Z" fill="#ec1688"/>
+      <path d="M75 139v8m-9-9-4 7m22-7 4 7" stroke="#ff79b8" stroke-width="4" stroke-linecap="round"/>
+    </svg>
+    <span class="booking-confetti confetti-a">✦</span><span class="booking-confetti confetti-b">●</span><span class="booking-confetti confetti-c">◆</span>
+  </div>
+  <h2>Reserva tu Traslado <span>/ Book Your Ride</span></h2>
 
   <form class="booking-form" id="bookingForm" onsubmit="sendBookingToWhatsApp(event)">
     <div class="field">
