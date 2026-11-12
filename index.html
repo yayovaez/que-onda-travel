@@ -2170,6 +2170,42 @@ header,.site-header{border-bottom:0!important;box-shadow:none}
  .booking-notice strong{font-size:15px!important}
  .booking-notice .airport-note{padding:12px!important}
 }
+
+/* BOTONES PREMIUM · VINO TINTO Y CHAMPAGNE */
+.hero-cta,.gold-button,.contact-button,.primary-button,.vehicle-link{
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  gap:0!important;min-height:48px;padding:14px 25px!important;
+  border:1px solid #d7bd91!important;border-radius:999px!important;
+  background:linear-gradient(135deg,#70283f 0%,#481a2b 58%,#321522 100%)!important;
+  color:#fff8ef!important;font:700 12px Arial,sans-serif!important;
+  letter-spacing:1px!important;text-decoration:none!important;text-transform:uppercase!important;
+  box-shadow:0 7px 20px #0005, inset 0 1px 0 #ffffff20!important;
+  transition:transform .22s ease,box-shadow .22s ease,background .22s ease!important;
+}
+.hero-cta:hover,.gold-button:hover,.contact-button:hover,.primary-button:hover,.vehicle-link:hover{
+  background:linear-gradient(135deg,#8a3a52,#5b2036)!important;
+  color:#fff!important;transform:translateY(-2px)!important;
+  box-shadow:0 11px 25px #0007,0 0 0 3px #d7bd9120!important;
+}
+.hero-cta-secondary{
+  background:rgba(18,15,19,.38)!important;color:#fff8ef!important;
+  border:1px solid #e0cba8!important;backdrop-filter:blur(8px);
+}
+.hero-cta-secondary:hover{background:#e0cba8!important;color:#321522!important}
+.vehicle-link{min-height:42px;padding:12px 19px!important;font-size:10px!important;letter-spacing:.8px!important}
+.gold-button{min-height:54px!important;font-size:13px!important}
+.contact-button{margin-top:18px!important}
+button:focus-visible,a.hero-cta:focus-visible,a.vehicle-link:focus-visible,a.contact-button:focus-visible{
+  outline:2px solid #f0d9ad!important;outline-offset:4px!important;
+}
+button:disabled{opacity:.65;cursor:wait;transform:none!important}
+@media(max-width:620px){
+ .hero-actions{gap:10px!important}
+ .hero-cta,.hero-cta-secondary{width:100%;min-height:50px;padding:14px 18px!important}
+ .vehicle-link{width:100%;min-height:46px}
+ .gold-button,.contact-button{width:100%}
+}
+
 </style>
 </head>
 
@@ -2208,8 +2244,8 @@ header,.site-header{border-bottom:0!important;box-shadow:none}
     <p class="hero-lead">Somos una propuesta de hospitalidad y transporte privado que conecta a los viajeros con lo mejor de Los Cabos y la cultura de México.</p>
     <p>Diseñamos traslados cómodos y experiencias locales con atención cercana, servicio bilingüe y ese toque mexicano que hace especial cada viaje.</p>
     <div class="hero-actions">
-      <a class="hero-cta" href="#experiencias">DESCUBRE EXPERIENCIAS <span>↗</span></a>
-      <a class="hero-cta hero-cta-secondary" href="#reservar">RESERVA TU VIAJE <span>↗</span></a>
+      <a class="hero-cta" href="#experiencias">DESCUBRE EXPERIENCIAS</a>
+      <a class="hero-cta hero-cta-secondary" href="#reservar">RESERVA TU VIAJE</a>
           </div>
     <div class="hero-features">
       <span>Atención bilingüe y personalizada</span>
@@ -2278,7 +2314,7 @@ header,.site-header{border-bottom:0!important;box-shadow:none}
       <div class="vehicle-info">
         <h3>Volkswagen Jetta</h3>
         <p>Volkswagen · Negro<br>Hasta 4 pasajeros</p>
-        <a class="vehicle-link" href="#reservar">Ver detalles / View details ›</a>
+        <a class="vehicle-link" href="#reservar">Ver detalles / View details</a>
       </div>
     </article>
 
