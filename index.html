@@ -2485,6 +2485,29 @@ a:focus-visible,button:focus-visible{outline-color:#d4c1a2!important}
 .mapbox-suggestions small{display:block;color:#b9ad9d;font-size:11px;margin-top:3px}
 .mapbox-route-status{min-height:1.2em;color:#d4c1a2;font-size:12px;margin:4px 0 12px}
 .booking input[readonly]{opacity:.9;cursor:not-allowed}
+
+/* Uniformar controles de fecha y hora con el resto del formulario */
+.booking-form .field input[type="date"],
+.booking-form .field input[type="time"]{
+  display:block;
+  width:100%;
+  min-width:0;
+  height:56px;
+  min-height:56px;
+  max-height:56px;
+  box-sizing:border-box;
+  padding:12px 14px;
+  font-size:16px;
+  line-height:1.2;
+  border-radius:13px;
+  -webkit-appearance:none;
+  appearance:none;
+}
+.booking-form .field input[type="date"]::-webkit-date-and-time-value,
+.booking-form .field input[type="time"]::-webkit-date-and-time-value{
+  text-align:left;
+  min-height:1.2em;
+}
 </style>
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
