@@ -834,6 +834,14 @@ footer { background: #042b35; border-top: 2px solid #ffc62955; }
     </div>
 
     <div class="field">
+      <label>Tipo de viaje / Trip type</label>
+      <select name="tripType" required>
+        <option value="Sencillo / One-way">Sencillo / One-way</option>
+        <option value="Redondo / Round-trip">Redondo / Round-trip</option>
+      </select>
+    </div>
+
+    <div class="field">
       <label>Origen / Pickup</label>
       <input name="pickup" type="text" placeholder="Lugar de recogida" required>
     </div>
@@ -998,6 +1006,7 @@ function sendBookingToWhatsApp(event) {
     'Hello Qué Onda Travel! I would like to request a ride quote.',
     '',
     'Service: ' + data.get('service'),
+    'Trip type: ' + data.get('tripType'),
     'Pickup: ' + data.get('pickup'),
     'Destination: ' + data.get('destination'),
     'Date: ' + data.get('date'),
