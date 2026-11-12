@@ -2075,14 +2075,25 @@ footer a{color:#ff8bc2!important}
 
 
 /* ACENTOS FESTIVOS EN EL FONDO · SIN ALTERAR LA IDENTIDAD */
-body{position:relative;isolation:isolate}
-body::before{
- content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.24;}
-body > header, body > main, body > footer{position:relative;z-index:1}
-body::before{
- background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20900%20650%22%20fill%3D%22none%22%3E%0A%3Cg%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%0A%3C!--%20dunas%20del%20desierto%2C%20l%C3%ADneas%20topogr%C3%A1ficas%20c%C3%A1lidas%20--%3E%0A%3Cpath%20d%3D%22M-30%20190C110%20115%20220%20125%20335%20185s210%2072%20315%2012%20190-55%20280-12%22%20stroke%3D%22%23B97845%22%20stroke-width%3D%223%22%2F%3E%0A%3Cpath%20d%3D%22M-30%20207C110%20145%20220%20150%20335%20205s210%2070%20315%2018%20190-49%20280-8%22%20stroke%3D%22%23D49A63%22%20stroke-width%3D%222%22%2F%3E%0A%3Cpath%20d%3D%22M-30%20540c145-95%20250-85%20365-20s205%2078%20315%2018%20175-58%20280-12%22%20stroke%3D%22%23B97845%22%20stroke-width%3D%223%22%2F%3E%0A%3Cpath%20d%3D%22M-30%20558c145-80%20250-75%20365-14s205%2072%20315%2024%20175-53%20280-8%22%20stroke%3D%22%23D49A63%22%20stroke-width%3D%222%22%2F%3E%0A%3C!--%20cactus%20saguaro%20en%20verde%20ne%C3%B3n%20--%3E%0A%3Cpath%20d%3D%22M170%20490V350c0-20%2012-34%2029-34s29%2014%2029%2034v37m-58-16h-18c-13%200-23-10-23-23v-29m70%2063h19c13%200%2023-10%2023-23v-22%22%20stroke%3D%22%2339FF72%22%20stroke-width%3D%225%22%2F%3E%0A%3Cpath%20d%3D%22M690%20160V65c0-17%2010-29%2024-29s24%2012%2024%2029v26m-48-13h-15c-11%200-19-8-19-19V41m58%2057h16c11%200%2019-8%2019-19V61%22%20stroke%3D%22%2339FF72%22%20stroke-width%3D%224%22%2F%3E%0A%3C!--%20peque%C3%B1os%20destellos%20discretos%20--%3E%0A%3Cpath%20d%3D%22m440%20315%204%2010%2010%204-10%204-4%2010-4-10-10-4%2010-4Z%22%20stroke%3D%22%23D49A63%22%20stroke-width%3D%222%22%2F%3E%0A%3Cpath%20d%3D%22m825%20390%203%208%208%203-8%203-3%208-3-8-8-3%208-3Z%22%20stroke%3D%22%2339FF72%22%20stroke-width%3D%222%22%2F%3E%0A%3C%2Fg%3E%3C%2Fsvg%3E");
- background-repeat:repeat;background-size:900px 650px;background-position:center
+
+/* Fondo desértico visible: dunas arena + cactus verde neón */
+body{
+ background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20900%20650%22%20fill%3D%22none%22%3E%3Cg%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%0A%3Cpath%20d%3D%22M-20%20185C105%20100%20225%20120%20345%20183s205%2070%20315%2012%20180-52%20270-5M-20%20204C105%20130%20225%20145%20345%20202s205%2068%20315%2019%20180-48%20270-2%22%20stroke%3D%22%23B97845%22%20stroke-width%3D%223%22%2F%3E%0A%3Cpath%20d%3D%22M-20%20535c140-88%20255-85%20370-20s205%2075%20315%2018%20175-55%20270-8M-20%20554c140-75%20255-74%20370-14s205%2069%20315%2023%20175-50%20270-4%22%20stroke%3D%22%23D49A63%22%20stroke-width%3D%222.5%22%2F%3E%0A%3Cpath%20d%3D%22M170%20490V350c0-20%2012-34%2029-34s29%2014%2029%2034v37m-58-16h-18c-13%200-23-10-23-23v-29m70%2063h19c13%200%2023-10%2023-23v-22%22%20stroke%3D%22%2339FF72%22%20stroke-width%3D%225%22%2F%3E%0A%3Cpath%20d%3D%22M690%20160V65c0-17%2010-29%2024-29s24%2012%2024%2029v26m-48-13h-15c-11%200-19-8-19-19V41m58%2057h16c11%200%2019-8%2019-19V61%22%20stroke%3D%22%2339FF72%22%20stroke-width%3D%224%22%2F%3E%0A%3C%2Fg%3E%3C%2Fsvg%3E")!important;
+ background-repeat:repeat!important;
+ background-size:900px 650px!important;
+ background-position:center top!important;
+ background-attachment:fixed!important;
 }
+body::before{content:none!important}
+.booking{
+ background-image:
+   linear-gradient(145deg,rgba(33,25,34,.96),rgba(21,18,24,.96) 58%,rgba(36,21,31,.96)),
+   url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20900%20650%22%20fill%3D%22none%22%3E%3Cg%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%0A%3Cpath%20d%3D%22M-20%20185C105%20100%20225%20120%20345%20183s205%2070%20315%2012%20180-52%20270-5M-20%20204C105%20130%20225%20145%20345%20202s205%2068%20315%2019%20180-48%20270-2%22%20stroke%3D%22%23B97845%22%20stroke-width%3D%223%22%2F%3E%0A%3Cpath%20d%3D%22M-20%20535c140-88%20255-85%20370-20s205%2075%20315%2018%20175-55%20270-8M-20%20554c140-75%20255-74%20370-14s205%2069%20315%2023%20175-50%20270-4%22%20stroke%3D%22%23D49A63%22%20stroke-width%3D%222.5%22%2F%3E%0A%3Cpath%20d%3D%22M170%20490V350c0-20%2012-34%2029-34s29%2014%2029%2034v37m-58-16h-18c-13%200-23-10-23-23v-29m70%2063h19c13%200%2023-10%2023-23v-22%22%20stroke%3D%22%2339FF72%22%20stroke-width%3D%225%22%2F%3E%0A%3Cpath%20d%3D%22M690%20160V65c0-17%2010-29%2024-29s24%2012%2024%2029v26m-48-13h-15c-11%200-19-8-19-19V41m58%2057h16c11%200%2019-8%2019-19V61%22%20stroke%3D%22%2339FF72%22%20stroke-width%3D%224%22%2F%3E%0A%3C%2Fg%3E%3C%2Fsvg%3E")!important;
+ background-size:auto,900px 650px!important;
+ background-position:center,center!important;
+ background-repeat:no-repeat,repeat!important;
+}
+
 
 
 /* Emblema discreto de Los Cabos para la cabecera de reservaciones */
