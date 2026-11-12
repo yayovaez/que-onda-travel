@@ -2443,6 +2443,10 @@ const quotePreview = document.getElementById('quotePreview');
 const serviceSelect = document.getElementById('serviceType');
 const airportNote = document.getElementById('airportNote');
 const passengersSelect = bookingForm.querySelector('select[name="passengers"]');
+const travelDateInput = bookingForm.querySelector('input[name="date"]');
+const todayLocal = new Date();
+const localDateValue = [todayLocal.getFullYear(), String(todayLocal.getMonth() + 1).padStart(2, '0'), String(todayLocal.getDate()).padStart(2, '0')].join('-');
+travelDateInput.min = localDateValue;
 const vehicleCapacity = { Jetta: 4, Atlas: 5, Tiguan: 6 };
 
 function updatePassengerCapacity() {
