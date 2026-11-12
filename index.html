@@ -2918,39 +2918,39 @@ const LOCAL_CABO_PLACES = [
   {text:'Playa Chileno',place_name:'Playa Chileno, Los Cabos, BCS',center:[-109.80,22.91],aliases:['chileno']},
   {text:'Playa Santa María',place_name:'Playa Santa María, Los Cabos, BCS',center:[-109.82,22.90],aliases:['santa maria','santa maría']}
 ];
-async function searchMapboxPlaces(input, container, kind) {
+function searchMapboxPlaces(input, container, kind) {
   const query = input.value.trim();
   const requestId = ++routeSearchSequence[kind];
   if (query.length < 2) { clearMapboxSuggestions(container); return; }
-  container.innerHTML = '<div style="padding:12px 14px;color:#c9a45b;font-size:12px">Buscando ubicaciones…</div>';
-  container.hidden = false;
-  const normalized = query.normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').toLowerCase();
+
+  // Mostrar coincidencias locales inmediatamente, sin esperar a ningún servidor.
+  const normalize = value => String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+  const normalized = normalize(query);
   const localMatches = LOCAL_CABO_PLACES.filter(place => {
-    const haystack = [place.text, place.place_name, ...(place.aliases || [])]
-      .join(' ').normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').toLowerCase();
-    return haystack.includes(normalized) || normalized.split(/\\s+/).every(word => haystack.includes(word));
+    const haystack = normalize([place.text, place.place_name, ...(place.aliases || [])].join(' '));
+    return haystack.includes(normalized) || normalized.split(/\s+/).every(word => haystack.includes(word));
   }).map((place,index) => ({...place,id:'local-cabo-'+index,relevance:1}));
-  try {
-    let remoteFeatures = [];
-    try {
-      const result = await callMapboxProxy({ action: 'geocode', query });
-      remoteFeatures = result.features || [];
-    } catch (remoteError) {
-      console.warn('Búsqueda remota no disponible; se usarán sugerencias locales.', remoteError);
-    }
-    if (requestId !== routeSearchSequence[kind] || input.value.trim() !== query) return;
-    const seen = new Set(localMatches.map(f => f.text.toLowerCase()));
-    const merged = [...localMatches, ...remoteFeatures.filter(f => {
-      const key = String(f.text || f.place_name || '').toLowerCase();
-      if (seen.has(key)) return false;
-      seen.add(key); return true;
-    })];
-    renderMapboxSuggestions(container, kind, merged);
-  } catch (error) {
-    if (requestId !== routeSearchSequence[kind]) return;
-    console.error('Autocomplete:', error);
-    renderMapboxSuggestions(container, kind, localMatches);
+
+  renderMapboxSuggestions(container, kind, localMatches);
+  if (localMatches.length) {
+    mapboxRouteStatus.textContent = 'Selecciona una ubicación de la lista o continúa escribiendo.';
+  } else {
+    mapboxRouteStatus.textContent = 'No hay coincidencia en la lista rápida. Puedes marcar el punto en el mapa.';
   }
+
+  // Consultar Mapbox en segundo plano y añadir coincidencias adicionales.
+  callMapboxProxy({ action: 'geocode', query }).then(result => {
+    if (requestId !== routeSearchSequence[kind] || input.value.trim() !== query) return;
+    const seen = new Set(localMatches.map(f => normalize(f.text || f.place_name)));
+    const extra = (result.features || []).filter(f => {
+      const key = normalize(f.text || f.place_name);
+      if (!key || seen.has(key)) return false;
+      seen.add(key); return true;
+    });
+    if (extra.length) renderMapboxSuggestions(container, kind, [...localMatches, ...extra]);
+  }).catch(error => {
+    console.warn('Búsqueda externa no disponible; se conservan las sugerencias locales.', error);
+  });
 }
 function attachMapboxAutocomplete(input, container, kind) {
   // Evita que Safari móvil quite el foco antes de procesar el toque en una sugerencia.
