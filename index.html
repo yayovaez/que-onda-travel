@@ -2675,10 +2675,10 @@ a:focus-visible,button:focus-visible{outline-color:#d4c1a2!important}
       <input name="destination" id="destinationLocation" type="text" placeholder="Escribe tu destino" autocomplete="off" required>
       <div class="mapbox-suggestions" id="destinationSuggestions" role="listbox" aria-label="Sugerencias de destino" hidden></div>
     </div>
-    <div class="booking-route-helper"><button type="button" id="openRouteMap" class="route-map-button">Calcular distancia y tarifa</button><small>Selecciona una sugerencia para el origen y el destino. Calcularemos la distancia por carretera con Mapbox.</small></div>
+    <div class="booking-route-helper"><button type="button" id="openRouteMap" class="route-map-button">Calcular distancia y tarifa</button><small>Busca una dirección; si no aparece, toca el mapa para colocar el pin. Calculamos la distancia por carretera.</small></div>
     <p class="mapbox-route-status" id="mapboxRouteStatus" role="status" aria-live="polite"></p>
     <div class="booking-map-panel">
-      <div class="booking-map-heading"><strong>Ubicación y recorrido</strong><small>Mueve los pines para ajustar el punto exacto.</small></div>
+      <div class="booking-map-heading"><strong>Ubicación y recorrido</strong><small>Toca el mapa para marcar el punto del campo seleccionado; también puedes mover los pines.</small></div>
       <div id="bookingMap" role="application" aria-label="Mapa para seleccionar origen y destino"></div>
       <div class="booking-map-actions">
         <button type="button" id="useAirportPickup">📍 Usar aeropuerto SJD como origen</button>
@@ -2788,6 +2788,7 @@ const pickupSuggestions = document.getElementById('pickupSuggestions');
 const destinationSuggestions = document.getElementById('destinationSuggestions');
 const mapboxRouteStatus = document.getElementById('mapboxRouteStatus');
 const selectedPlaces = { pickup: null, destination: null };
+let activeRouteField = 'pickup';
 const AIRPORT_SJD = {longitude:-109.7210,latitude:23.1518,label:'Aeropuerto Internacional de Los Cabos (SJD) · estacionamiento frente a la terminal'};
 let bookingMap, pickupMarker, destinationMarker, airportMarker, routeLine;
 function initBookingMap(){
@@ -2796,6 +2797,15 @@ function initBookingMap(){
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap'}).addTo(bookingMap);
   airportMarker=L.marker([AIRPORT_SJD.latitude,AIRPORT_SJD.longitude]).addTo(bookingMap).bindPopup('Aeropuerto Internacional de Los Cabos (SJD) · punto fijo de encuentro');
   airportMarker.setIcon(L.divIcon({className:'',html:'<div style="background:#c9a45b;border:2px solid white;border-radius:50%;width:18px;height:18px;box-shadow:0 1px 7px #0008"></div>',iconSize:[18,18],iconAnchor:[9,9]}));
+  bookingMap.on('click',(event)=>{
+    const kind=activeRouteField;
+    const point={longitude:event.latlng.lng,latitude:event.latlng.lat,label:kind==='pickup'?'Punto de recogida seleccionado en el mapa':'Destino seleccionado en el mapa'};
+    selectedPlaces[kind]=point;
+    (kind==='pickup'?pickupInput:destinationInput).value=point.label;
+    updateMapMarker(kind,point);
+    distanceInput.value='';getQuote();
+    mapboxRouteStatus.textContent=(kind==='pickup'?'Recogida':'Destino')+' marcado en el mapa. Selecciona el otro campo y marca el segundo punto.';
+  });
   setTimeout(()=>bookingMap.invalidateSize(),250);
 }
 function makeMapIcon(color){return L.divIcon({className:'',html:'<div style="width:22px;height:22px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:'+color+';border:3px solid white;box-shadow:0 2px 8px #0008"></div>',iconSize:[22,22],iconAnchor:[11,22]});}
@@ -2860,30 +2870,20 @@ function renderMapboxSuggestions(container, kind, features) {
     const detail = document.createElement('small');
     detail.textContent = feature.place_name || '';
     option.append(title, detail);
-    option.addEventListener('click', async () => {
-      option.disabled = true;
-      option.textContent = 'Obteniendo ubicación exacta…';
-      try {
-        const place = await callMapboxProxy({ action: 'googleDetails', place_id: feature.place_id });
-        const [longitude, latitude] = place.center || [];
-        if (!Number.isFinite(longitude) || !Number.isFinite(latitude)) throw new Error('No encontramos las coordenadas de este lugar.');
-        const input = kind === 'pickup' ? pickupInput : destinationInput;
-        input.value = place.place_name || place.text;
-        selectedPlaces[kind] = { longitude, latitude, label: input.value };
-        updateMapMarker(kind, selectedPlaces[kind]);
-        bookingMap.setView([latitude,longitude],15);
-        clearMapboxSuggestions(container);
-        distanceInput.value = '';
-        getQuote();
-        mapboxRouteStatus.textContent = kind === 'pickup'
-          ? 'Origen confirmado en el mapa. Ahora elige tu destino.'
-          : 'Destino confirmado en el mapa. Calcula la ruta para conocer los kilómetros y la tarifa.';
-      } catch (error) {
-        console.error(error);
-        mapboxRouteStatus.textContent = error.message || 'No pudimos confirmar ese lugar.';
-        option.disabled = false;
-        option.textContent = feature.place_name || feature.text;
-      }
+    option.addEventListener('click', () => {
+      const [longitude, latitude] = feature.center || [];
+      if (!Number.isFinite(longitude) || !Number.isFinite(latitude)) return;
+      const input = kind === 'pickup' ? pickupInput : destinationInput;
+      input.value = feature.place_name || feature.text;
+      selectedPlaces[kind] = { longitude, latitude, label: input.value };
+      updateMapMarker(kind, selectedPlaces[kind]);
+      bookingMap.setView([latitude,longitude],14);
+      clearMapboxSuggestions(container);
+      distanceInput.value = '';
+      getQuote();
+      mapboxRouteStatus.textContent = kind === 'pickup'
+        ? 'Origen seleccionado. Ahora elige tu destino.'
+        : 'Destino seleccionado. Calcula la ruta para conocer los kilómetros y la tarifa.';
     });
     container.appendChild(option);
   });
@@ -2893,9 +2893,9 @@ async function searchMapboxPlaces(input, container, kind) {
   const query = input.value.trim();
   if (query.length < 3) { clearMapboxSuggestions(container); return; }
   try {
-    const result = await callMapboxProxy({ action: 'googleAutocomplete', input: query });
+    const result = await callMapboxProxy({ action: 'geocode', query });
     if (input.value.trim() !== query) return;
-    renderMapboxSuggestions(container, kind, result.suggestions || []);
+    renderMapboxSuggestions(container, kind, result.features || []);
   } catch (error) {
     console.error(error);
     mapboxRouteStatus.textContent = error.message || 'No pudimos buscar esa dirección.';
@@ -2903,7 +2903,10 @@ async function searchMapboxPlaces(input, container, kind) {
   }
 }
 function attachMapboxAutocomplete(input, container, kind) {
+  input.addEventListener('focus',()=>{activeRouteField=kind;});
+  input.addEventListener('click',()=>{activeRouteField=kind;});
   input.addEventListener('input', () => {
+    activeRouteField=kind;
     selectedPlaces[kind] = null;
     distanceInput.value = '';
     getQuote();
