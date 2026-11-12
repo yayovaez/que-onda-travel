@@ -44,15 +44,11 @@ window.__qotAdminLogin = async function(event){
   message.textContent='Conectando con el servicio de acceso…';
   try{
     if(email!=='yairnarvaez58@gmail.com') throw new Error('Este correo no está autorizado para administrar las reservas.');
-    if(!window.supabase||!window.supabase.createClient) throw new Error('No se pudo cargar el servicio de acceso. Recarga la página e inténtalo de nuevo.');
-    if(!window.__qotAdminClient) window.__qotAdminClient=window.supabase.createClient('https://iyelnragqgriycdyqowq.supabase.co','sb_publishable_d-xqUkbQSgzZys3OfXzbiw_iyHzHItE');
-    const result=await window.__qotAdminClient.auth.signInWithPassword({email,password});
+    await ensureSupabase();
+    const result=await db.auth.signInWithPassword({email,password});
     if(result.error) throw result.error;
     message.textContent='Acceso correcto. Abriendo el panel…';
-    document.getElementById('authPanel').classList.add('hidden');
-    document.getElementById('dashboard').classList.remove('hidden');
-    document.getElementById('logout').classList.remove('hidden');
-    message.textContent='';
+    await showDashboard();
     return false;
   }catch(error){
     message.textContent=error&&error.message?error.message:'No se pudo completar el acceso.';
