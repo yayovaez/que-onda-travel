@@ -2906,21 +2906,50 @@ function renderMapboxSuggestions(container, kind, features) {
   });
   container.hidden = false;
 }
+const LOCAL_CABO_PLACES = [
+  {text:'Aeropuerto Internacional de Los Cabos (SJD)',place_name:'Aeropuerto SJD · estacionamiento frente a la terminal',center:[-109.7210,23.1518],aliases:['aeropuerto','sjd','airport']},
+  {text:'Costco · El Tezal',place_name:'Costco Wholesale, El Tezal, Cabo San Lucas',center:[-109.89,22.912],aliases:['costco','el tezal']},
+  {text:'Marina de Cabo San Lucas',place_name:'Marina, Cabo San Lucas, BCS',center:[-109.909,22.881],aliases:['marina','puerto','muelle']},
+  {text:'Playa El Médano',place_name:'Playa El Médano, Cabo San Lucas, BCS',center:[-109.904,22.887],aliases:['medano','médano','playa']},
+  {text:'Centro de Cabo San Lucas',place_name:'Centro, Cabo San Lucas, BCS',center:[-109.915,22.891],aliases:['centro cabo','downtown cabo','centro']},
+  {text:'Centro de San José del Cabo',place_name:'Centro Histórico, San José del Cabo, BCS',center:[-109.70,23.061],aliases:['san jose','san josé','centro san jose']},
+  {text:'Corredor turístico de Los Cabos',place_name:'Corredor turístico Cabo San Lucas – San José del Cabo',center:[-109.80,22.94],aliases:['corredor','zona hotelera','hotelera']},
+  {text:'Playa Palmilla',place_name:'Playa Palmilla, San José del Cabo, BCS',center:[-109.713,23.014],aliases:['palmilla']},
+  {text:'Playa Chileno',place_name:'Playa Chileno, Los Cabos, BCS',center:[-109.80,22.91],aliases:['chileno']},
+  {text:'Playa Santa María',place_name:'Playa Santa María, Los Cabos, BCS',center:[-109.82,22.90],aliases:['santa maria','santa maría']}
+];
 async function searchMapboxPlaces(input, container, kind) {
   const query = input.value.trim();
   const requestId = ++routeSearchSequence[kind];
   if (query.length < 2) { clearMapboxSuggestions(container); return; }
   container.innerHTML = '<div style="padding:12px 14px;color:#c9a45b;font-size:12px">Buscando ubicaciones…</div>';
   container.hidden = false;
+  const normalized = query.normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').toLowerCase();
+  const localMatches = LOCAL_CABO_PLACES.filter(place => {
+    const haystack = [place.text, place.place_name, ...(place.aliases || [])]
+      .join(' ').normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').toLowerCase();
+    return haystack.includes(normalized) || normalized.split(/\\s+/).every(word => haystack.includes(word));
+  }).map((place,index) => ({...place,id:'local-cabo-'+index,relevance:1}));
   try {
-    const result = await callMapboxProxy({ action: 'geocode', query });
+    let remoteFeatures = [];
+    try {
+      const result = await callMapboxProxy({ action: 'geocode', query });
+      remoteFeatures = result.features || [];
+    } catch (remoteError) {
+      console.warn('Búsqueda remota no disponible; se usarán sugerencias locales.', remoteError);
+    }
     if (requestId !== routeSearchSequence[kind] || input.value.trim() !== query) return;
-    renderMapboxSuggestions(container, kind, result.features || []);
+    const seen = new Set(localMatches.map(f => f.text.toLowerCase()));
+    const merged = [...localMatches, ...remoteFeatures.filter(f => {
+      const key = String(f.text || f.place_name || '').toLowerCase();
+      if (seen.has(key)) return false;
+      seen.add(key); return true;
+    })];
+    renderMapboxSuggestions(container, kind, merged);
   } catch (error) {
     if (requestId !== routeSearchSequence[kind]) return;
-    console.error('Mapbox autocomplete:', error);
-    mapboxRouteStatus.textContent = 'No pudimos completar la búsqueda. Revisa tu conexión e inténtalo otra vez.';
-    clearMapboxSuggestions(container);
+    console.error('Autocomplete:', error);
+    renderMapboxSuggestions(container, kind, localMatches);
   }
 }
 function attachMapboxAutocomplete(input, container, kind) {
