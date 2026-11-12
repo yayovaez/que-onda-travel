@@ -213,6 +213,26 @@ nav a:hover { color: var(--gold); }
 }
 .gold-button:hover { filter: brightness(1.05); }
 
+.quote-preview {
+  grid-column: 1 / -1;
+  padding: 13px 16px;
+  border: 1px dashed #d2a83c;
+  border-radius: 14px;
+  background: #fffdf7;
+  color: #073f4c;
+  font-weight: 700;
+  line-height: 1.5;
+}
+.quote-preview small { display: block; font-weight: 400; color: #52666a; }
+@media(max-width: 900px) {
+  .booking-form { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .booking-form button { grid-column: span 3; }
+}
+@media(max-width: 620px) {
+  .booking-form { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .booking-form button { grid-column: 1 / -1; }
+}
+
 /* SERVICIOS */
 .services {
   display: grid;
@@ -835,10 +855,24 @@ footer { background: #042b35; border-top: 2px solid #ffc62955; }
 
     <div class="field">
       <label>Tipo de viaje / Trip type</label>
-      <select name="tripType" required>
+      <select name="tripType" id="tripType" required>
         <option value="Sencillo / One-way">Sencillo / One-way</option>
         <option value="Redondo / Round-trip">Redondo / Round-trip</option>
       </select>
+    </div>
+
+    <div class="field">
+      <label>Vehículo / Vehicle</label>
+      <select name="vehicle" id="vehicle" required>
+        <option value="Jetta" data-rate="30">Volkswagen Jetta</option>
+        <option value="Atlas" data-rate="60">Volkswagen Atlas</option>
+        <option value="Tiguan" data-rate="70">Volkswagen Tiguan</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Distancia de ida (km) / One-way distance</label>
+      <input name="distance" id="distance" type="number" min="1" step="0.1" placeholder="Ej. 35" required>
     </div>
 
     <div class="field">
@@ -867,6 +901,15 @@ footer { background: #042b35; border-top: 2px solid #ffc62955; }
         <option>1</option><option>2</option><option>3</option>
         <option>4</option><option>5</option><option>6</option>
       </select>
+    </div>
+
+    <div class="field">
+      <label>Tu propuesta (MXN) / Your offer</label>
+      <input name="offer" id="offer" type="number" min="1" step="1" placeholder="Opcional / Optional">
+    </div>
+
+    <div class="quote-preview" id="quotePreview" aria-live="polite">
+      Ingresa los kilómetros para ver una tarifa estimada.
     </div>
 
     <button class="gold-button" type="submit">
@@ -997,21 +1040,60 @@ footer { background: #042b35; border-top: 2px solid #ffc62955; }
 
 
 <script>
+const bookingForm = document.getElementById('bookingForm');
+const vehicleSelect = document.getElementById('vehicle');
+const distanceInput = document.getElementById('distance');
+const tripTypeSelect = document.getElementById('tripType');
+const offerInput = document.getElementById('offer');
+const quotePreview = document.getElementById('quotePreview');
+
+function getQuote() {
+  const distance = Number(distanceInput.value);
+  const selectedVehicle = vehicleSelect.options[vehicleSelect.selectedIndex];
+  const rate = Number(selectedVehicle.dataset.rate);
+  const multiplier = tripTypeSelect.value.startsWith('Redondo') ? 2 : 1;
+  if (!Number.isFinite(distance) || distance <= 0) {
+    quotePreview.textContent = 'Ingresa los kilómetros de ida para ver una tarifa estimada.';
+    return null;
+  }
+  const totalKm = distance * multiplier;
+  const total = Math.round(totalKm * rate);
+  quotePreview.innerHTML = 'Tarifa estimada: $' + total.toLocaleString('es-MX') +
+    ' MXN <small>' + selectedVehicle.value + ' · ' + totalKm.toLocaleString('es-MX') +
+    ' km totales · $' + rate + ' MXN por km</small>';
+  return { distance, totalKm, rate, total, vehicle: selectedVehicle.value };
+}
+
+[vehicleSelect, distanceInput, tripTypeSelect].forEach(el => el.addEventListener('input', getQuote));
+[vehicleSelect, distanceInput, tripTypeSelect].forEach(el => el.addEventListener('change', getQuote));
+
 function sendBookingToWhatsApp(event) {
   event.preventDefault();
-  const form = document.getElementById('bookingForm');
-  if (!form.reportValidity()) return;
-  const data = new FormData(form);
+  if (!bookingForm.reportValidity()) return;
+  const data = new FormData(bookingForm);
+  const quote = getQuote();
+  if (!quote) {
+    distanceInput.focus();
+    return;
+  }
+  const offer = data.get('offer');
   const message = [
     'Hello Qué Onda Travel! I would like to request a ride quote.',
     '',
     'Service: ' + data.get('service'),
     'Trip type: ' + data.get('tripType'),
+    'Vehicle: ' + data.get('vehicle'),
     'Pickup: ' + data.get('pickup'),
     'Destination: ' + data.get('destination'),
+    'One-way distance entered: ' + quote.distance + ' km',
+    'Total estimated distance: ' + quote.totalKm + ' km',
+    'Estimated fare: $' + quote.total + ' MXN',
+    'My offer: ' + (offer ? '$' + Number(offer).toLocaleString('es-MX') + ' MXN' : 'No offer entered'),
     'Date: ' + data.get('date'),
     'Time: ' + data.get('time'),
-    'Passengers: ' + data.get('passengers')
+    'Passengers: ' + data.get('passengers'),
+    '',
+    'I understand this is a request and the final price must be confirmed by Qué Onda Travel.'
   ].join('\n');
   const whatsappUrl = 'https://wa.me/16395255179?text=' + encodeURIComponent(message);
   window.location.href = whatsappUrl;
