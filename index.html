@@ -2082,6 +2082,13 @@ body::before{
  background-repeat:repeat;background-size:900px 650px;background-position:center
 }
 
+
+/* Emblema discreto de Los Cabos para la cabecera de reservaciones */
+.booking-festive-top{min-height:82px;position:relative;display:flex;align-items:center;padding:8px 118px 8px 4px;margin-bottom:4px}
+.booking-kicker{display:inline-block;color:#ff8dc2;font-size:11px;font-weight:800;letter-spacing:2.2px;text-transform:uppercase}
+.booking-arch{position:absolute;right:10px;top:0;width:104px;height:78px;filter:drop-shadow(0 0 8px #ec168855)}
+@media(max-width:620px){.booking-festive-top{min-height:74px;padding-right:90px}.booking-arch{width:78px;height:66px;right:4px;top:2px}}
+
 </style>
 </head>
 
@@ -2217,7 +2224,16 @@ body::before{
 </section>
 
 <section class="booking" id="reservar">
-  <h2>Reserva tu Traslado <span>/ Book Your Ride</span></h2>
+   <div class="booking-festive-top" aria-hidden="true">
+    <span class="booking-kicker">LOS CABOS · MÉXICO · EXPERIENCIAS CON IDENTIDAD</span>
+    <svg class="booking-arch" viewBox="0 0 150 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M17 79V57C17 25 42 9 75 9s58 16 58 48v22" stroke="#ec1688" stroke-width="3.5" stroke-linecap="round"/>
+      <path d="M43 79V58c0-18 13-31 32-31s32 13 32 31v21" stroke="#ff8dc2" stroke-width="2.5" stroke-linecap="round"/>
+      <path d="M8 87c18-7 30-7 48 0s30 7 48 0 30-7 40 0" stroke="#ec1688" stroke-width="2.5" stroke-linecap="round"/>
+      <path d="M75 4v-1m-9 8 9-8 9 8" stroke="#f5c52f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+ <h2>Reserva tu Traslado <span>/ Book Your Ride</span></h2>
 
   <form class="booking-form" id="bookingForm" onsubmit="sendBookingToWhatsApp(event)">
     <div class="field">
