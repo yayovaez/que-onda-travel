@@ -2442,6 +2442,22 @@ a:focus-visible,button:focus-visible{outline-color:#d4c1a2!important}
  .route-map-button{width:100%;min-height:44px}
 }
 
+/* Mapa interactivo de reservación */
+.booking-map-panel{grid-column:1/-1;margin:5px 0 12px;padding:15px;border:1px solid #b69a78;border-radius:16px;background:#171512}
+.booking-map-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px;color:#ead8bb}
+.booking-map-heading strong{font-family:Georgia,serif;font-size:18px}
+.booking-map-heading small{color:#b9ad9d;font-size:11px}
+#bookingMap{width:100%;height:330px;border-radius:12px;overflow:hidden;background:#ded6c8}
+.booking-map-actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:11px}
+.booking-map-actions button{border:1px solid #b69a78;border-radius:22px;padding:9px 13px;background:transparent;color:#ead8bb;font-size:12px;cursor:pointer}
+.booking-map-actions button:hover{background:#30271d}
+.booking-map-legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:10px;color:#d5c7b3;font-size:11px}
+.booking-map-legend span{display:flex;align-items:center;gap:6px}
+.map-dot{display:inline-block;width:9px;height:9px;border-radius:50%}
+.map-dot.pickup{background:#1f9d76}.map-dot.destination{background:#d94b86}.map-dot.airport{background:#d6ad61}
+.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:#fff8ed;color:#203b36}
+@media(max-width:620px){#bookingMap{height:280px}.booking-map-heading{align-items:flex-start;flex-direction:column}}
+
 /* Mapbox autocomplete and route feedback */
 .booking .field{position:relative}
 .mapbox-suggestions{position:absolute;z-index:50;top:100%;left:0;right:0;background:#171512;border:1px solid #b69a78;border-radius:10px;box-shadow:0 12px 30px rgba(0,0,0,.35);overflow:hidden;margin-top:5px}
@@ -2453,6 +2469,7 @@ a:focus-visible,button:focus-visible{outline-color:#d4c1a2!important}
 .booking input[readonly]{opacity:.9;cursor:not-allowed}
 </style>
 
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
 </head>
 
 <body>
@@ -2660,6 +2677,17 @@ a:focus-visible,button:focus-visible{outline-color:#d4c1a2!important}
     </div>
     <div class="booking-route-helper"><button type="button" id="openRouteMap" class="route-map-button">Calcular distancia y tarifa</button><small>Selecciona una sugerencia para el origen y el destino. Calcularemos la distancia por carretera con Mapbox.</small></div>
     <p class="mapbox-route-status" id="mapboxRouteStatus" role="status" aria-live="polite"></p>
+    <div class="booking-map-panel">
+      <div class="booking-map-heading"><strong>Ubicación y recorrido</strong><small>Mueve los pines para ajustar el punto exacto.</small></div>
+      <div id="bookingMap" role="application" aria-label="Mapa para seleccionar origen y destino"></div>
+      <div class="booking-map-actions">
+        <button type="button" id="useAirportPickup">📍 Usar aeropuerto SJD como origen</button>
+        <button type="button" id="fitBookingMap">Ver ambos puntos</button>
+      </div>
+      <div class="booking-map-legend">
+        <span><i class="map-dot pickup"></i> Recogida</span><span><i class="map-dot destination"></i> Destino</span><span><i class="map-dot airport"></i> Aeropuerto SJD (punto fijo)</span>
+      </div>
+    </div>
 
     <div class="field">
       <label>Fecha / Date</label>
@@ -2721,6 +2749,7 @@ a:focus-visible,button:focus-visible{outline-color:#d4c1a2!important}
 </footer>
 
 
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script>
 const bookingForm = document.getElementById('bookingForm');
 const vehicleSelect = document.getElementById('vehicle');
@@ -2759,6 +2788,42 @@ const pickupSuggestions = document.getElementById('pickupSuggestions');
 const destinationSuggestions = document.getElementById('destinationSuggestions');
 const mapboxRouteStatus = document.getElementById('mapboxRouteStatus');
 const selectedPlaces = { pickup: null, destination: null };
+const AIRPORT_SJD = {longitude:-109.7210,latitude:23.1518,label:'Aeropuerto Internacional de Los Cabos (SJD) · estacionamiento frente a la terminal'};
+let bookingMap, pickupMarker, destinationMarker, airportMarker, routeLine;
+function initBookingMap(){
+  if(!window.L||bookingMap)return;
+  bookingMap=L.map('bookingMap',{scrollWheelZoom:false}).setView([23.15,-109.75],9);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap'}).addTo(bookingMap);
+  airportMarker=L.marker([AIRPORT_SJD.latitude,AIRPORT_SJD.longitude]).addTo(bookingMap).bindPopup('Aeropuerto Internacional de Los Cabos (SJD) · punto fijo de encuentro');
+  airportMarker.setIcon(L.divIcon({className:'',html:'<div style="background:#c9a45b;border:2px solid white;border-radius:50%;width:18px;height:18px;box-shadow:0 1px 7px #0008"></div>',iconSize:[18,18],iconAnchor:[9,9]}));
+  setTimeout(()=>bookingMap.invalidateSize(),250);
+}
+function makeMapIcon(color){return L.divIcon({className:'',html:'<div style="width:22px;height:22px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:'+color+';border:3px solid white;box-shadow:0 2px 8px #0008"></div>',iconSize:[22,22],iconAnchor:[11,22]});}
+function updateMapMarker(kind,point){
+  if(!bookingMap||!point)return;
+  const isPickup=kind==='pickup';
+  let marker=isPickup?pickupMarker:destinationMarker;
+  if(!marker)marker=L.marker([point.latitude,point.longitude],{draggable:true,icon:makeMapIcon(isPickup?'#1f9d76':'#d94b86')}).addTo(bookingMap);
+  marker.setLatLng([point.latitude,point.longitude]).bindPopup(isPickup?'Punto de recogida':'Destino');
+  marker.off('dragend');
+  marker.on('dragend',()=>{
+    const p=marker.getLatLng();
+    const updated={longitude:p.lng,latitude:p.lat,label:isPickup?'Punto de recogida ajustado en el mapa':'Destino ajustado en el mapa'};
+    selectedPlaces[kind]=updated;(isPickup?pickupInput:destinationInput).value=updated.label;
+    distanceInput.value='';getQuote();
+    mapboxRouteStatus.textContent='Ubicación ajustada. Calcula de nuevo la ruta para actualizar la tarifa.';
+  });
+  if(isPickup)pickupMarker=marker;else destinationMarker=marker;
+}
+function fitMapToPoints(){
+  if(!bookingMap)return;
+  const pts=[];
+  if(selectedPlaces.pickup)pts.push([selectedPlaces.pickup.latitude,selectedPlaces.pickup.longitude]);
+  if(selectedPlaces.destination)pts.push([selectedPlaces.destination.latitude,selectedPlaces.destination.longitude]);
+  pts.push([AIRPORT_SJD.latitude,AIRPORT_SJD.longitude]);
+  bookingMap.fitBounds(pts,{padding:[28,28],maxZoom:13});
+}
+
 const routeSearchTimers = { pickup: null, destination: null };
 
 async function callMapboxProxy(payload) {
@@ -2801,6 +2866,8 @@ function renderMapboxSuggestions(container, kind, features) {
       const input = kind === 'pickup' ? pickupInput : destinationInput;
       input.value = feature.place_name || feature.text;
       selectedPlaces[kind] = { longitude, latitude, label: input.value };
+      updateMapMarker(kind, selectedPlaces[kind]);
+      bookingMap.setView([latitude,longitude],13);
       clearMapboxSuggestions(container);
       distanceInput.value = '';
       getQuote();
@@ -2865,6 +2932,11 @@ async function calculateMapboxRoute() {
       throw new Error('La distancia calculada está fuera del rango permitido. Revisa las ubicaciones.');
     }
     distanceInput.value = distanceKm;
+    if(routeLine)bookingMap.removeLayer(routeLine);
+    if(result.geometry&&result.geometry.coordinates){
+      routeLine=L.geoJSON(result.geometry,{style:{color:'#c9a45b',weight:5,opacity:.9}}).addTo(bookingMap);
+      bookingMap.fitBounds(routeLine.getBounds(),{padding:[30,30]});
+    }
     getQuote();
     mapboxRouteStatus.textContent = 'Ruta calculada: ' + distanceKm.toLocaleString('es-MX') +
       ' km de ida · Tiempo estimado: ' + Number(result.duration_minutes).toLocaleString('es-MX') +
@@ -2880,6 +2952,15 @@ async function calculateMapboxRoute() {
   }
 }
 document.getElementById('openRouteMap').addEventListener('click', calculateMapboxRoute);
+document.getElementById('useAirportPickup').addEventListener('click',()=>{
+  selectedPlaces.pickup={...AIRPORT_SJD};pickupInput.value=AIRPORT_SJD.label;
+  updateMapMarker('pickup',selectedPlaces.pickup);bookingMap.setView([AIRPORT_SJD.latitude,AIRPORT_SJD.longitude],14);
+  distanceInput.value='';getQuote();
+  mapboxRouteStatus.textContent='Aeropuerto SJD fijado como punto de recogida. Selecciona el destino y calcula la ruta.';
+  if(selectedPlaces.destination)calculateMapboxRoute();
+});
+document.getElementById('fitBookingMap').addEventListener('click',fitMapToPoints);
+initBookingMap();
 
 function updateBookingNotice() {
   airportNote.hidden = serviceSelect.value !== 'Traslado Aeropuerto (SJD)';
