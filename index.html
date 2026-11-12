@@ -2286,7 +2286,17 @@ header,.site-header{border-bottom:0!important;box-shadow:none}
   </div>
  <h2>Reserva tu Traslado <span>/ Book Your Ride</span></h2>
 
-  <form class="booking-form" id="bookingForm" onsubmit="sendBookingToWhatsApp(event)">
+  <form class="booking-form" id="bookingForm" onsubmit="submitBookingRequest(event)">
+    <div class="field">
+      <label>Nombre completo / Full name</label>
+      <input name="customerName" type="text" minlength="2" maxlength="100" autocomplete="name" placeholder="Tu nombre" required>
+    </div>
+
+    <div class="field">
+      <label>Correo electrónico / Email</label>
+      <input name="customerEmail" type="email" maxlength="254" autocomplete="email" placeholder="tucorreo@ejemplo.com" required>
+    </div>
+
     <div class="field">
       <label>Tipo de servicio / Service</label>
       <select name="service" required>
@@ -2355,8 +2365,9 @@ header,.site-header{border-bottom:0!important;box-shadow:none}
       Ingresa los kilómetros para ver una tarifa estimada.
     </div>
 
-    <button class="gold-button" type="submit">
-      Cotizar y Reservar / Get a Quote
+    <p id="bookingStatus" role="status" aria-live="polite"></p>
+    <button class="gold-button" id="bookingSubmit" type="submit">
+      Enviar solicitud / Request booking
     </button>
   </form>
 </section>
@@ -2405,36 +2416,49 @@ function getQuote() {
 [vehicleSelect, distanceInput, tripTypeSelect].forEach(el => el.addEventListener('input', getQuote));
 [vehicleSelect, distanceInput, tripTypeSelect].forEach(el => el.addEventListener('change', getQuote));
 
-function sendBookingToWhatsApp(event) {
+async function submitBookingRequest(event) {
   event.preventDefault();
   if (!bookingForm.reportValidity()) return;
-  const data = new FormData(bookingForm);
   const quote = getQuote();
-  if (!quote) {
-    distanceInput.focus();
-    return;
+  if (!quote) { distanceInput.focus(); return; }
+
+  const data = new FormData(bookingForm);
+  const status = document.getElementById('bookingStatus');
+  const button = document.getElementById('bookingSubmit');
+  button.disabled = true;
+  status.textContent = 'Enviando tu solicitud…';
+
+  try {
+    const client = window.supabase.createClient(
+      'https://iyelnragqgriycdyqowq.supabase.co',
+      'sb_publishable_d-xqUkbQSgzZys3OfXzbiw_iyHzHItE'
+    );
+    const { error } = await client.from('booking_requests').insert({
+      customer_name: String(data.get('customerName')).trim(),
+      customer_email: String(data.get('customerEmail')).trim(),
+      service: data.get('service'),
+      trip_type: String(data.get('tripType')).startsWith('Redondo') ? 'Redondo' : 'Sencillo',
+      vehicle: data.get('vehicle'),
+      distance_km: quote.totalKm,
+      pickup: String(data.get('pickup')).trim(),
+      destination: String(data.get('destination')).trim(),
+      travel_date: data.get('date'),
+      travel_time: data.get('time'),
+      passengers: Number(data.get('passengers')),
+      offer_mxn: data.get('offer') ? Number(data.get('offer')) : null,
+      estimated_total_mxn: quote.total,
+      status: 'pending'
+    });
+    if (error) throw error;
+    bookingForm.reset();
+    quotePreview.textContent = 'Solicitud recibida. La tarifa es estimada y confirmaremos disponibilidad y precio.';
+    status.textContent = '¡Listo! Recibimos tu solicitud. Qué Onda Travel se pondrá en contacto contigo para confirmar tu reservación.';
+  } catch (error) {
+    console.error(error);
+    status.textContent = 'No pudimos enviar tu solicitud. Inténtalo de nuevo o contáctanos por WhatsApp.';
+  } finally {
+    button.disabled = false;
   }
-  const offer = data.get('offer');
-  const message = [
-    'Hello Qué Onda Travel! I would like to request a ride quote.',
-    '',
-    'Service: ' + data.get('service'),
-    'Trip type: ' + data.get('tripType'),
-    'Vehicle: ' + data.get('vehicle'),
-    'Pickup: ' + data.get('pickup'),
-    'Destination: ' + data.get('destination'),
-    'One-way distance entered: ' + quote.distance + ' km',
-    'Total estimated distance: ' + quote.totalKm + ' km',
-    'Estimated fare: $' + quote.total + ' MXN',
-    'My offer: ' + (offer ? '$' + Number(offer).toLocaleString('es-MX') + ' MXN' : 'No offer entered'),
-    'Date: ' + data.get('date'),
-    'Time: ' + data.get('time'),
-    'Passengers: ' + data.get('passengers'),
-    '',
-    'I understand this is a request and the final price must be confirmed by Qué Onda Travel.'
-  ].join('\n');
-  const whatsappUrl = 'https://wa.me/16395255179?text=' + encodeURIComponent(message);
-  window.location.href = whatsappUrl;
 }
 </script>
 
