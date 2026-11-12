@@ -1891,6 +1891,62 @@ a{transition:color .2s ease,background .2s ease,transform .2s ease}
  .booking,.booking-card{border-top-width:4px!important}
 }
 
+
+/* CORRECCIÓN DE IDENTIDAD: CONSERVAR EL DISEÑO ORIGINAL, SOLO ROSA + NEGRO */
+:root{
+ --green:#111014;--green-dark:#08080b;--gold:#ec1688;--cream:#17151a;
+ --pink:#ec1688;--turquoise:#ec1688;--ink:#fff7fb;
+ --coral:#f05aa4;--blue:#ec1688;
+}
+body{background:#111014!important;color:#fff7fb!important}
+header{background:#08080b!important;color:#fff!important;border-bottom:2px solid #ec1688!important}
+.brand-logo, .brand-description{color:#fff7fb!important}
+.brand-logo span,.brand-symbol{color:#ff69b0!important}
+.brand-description{border-left-color:#ec1688!important}
+nav a{color:#fff7fb!important} nav a:hover{color:#ff69b0!important}
+.language{background:#171219!important;color:#ff8bc2!important;border:1px solid #ec1688!important}
+.hero{
+ background:linear-gradient(90deg,rgba(8,7,11,.91),rgba(15,9,15,.72) 48%,rgba(15,9,15,.22)),
+ url("images/hero-arco.jpg") center 48%/cover no-repeat!important;
+ color:#fff!important;
+}
+.hero h1,.hero-copy p{color:#fff7fb!important}
+.hero h1 span,.eyebrow,.hero-features span{color:#ff78b8!important}
+.hero-cta,.gold-button,.contact-button{background:#ec1688!important;color:#fff!important;border:1px solid #ff8bc2!important;border-radius:30px!important;box-shadow:0 8px 22px #ec168844!important}
+.hero-cta:hover,.gold-button:hover,.contact-button:hover{background:#c90d70!important}
+.booking{background:#201a21!important;border:1px solid #ec1688!important;color:#fff!important;box-shadow:0 15px 35px #0008!important}
+.booking h2,.section-title,.vehicle-info h3{color:#fff!important}
+.field label{color:#f8eaf1!important}
+.field input,.field select{background:#100e13!important;color:#fff!important;border:1px solid #594052!important}
+.quote-preview{background:#2a1a26!important;color:#ffd8eb!important;border:1px dashed #ec1688!important}
+.quote-preview small{color:#e7c7d7!important}
+.services{background:#1c1720!important;color:#fff!important;border-top:1px solid #55233e;border-bottom:1px solid #55233e}
+.service{border-color:#66314c!important;color:#fff!important}
+.service-icon{color:#ff78b8!important}
+.fleet,.experiences,.about,.reviews{background:#111014!important;color:#fff7fb!important}
+.section-kicker{color:#ff78b8!important}
+.vehicle{background:#201b22!important;border:1px solid #553448!important;color:#fff!important;box-shadow:0 10px 25px #0007!important}
+.vehicle-photo{background:#29232b!important}
+.vehicle-info p{color:#e7dce3!important}
+.vehicle-link{background:#ec1688!important;color:#fff!important;border:1px solid #ff8bc2!important}
+.vehicle-link:hover{background:#c90d70!important}
+.experience,.experience:nth-child(2),.experience:nth-child(3){
+ background:linear-gradient(145deg,rgba(17,13,19,.24),rgba(17,13,19,.82)),#382331!important;
+ border:1px solid #713653!important;color:#fff!important;
+}
+.experiences:before,.experiences:after{color:#ec1688!important;opacity:.12!important}
+.experience p{color:#fff0f7!important}
+.about p,.reviews p{color:#e8dce4!important}
+.contact{background:linear-gradient(130deg,#291321,#100e13)!important;color:#fff!important;border-top:1px solid #ec1688!important}
+.contact h2{color:#ff8bc2!important}
+footer{background:#08080b!important;color:#e8dce4!important;border-top:1px solid #6c294a!important}
+footer a{color:#ff8bc2!important}
+@media(max-width:620px){
+ .hero{background:linear-gradient(180deg,rgba(8,7,11,.7),rgba(8,7,11,.92)),url("images/hero-arco.jpg") center/cover no-repeat!important}
+ .services{background:#1c1720!important}
+ .booking{background:#201a21!important}
+}
+
 </style>
 </head>
 
