@@ -1330,6 +1330,28 @@ footer .brand-logo { text-shadow: none; }
   .service-icon { width: 68px; height: 68px; font-size: 32px; }
 }
 
+
+/* ESTRUCTURA PRINCIPAL · PRESENTACIÓN DE MARCA */
+.hero { min-height: 590px; grid-template-columns: 10% minmax(0,1fr) 10%; }
+.hero-copy { grid-column: 2; max-width: 760px; margin: 0 auto; text-align: center; }
+.hero h1 { font-size: clamp(52px,7vw,88px); margin: 14px 0; }
+.hero-copy p { max-width: 720px; margin: 13px auto; line-height: 1.65; }
+.hero-lead { font-family: Georgia,serif !important; font-size: clamp(19px,2.3vw,25px) !important; }
+.hero-actions { display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:13px; margin-top:24px; }
+.hero-cta { margin-top:0; }
+.hero-cta-secondary { background:#e9b83f; color:#123f50; box-shadow:0 5px 0 #b58a2e; }
+.hero-contact-link { color:#fff8ed; text-decoration:underline; text-underline-offset:5px; font-weight:700; padding:12px; }
+.services { margin:0; }
+#experiencias,#reservar,#contacto { scroll-margin-top:24px; }
+@media(max-width:620px) {
+  .hero { min-height:620px; grid-template-columns:1fr; padding:48px 6% 36px; }
+  .hero-copy { grid-column:1; }
+  .hero-copy p { font-size:16px; }
+  .hero-actions { flex-direction:column; align-items:stretch; }
+  .hero-actions a { text-align:center; }
+  nav { width:100%; justify-content:space-around; }
+}
+
 </style>
 </head>
 
@@ -1346,36 +1368,122 @@ footer .brand-logo { text-shadow: none; }
     </div>
   </div>
 
-  <nav>
+  <nav aria-label="Navegación principal">
     <a href="#inicio">Inicio</a>
     <a href="#experiencias">Experiencias</a>
-    <a href="#flota">Nuestra flota</a>
     <a href="#reservar">Reservar</a>
-    <a href="#nosotros">Nosotros</a>
-    <a href="#resenas">Reseñas</a>
     <a href="#contacto">Contacto</a>
-    <a class="language" href="#inicio">EN / ES</a>
   </nav>
 </header>
 
 <main>
 
 <section class="hero" id="inicio">
-  <div class="decoration decoration-two">🌵</div>
-
+  <div class="decoration decoration-two" aria-hidden="true">🌵</div>
   <div class="hero-copy">
-    <div class="eyebrow">Los Cabos · México</div>
-    <h1>Discover<br><span>Los Cabos</span></h1>
-    <p>
-      Descubre Los Cabos con el encanto de México y la comodidad
-      de un servicio privado pensado para disfrutar cada momento.
-    </p>
-    <a class="hero-cta" href="#reservar">PLANEA TU EXPERIENCIA <span>↗</span></a>
-    <div class="hero-features">
-      <span>✧ Seguro y confiable</span>
-      <span>✧ Servicio bilingüe</span>
-      <span>✧ Vehículos premium</span>
+    <div class="eyebrow">Los Cabos · Baja California Sur · México</div>
+    <h1>Qué Onda<br><span>Travel</span></h1>
+    <p class="hero-lead">Somos una propuesta de hospitalidad y transporte privado que conecta a los viajeros con lo mejor de Los Cabos y la cultura de México.</p>
+    <p>Diseñamos traslados cómodos y experiencias locales con atención cercana, servicio bilingüe y ese toque mexicano que hace especial cada viaje.</p>
+    <div class="hero-actions">
+      <a class="hero-cta" href="#experiencias">DESCUBRE EXPERIENCIAS <span>↗</span></a>
+      <a class="hero-cta hero-cta-secondary" href="#reservar">RESERVA TU VIAJE <span>↗</span></a>
+      <a class="hero-contact-link" href="#contacto">Hablemos / Contact us</a>
     </div>
+    <div class="hero-features">
+      <span>✧ Atención bilingüe</span>
+      <span>✧ Transporte privado</span>
+      <span>✧ Esencia mexicana</span>
+    </div>
+  </div>
+</section>
+
+<section class="services">
+  <div class="service">
+    <span class="service-icon">✈</span>
+    Traslados al Aeropuerto<br>Airport Transfers
+  </div>
+  <div class="service">
+    <span class="service-icon">🚘</span>
+    Transporte Privado<br>Private Transportation
+  </div>
+  <div class="service">
+    <span class="service-icon">⌖</span>
+    Tours Locales<br>Local Tours
+  </div>
+  <div class="service">
+    <span class="service-icon">✧</span>
+    Experiencias en Los Cabos<br>Cabo Experiences
+  </div>
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<section class="experiences" id="experiencias">
+  <div class="section-kicker">México en colores · Baja California Sur y más allá</div>
+  <h2 class="section-title">Un viaje con sabor a México</h2>
+  <p class="experience-intro">Del desierto de Baja al corazón artesanal de México: lugares, sabores y tradiciones que se quedan contigo.</p>
+
+  <div class="experience-grid">
+    <article class="experience"><div class="experience-photo" style="background-image:url('https://cdn.northropandjohnson.com/uploads/Western-Mexico_Cabo-San-Lucas.jpg?auto=format&h=1&q=65')"><div><h3>El Arco de Cabo</h3><p>Donde el desierto se encuentra con el mar</p></div></div></article>
+    <article class="experience"><div class="experience-photo" style="background-image:url('https://cdn1.yumping.com.mx/emp/fotos/301/P/065230/640/p-65230-san-antonio_15871235913173.jpg')"><div><h3>Desierto de Baja</h3><p>Cactus gigantes, montañas y mar turquesa</p></div></div></article>
+    <article class="experience"><div class="experience-photo" style="background-image:url('https://commons.wikimedia.org/wiki/Special:FilePath/Playa%20Balandra%2C%20Baja%20California%20Sur.jpg?width=1200')"><div><h3>Balandra</h3><p>Aguas turquesa y paisajes inolvidables de La Paz</p></div></div></article>
+    <article class="experience"><div class="experience-photo" style="background-image:url('https://commons.wikimedia.org/wiki/Special:FilePath/Todos%20Santos%20street%20scene%20%288770121309%29.jpg?width=1200')"><div><h3>Todos Santos</h3><p>Un Pueblo Mágico entre galerías, oasis y el Pacífico</p></div></div></article>
+    <article class="experience"><div class="experience-photo" style="background-image:url('https://assets.simpleviewinc.com/sv-loscabos/image/upload/c_fill,h_800,q_75,w_1200/v1/cms_resources/clients/loscabosmx/Art_Walk_3_min_5561c4b7-76db-492b-8a12-c0b6b97d8b50.jpg')"><div><h3>Art Walk · San José del Cabo</h3><p>Galerías, arte mexicano y calles llenas de vida</p></div></div></article>
+    <article class="experience"><div class="experience-photo" style="background-image:url('https://images.squarespace-cdn.com/content/v1/64f8f151dba4110da14fc2ff/e655f8a5-0067-4467-8af6-559476f9e085/2023-08-23_WebsiteSocialLaunch-LocosKitchen-155.jpg')"><div><h3>Comida mexicana</h3><p>Tacos, sabores tradicionales y buenos momentos</p></div></div></article>
+  </div>
+</section>
+
+<section class="fleet" id="flota">
+  <div class="section-kicker">Viaja con comodidad</div>
+  <h2 class="section-title">Nuestra Flota / Our Fleet</h2>
+
+  <div class="fleet-grid">
+
+    <article class="vehicle">
+      <div class="vehicle-photo">
+        <img src="images/jetta-negro-2019.jpg" alt="Volkswagen Jetta 2019 negro, fotografía de la flota Qué Onda Travel">
+      </div>
+      <div class="vehicle-info">
+        <h3>Jetta 2019</h3>
+        <p>Volkswagen · Negro<br>Hasta 4 pasajeros</p>
+        <a class="vehicle-link" href="#reservar">Ver detalles / View details ›</a>
+      </div>
+    </article>
+
+    <article class="vehicle">
+      <div class="vehicle-photo">
+        <!-- Atlas ORIGINAL también en la tarjeta -->
+        <img src="images/atlas-blanca-2019.jpg" alt="Volkswagen Atlas 2019 blanca, fotografía de la flota Qué Onda Travel">
+      </div>
+      <div class="vehicle-info">
+        <h3>Atlas 2019</h3>
+        <p>Volkswagen · Blanca<br>Hasta 5 pasajeros</p>
+        <a class="vehicle-link" href="#reservar">Ver detalles / View details ›</a>
+      </div>
+    </article>
+
+    <article class="vehicle">
+      <div class="vehicle-photo">
+        <img src="images/tiguan-negra-2018.jpg" alt="Volkswagen Tiguan 2018 negra, fotografía de la flota Qué Onda Travel">
+      </div>
+      <div class="vehicle-info">
+        <h3>Tiguan 2018</h3>
+        <p>Volkswagen · Negra<br>Hasta 6 pasajeros</p>
+        <a class="vehicle-link" href="#reservar">Ver detalles / View details ›</a>
+      </div>
+    </article>
+
   </div>
 </section>
 
@@ -1455,100 +1563,6 @@ footer .brand-logo { text-shadow: none; }
       Cotizar y Reservar / Get a Quote
     </button>
   </form>
-</section>
-
-<section class="services">
-  <div class="service">
-    <span class="service-icon">✈</span>
-    Traslados al Aeropuerto<br>Airport Transfers
-  </div>
-  <div class="service">
-    <span class="service-icon">🚘</span>
-    Transporte Privado<br>Private Transportation
-  </div>
-  <div class="service">
-    <span class="service-icon">⌖</span>
-    Tours Locales<br>Local Tours
-  </div>
-  <div class="service">
-    <span class="service-icon">✧</span>
-    Experiencias en Los Cabos<br>Cabo Experiences
-  </div>
-</section>
-
-<section class="fleet" id="flota">
-  <div class="section-kicker">Viaja con comodidad</div>
-  <h2 class="section-title">Nuestra Flota / Our Fleet</h2>
-
-  <div class="fleet-grid">
-
-    <article class="vehicle">
-      <div class="vehicle-photo">
-        <img src="images/jetta-negro-2019.jpg" alt="Volkswagen Jetta 2019 negro, fotografía de la flota Qué Onda Travel">
-      </div>
-      <div class="vehicle-info">
-        <h3>Jetta 2019</h3>
-        <p>Volkswagen · Negro<br>Hasta 4 pasajeros</p>
-        <a class="vehicle-link" href="#reservar">Ver detalles / View details ›</a>
-      </div>
-    </article>
-
-    <article class="vehicle">
-      <div class="vehicle-photo">
-        <!-- Atlas ORIGINAL también en la tarjeta -->
-        <img src="images/atlas-blanca-2019.jpg" alt="Volkswagen Atlas 2019 blanca, fotografía de la flota Qué Onda Travel">
-      </div>
-      <div class="vehicle-info">
-        <h3>Atlas 2019</h3>
-        <p>Volkswagen · Blanca<br>Hasta 5 pasajeros</p>
-        <a class="vehicle-link" href="#reservar">Ver detalles / View details ›</a>
-      </div>
-    </article>
-
-    <article class="vehicle">
-      <div class="vehicle-photo">
-        <img src="images/tiguan-negra-2018.jpg" alt="Volkswagen Tiguan 2018 negra, fotografía de la flota Qué Onda Travel">
-      </div>
-      <div class="vehicle-info">
-        <h3>Tiguan 2018</h3>
-        <p>Volkswagen · Negra<br>Hasta 6 pasajeros</p>
-        <a class="vehicle-link" href="#reservar">Ver detalles / View details ›</a>
-      </div>
-    </article>
-
-  </div>
-</section>
-
-<section class="experiences" id="experiencias">
-  <div class="section-kicker">México en colores · Baja California Sur y más allá</div>
-  <h2 class="section-title">Un viaje con sabor a México</h2>
-  <p class="experience-intro">Del desierto de Baja al corazón artesanal de México: lugares, sabores y tradiciones que se quedan contigo.</p>
-
-  <div class="experience-grid">
-    <article class="experience"><div class="experience-photo" style="background-image:url('https://cdn.northropandjohnson.com/uploads/Western-Mexico_Cabo-San-Lucas.jpg?auto=format&h=1&q=65')"><div><h3>El Arco de Cabo</h3><p>Donde el desierto se encuentra con el mar</p></div></div></article>
-    <article class="experience"><div class="experience-photo" style="background-image:url('https://cdn1.yumping.com.mx/emp/fotos/301/P/065230/640/p-65230-san-antonio_15871235913173.jpg')"><div><h3>Desierto de Baja</h3><p>Cactus gigantes, montañas y mar turquesa</p></div></div></article>
-    <article class="experience"><div class="experience-photo" style="background-image:url('https://commons.wikimedia.org/wiki/Special:FilePath/Playa%20Balandra%2C%20Baja%20California%20Sur.jpg?width=1200')"><div><h3>Balandra</h3><p>Aguas turquesa y paisajes inolvidables de La Paz</p></div></div></article>
-    <article class="experience"><div class="experience-photo" style="background-image:url('https://commons.wikimedia.org/wiki/Special:FilePath/Todos%20Santos%20street%20scene%20%288770121309%29.jpg?width=1200')"><div><h3>Todos Santos</h3><p>Un Pueblo Mágico entre galerías, oasis y el Pacífico</p></div></div></article>
-    <article class="experience"><div class="experience-photo" style="background-image:url('https://assets.simpleviewinc.com/sv-loscabos/image/upload/c_fill,h_800,q_75,w_1200/v1/cms_resources/clients/loscabosmx/Art_Walk_3_min_5561c4b7-76db-492b-8a12-c0b6b97d8b50.jpg')"><div><h3>Art Walk · San José del Cabo</h3><p>Galerías, arte mexicano y calles llenas de vida</p></div></div></article>
-    <article class="experience"><div class="experience-photo" style="background-image:url('https://images.squarespace-cdn.com/content/v1/64f8f151dba4110da14fc2ff/e655f8a5-0067-4467-8af6-559476f9e085/2023-08-23_WebsiteSocialLaunch-LocosKitchen-155.jpg')"><div><h3>Comida mexicana</h3><p>Tacos, sabores tradicionales y buenos momentos</p></div></div></article>
-  </div>
-</section>
-
-<section class="about" id="nosotros">
-  <div class="section-kicker">Nuestra esencia / Our spirit</div>
-  <h2 class="section-title">México se vive diferente</h2>
-  <p>
-    En Qué Onda Travel creemos que cada viaje puede convertirse
-    en una experiencia especial. Unimos hospitalidad mexicana,
-    atención bilingüe y transporte privado para que descubras
-    Los Cabos a tu manera.
-  </p>
-</section>
-
-<section class="reviews" id="resenas">
-  <div class="section-kicker">Historias de nuestros viajeros</div>
-  <h2 class="section-title">Experiencias Qué Onda</h2>
-  <p>Próximamente compartiremos las experiencias de nuestros viajeros.</p>
 </section>
 
 <section class="contact" id="contacto">
