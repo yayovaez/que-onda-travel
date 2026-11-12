@@ -2674,16 +2674,16 @@ a:focus-visible,button:focus-visible{outline-color:#d4c1a2!important}
 
     <div class="field">
       <label>¿Dónde te recogemos?</label>
-      <input name="pickup" id="pickupLocation" type="text" placeholder="Escribe tu lugar de recogida" autocomplete="off" required>
+      <input name="pickup" id="pickupLocation" type="text" placeholder="Ej. Aeropuerto SJD, hotel o colonia" autocomplete="off" required>
       <div class="mapbox-suggestions" id="pickupSuggestions" role="listbox" aria-label="Sugerencias de recogida" hidden></div>
     </div>
 
     <div class="field">
       <label>¿A dónde vas?</label>
-      <input name="destination" id="destinationLocation" type="text" placeholder="Escribe tu destino" autocomplete="off" required>
+      <input name="destination" id="destinationLocation" type="text" placeholder="Ej. Costco, Marina o nombre del hotel" autocomplete="off" required>
       <div class="mapbox-suggestions" id="destinationSuggestions" role="listbox" aria-label="Sugerencias de destino" hidden></div>
     </div>
-    <div class="booking-route-helper"><button type="button" id="openRouteMap" class="route-map-button">Calcular distancia y tarifa</button><small>Busca una dirección; si no aparece, toca el mapa para colocar el pin. Calculamos la distancia por carretera.</small></div>
+    <div class="booking-route-helper"><button type="button" id="openRouteMap" class="route-map-button">Calcular distancia y tarifa</button><small>Escribe desde 2 letras para buscar. Si no aparece, puedes marcar el punto directamente en el mapa.</small></div>
     <p class="mapbox-route-status" id="mapboxRouteStatus" role="status" aria-live="polite"></p>
     <details class="booking-map-details"><summary>Ver mapa y ajustar ubicaciones <span>Opcional</span></summary><div class="booking-map-panel">
       <div class="booking-map-heading"><strong>Ubicación y recorrido</strong><small>Elige una zona rápida o toca el mapa para marcar el punto exacto.</small></div>
@@ -2908,6 +2908,8 @@ async function searchMapboxPlaces(input, container, kind) {
   const query = input.value.trim();
   const requestId = ++routeSearchSequence[kind];
   if (query.length < 2) { clearMapboxSuggestions(container); return; }
+  container.innerHTML = '<div style="padding:12px 14px;color:#c9a45b;font-size:12px">Buscando ubicaciones…</div>';
+  container.hidden = false;
   try {
     const result = await callMapboxProxy({ action: 'geocode', query });
     if (requestId !== routeSearchSequence[kind] || input.value.trim() !== query) return;
@@ -2930,7 +2932,7 @@ function attachMapboxAutocomplete(input, container, kind) {
     mapboxRouteStatus.textContent = '';
     routeSearchSequence[kind]++;
     clearTimeout(routeSearchTimers[kind]);
-    routeSearchTimers[kind] = setTimeout(() => searchMapboxPlaces(input, container, kind), 350);
+    routeSearchTimers[kind] = setTimeout(() => searchMapboxPlaces(input, container, kind), 250);
   });
   input.addEventListener('blur', () => setTimeout(() => clearMapboxSuggestions(container), 180));
   input.addEventListener('focus', () => {
