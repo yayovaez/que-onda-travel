@@ -2473,11 +2473,13 @@ a:focus-visible,button:focus-visible{outline-color:#d4c1a2!important}
 .booking-map-details>summary span{margin-left:auto;margin-right:12px;color:#b9ad9d;font-size:10px;font-weight:400}
 .booking-map-details .booking-map-panel{margin:0;border:0;border-top:1px solid rgba(182,154,120,.25);border-radius:0}
 \n/* Mapbox autocomplete and route feedback */
-.booking .field{position:relative;z-index:1}
+.booking .field{position:relative;z-index:1;overflow:visible}
 .booking .field:focus-within{z-index:80}
-.mapbox-suggestions{position:absolute;z-index:100;top:100%;left:0;right:0;display:block;background:#171512;border:1px solid #b69a78;border-radius:10px;box-shadow:0 12px 30px rgba(0,0,0,.45);overflow:hidden;margin-top:5px;max-height:260px;overflow-y:auto}
+.booking-form{overflow:visible}
+.mapbox-suggestions{position:relative;z-index:100;display:block;width:100%;box-sizing:border-box;background:#171512;border:1px solid #b69a78;border-radius:10px;box-shadow:0 12px 30px rgba(0,0,0,.45);overflow-y:auto;overflow-x:hidden;margin-top:8px;max-height:220px}
 .mapbox-suggestions[hidden]{display:none!important}
-.mapbox-suggestions button{display:block;width:100%;min-height:48px;padding:12px 14px;text-align:left;background:#171512;border:0;border-bottom:1px solid rgba(182,154,120,.2);color:#f5eee5;font:inherit;cursor:pointer;touch-action:manipulation}
+.mapbox-suggestions button{display:block;width:100%;min-height:54px;padding:12px 14px;text-align:left;background:#171512;border:0;border-bottom:1px solid rgba(182,154,120,.2);color:#f5eee5;font:inherit;cursor:pointer;touch-action:manipulation}
+.mapbox-suggestions .suggestion-error{padding:12px 14px;color:#f5d9b5;font-size:13px}
 .mapbox-suggestions button:last-child{border-bottom:0}
 .mapbox-suggestions button:hover,.mapbox-suggestions button:focus{background:#30271e;outline:none}
 .mapbox-suggestions small{display:block;color:#b9ad9d;font-size:11px;margin-top:3px}
@@ -2960,14 +2962,21 @@ function attachMapboxAutocomplete(input, container, kind) {
   input.addEventListener('focus',()=>{activeRouteField=kind;});
   input.addEventListener('click',()=>{activeRouteField=kind;});
   input.addEventListener('input', () => {
-    activeRouteField=kind;
+    activeRouteField = kind;
     selectedPlaces[kind] = null;
     distanceInput.value = '';
-    getQuote();
     mapboxRouteStatus.textContent = '';
+    // Renderizar la lista local en este mismo evento: sin debounce ni espera de red.
     routeSearchSequence[kind]++;
     clearTimeout(routeSearchTimers[kind]);
-    routeSearchTimers[kind] = setTimeout(() => searchMapboxPlaces(input, container, kind), 250);
+    try {
+      searchMapboxPlaces(input, container, kind);
+    } catch (error) {
+      console.error('No se pudieron mostrar las sugerencias locales:', error);
+      container.innerHTML = '<div class="suggestion-error">No se pudieron mostrar las opciones. Continúa escribiendo o marca el punto en el mapa.</div>';
+      container.hidden = false;
+    }
+    try { getQuote(); } catch (error) { console.warn('No se pudo actualizar la cotización:', error); }
   });
   input.addEventListener('blur', () => setTimeout(() => {
     if (!container.matches(':hover') && !container.contains(document.activeElement)) clearMapboxSuggestions(container);
