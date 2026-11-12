@@ -4,196 +4,611 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Qué Onda Travel: experiencias mexicanas y transporte privado en Los Cabos.">
 <title>Qué Onda Travel | Discover Los Cabos</title>
-<meta name="description" content="Experiencias mexicanas y transporte privado en Los Cabos.">
+
 <style>
 :root {
-  --green:#123d32;
-  --gold:#c5a36a;
-  --sand:#f5efe4;
-  --pink:#d95780;
-  --orange:#e58a45;
-  --turquoise:#4a9b9b;
+  --green: #073b35;
+  --green-dark: #062c2b;
+  --gold: #d8ad51;
+  --cream: #fff5e7;
+  --pink: #ec398b;
+  --turquoise: #32aab0;
+  --ink: #18332f;
 }
-* {box-sizing:border-box}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
 body {
-  margin:0;
-  font-family:Arial,sans-serif;
-  color:#24352e;
-  background:var(--sand);
+  margin: 0;
+  font-family: Arial, sans-serif;
+  color: var(--ink);
+  background: var(--cream);
 }
+a { text-decoration: none; color: inherit; }
+button, input, select { font: inherit; }
+
+/* NAVEGACIÓN */
 header {
-  background:var(--green);
-  color:white;
-  padding:22px 7%;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:15px;
+  min-height: 85px;
+  padding: 12px 4%;
+  background: var(--green-dark);
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  border-bottom: 2px solid var(--gold);
 }
-.logo {font-family:Georgia,serif;font-size:25px}
-.logo span {color:var(--gold)}
-nav {display:flex;gap:20px;flex-wrap:wrap}
-nav a {color:white;text-decoration:none;font-size:13px}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 17px;
+}
+.brand-logo {
+  font-family: Georgia, serif;
+  font-style: italic;
+  font-size: 36px;
+  white-space: nowrap;
+}
+.brand-logo span {
+  display: block;
+  color: var(--gold);
+  font-family: Arial, sans-serif;
+  font-size: 12px;
+  letter-spacing: 8px;
+  text-align: center;
+  font-style: normal;
+}
+.brand-symbol {
+  color: var(--pink);
+  font-size: 30px;
+}
+.brand-description {
+  border-left: 1px solid var(--gold);
+  padding-left: 16px;
+  font-family: Georgia, serif;
+  font-size: 14px;
+  line-height: 1.4;
+}
+nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 19px;
+  flex-wrap: wrap;
+  font-size: 13px;
+}
+nav a:hover { color: var(--gold); }
+.language {
+  border: 1px solid var(--gold);
+  border-radius: 30px;
+  padding: 9px 13px;
+  color: var(--gold);
+}
+
+/* PORTADA */
 .hero {
-  min-height:570px;
-  padding:90px 8%;
-  color:white;
-  display:flex;
-  align-items:center;
+  min-height: 590px;
+  position: relative;
+  display: grid;
+  grid-template-columns: 23% 37% 40%;
+  align-items: center;
+  overflow: hidden;
+  padding: 40px 4%;
+  color: white;
   background:
-  linear-gradient(90deg,rgba(12,43,35,.88),rgba(12,43,35,.18)),
-  url('https://images.unsplash.com/photo-1512813195386-6cf811ad3542?auto=format&fit=crop&w=1800&q=85') center/cover;
+    linear-gradient(90deg, rgba(3,35,32,.94), rgba(3,48,48,.70) 42%, rgba(3,35,32,.08)),
+    url("images/hero-arco.jpg") center 48% / cover no-repeat,
+    #0c4946;
 }
-.hero-content {max-width:600px}
-.eyebrow {color:#f2c77c;letter-spacing:3px;text-transform:uppercase}
-h1 {font-family:Georgia,serif;font-size:clamp(42px,7vw,76px);margin:15px 0}
-.hero p {font-size:18px;line-height:1.7}
-.btn {
-  display:inline-block;
-  background:var(--gold);
-  color:#17392f;
-  padding:15px 24px;
-  border-radius:4px;
-  text-decoration:none;
-  font-weight:bold;
-  margin-top:15px;
+.hero-copy {
+  grid-column: 2;
+  position: relative;
+  z-index: 2;
 }
-section {padding:75px 8%}
-.section-title {
-  font-family:Georgia,serif;
-  font-size:38px;
-  color:var(--green);
+.eyebrow {
+  color: #f5cf79;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  font-size: 13px;
 }
-.intro {max-width:720px;line-height:1.8}
-.cards {
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  gap:22px;
-  margin-top:35px;
+.hero h1 {
+  font-family: Georgia, serif;
+  font-size: clamp(48px, 6vw, 78px);
+  line-height: .96;
+  margin: 20px 0;
 }
-.card {
-  background:white;
-  border-radius:8px;
-  overflow:hidden;
-  box-shadow:0 5px 20px #17392f12;
+.hero h1 span { color: #f5c85d; }
+.hero-copy p {
+  font-family: Georgia, serif;
+  font-size: 19px;
+  line-height: 1.55;
+  max-width: 440px;
 }
-.card img {width:100%;height:190px;object-fit:cover}
-.card-content {padding:22px}
-.card h3 {color:var(--green);font-family:Georgia,serif}
-.fleet {background:#eae1d2}
-.fleet-note {line-height:1.7}
+.hero-features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 17px;
+  margin-top: 28px;
+  font-size: 13px;
+}
+.hero-features span { color: #ffe7ae; }
+
+.hero-car {
+  grid-column: 3;
+  align-self: center;
+  position: relative;
+  z-index: 2;
+}
+.hero-car img {
+  width: 100%;
+  max-height: 340px;
+  object-fit: contain;
+  filter: drop-shadow(0 15px 18px #001c1b80);
+}
+
+/* DECORACIÓN MEXICANA */
+.decoration {
+  position: absolute;
+  z-index: 1;
+  font-size: 55px;
+  filter: drop-shadow(0 5px 8px #0005);
+  pointer-events: none;
+}
+.decoration-one { top: 18px; left: 15px; }
+.decoration-two { bottom: 25px; left: 18px; }
+.decoration-three { top: 18px; right: 20px; color: var(--pink); }
+
+/* RESERVACIONES */
 .booking {
-  background:var(--green);
-  color:white;
-  text-align:center;
+  position: relative;
+  z-index: 4;
+  margin: -35px 3% 0;
+  padding: 23px;
+  border: 2px solid var(--gold);
+  border-radius: 30px;
+  background: linear-gradient(110deg, #fff9ef, #f1dfc7);
+  box-shadow: 0 12px 30px #34271925;
 }
-.booking h2 {color:white}
-.booking p {line-height:1.7}
+.booking h2 {
+  text-align: center;
+  font-family: Georgia, serif;
+  font-size: clamp(23px, 3vw, 34px);
+  color: var(--green);
+  margin: 0 0 22px;
+}
+.booking-form {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr)) auto;
+  gap: 11px;
+  align-items: end;
+}
+.field label {
+  display: block;
+  font-size: 12px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+.field input, .field select {
+  width: 100%;
+  min-width: 0;
+  padding: 13px 9px;
+  border: 1px solid #d7c4a9;
+  border-radius: 12px;
+  background: white;
+  color: var(--ink);
+  font-size: 13px;
+}
+.gold-button {
+  display: inline-block;
+  border: 1px solid #f8d66c;
+  border-radius: 30px;
+  padding: 15px 22px;
+  background: linear-gradient(110deg, #f6ca38, #e99412);
+  color: #263a2d;
+  font-weight: bold;
+  cursor: pointer;
+  text-align: center;
+}
+.gold-button:hover { filter: brightness(1.05); }
+
+/* SERVICIOS */
+.services {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  padding: 28px 5%;
+  background: var(--green);
+  color: white;
+  text-align: center;
+}
+.service {
+  border-right: 1px solid var(--gold);
+  padding: 8px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.service:last-child { border: 0; }
+.service-icon {
+  display: block;
+  color: #f5c85d;
+  font-size: 29px;
+  margin-bottom: 7px;
+}
+
+/* FLOTA */
+section { scroll-margin-top: 20px; }
+.fleet {
+  padding: 65px 5%;
+  background: var(--cream);
+}
+.section-kicker {
+  color: #a77b29;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  font-size: 12px;
+}
+.section-title {
+  color: var(--green);
+  font-family: Georgia, serif;
+  font-size: clamp(34px, 4vw, 48px);
+  margin: 12px 0 25px;
+}
+.fleet-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 23px;
+}
+.vehicle {
+  overflow: hidden;
+  border: 1px solid #e5d0ae;
+  border-radius: 19px;
+  background: #fffaf2;
+  box-shadow: 0 8px 22px #513c2518;
+}
+.vehicle-photo {
+  height: 190px;
+  background: #e9d7bd;
+  overflow: hidden;
+}
+.vehicle-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.vehicle-info { padding: 19px; }
+.vehicle-info h3 {
+  font-family: Georgia, serif;
+  font-size: 28px;
+  color: var(--green);
+  margin: 0 0 9px;
+}
+.vehicle-info p {
+  line-height: 1.6;
+  font-size: 14px;
+}
+.vehicle-link {
+  display: inline-block;
+  border: 1px solid var(--gold);
+  border-radius: 25px;
+  padding: 10px 17px;
+  font-weight: bold;
+  font-size: 13px;
+  margin-top: 8px;
+}
+.vehicle-link:hover { background: #f8e8c7; }
+
+/* EXPERIENCIAS */
+.experiences {
+  padding: 65px 5%;
+  background: #eee0ca;
+}
+.experience-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+.experience {
+  min-height: 210px;
+  border-radius: 18px;
+  padding: 22px;
+  display: flex;
+  align-items: end;
+  color: white;
+  background: linear-gradient(140deg, #0a4844, #b77d4d);
+}
+.experience:nth-child(2) {
+  background: linear-gradient(140deg, #17545e, #d9a36c);
+}
+.experience:nth-child(3) {
+  background: linear-gradient(140deg, #593e40, #d38b42);
+}
+.experience h3 {
+  font-family: Georgia, serif;
+  font-size: 25px;
+  margin: 0;
+}
+
+/* NOSOTROS Y RESEÑAS */
+.about, .reviews {
+  padding: 65px 8%;
+  text-align: center;
+  line-height: 1.8;
+}
+.about p { max-width: 800px; margin: auto; }
+.reviews { background: #fffaf2; }
+
+/* CONTACTO */
+.contact {
+  background: var(--green);
+  color: white;
+  padding: 55px 6%;
+  text-align: center;
+}
+.contact h2 {
+  font-family: Georgia, serif;
+  font-size: 37px;
+}
 footer {
-  background:#102d25;
-  color:white;
-  text-align:center;
-  padding:35px 15px;
-  line-height:1.8;
+  background: var(--green-dark);
+  color: #eee3d2;
+  text-align: center;
+  padding: 30px 15px;
+  font-size: 13px;
+  line-height: 1.8;
 }
-footer a {color:#f2c77c}
-@media(max-width:600px) {
-  header {align-items:flex-start;flex-direction:column}
-  nav {gap:12px}
-  .hero {min-height:520px;padding:65px 7%}
-  section {padding:55px 7%}
+
+/* TELÉFONOS */
+@media(max-width: 900px) {
+  .booking-form { grid-template-columns: repeat(3, 1fr); }
+  .booking-form button { grid-column: span 3; }
+  nav { gap: 12px; }
+}
+@media(max-width: 620px) {
+  header { justify-content: center; }
+  .brand { justify-content: center; width: 100%; }
+  .brand-logo { font-size: 30px; }
+  .brand-description { font-size: 11px; }
+  nav { gap: 12px; font-size: 12px; }
+  .hero {
+    min-height: 650px;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+    padding: 55px 7% 35px;
+    background-position: center;
+  }
+  .hero-copy { grid-column: 1; }
+  .hero h1 { font-size: 55px; }
+  .hero-copy p { font-size: 16px; }
+  .hero-car {
+    grid-column: 1;
+    width: 90%;
+    margin: 0 auto;
+  }
+  .hero-car img { max-height: 220px; }
+  .decoration { font-size: 38px; }
+  .booking { margin: -18px 3% 0; padding: 18px 12px; }
+  .booking-form { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .booking-form button { grid-column: 1 / -1; }
+  .services { grid-template-columns: repeat(2, 1fr); }
+  .service:nth-child(2) { border-right: 0; }
+  .fleet-grid, .experience-grid { grid-template-columns: 1fr; }
+  .fleet, .experiences { padding: 48px 6%; }
 }
 </style>
 </head>
+
 <body>
 
 <header>
-  <div class="logo">Qué Onda <span>Travel</span></div>
+  <div class="brand">
+    <div>
+      <div class="brand-symbol">✺</div>
+      <div class="brand-logo">Qué Onda<span>TRAVEL</span></div>
+    </div>
+    <div class="brand-description">
+      Mexican Experiences<br>
+      with Private Transportation
+    </div>
+  </div>
+
   <nav>
     <a href="#inicio">Inicio</a>
-    <a href="#servicios">Servicios</a>
-    <a href="#flota">Nuestra flota</a>
     <a href="#experiencias">Experiencias</a>
+    <a href="#flota">Nuestra flota</a>
     <a href="#reservar">Reservar</a>
+    <a href="#nosotros">Nosotros</a>
+    <a href="#resenas">Reseñas</a>
+    <a href="#contacto">Contacto</a>
+    <a class="language" href="#inicio">EN / ES</a>
   </nav>
 </header>
 
 <main>
+
 <section class="hero" id="inicio">
-  <div class="hero-content">
+  <div class="decoration decoration-one">🌺</div>
+  <div class="decoration decoration-two">🌵</div>
+  <div class="decoration decoration-three">🌸</div>
+
+  <div class="hero-copy">
     <div class="eyebrow">Los Cabos · México</div>
-    <h1>Discover Los Cabos</h1>
-    <p>Descubre México con comodidad, hospitalidad y transporte privado. Tu aventura comienza aquí.</p>
-    <a class="btn" href="#reservar">Plan your ride</a>
+    <h1>Discover<br><span>Los Cabos</span></h1>
+    <p>
+      Experiencias mexicanas con transporte privado,
+      comodidad y hospitalidad local.
+    </p>
+    <div class="hero-features">
+      <span>✧ Seguro y confiable</span>
+      <span>✧ Servicio bilingüe</span>
+      <span>✧ Vehículos premium</span>
+    </div>
+  </div>
+
+  <div class="hero-car">
+    <!-- Atlas ORIGINAL, sin decoración -->
+    <img src="images/atlas-original.jpg"
+         alt="Volkswagen Atlas blanca original de Qué Onda Travel">
   </div>
 </section>
 
-<section>
-  <div class="eyebrow">Bienvenido · Welcome</div>
-  <h2 class="section-title">Algo más que un traslado</h2>
-  <p class="intro">En Qué Onda Travel combinamos la calidez mexicana con un servicio privado y personalizado. Queremos que disfrutes Los Cabos desde el primer momento.</p>
+<section class="booking" id="reservar">
+  <h2>✺ Reserva tu Traslado / Book Your Ride ✺</h2>
+
+  <form class="booking-form" onsubmit="event.preventDefault(); alert('El formulario todavía está en preparación. Contáctanos para solicitar tu traslado.');">
+    <div class="field">
+      <label>Tipo de servicio / Service</label>
+      <select>
+        <option>Traslado Aeropuerto (SJD)</option>
+        <option>Transporte privado</option>
+        <option>Tour local</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Origen / Pickup</label>
+      <input type="text" placeholder="Lugar de recogida">
+    </div>
+
+    <div class="field">
+      <label>Destino / Drop-off</label>
+      <input type="text" placeholder="Destino">
+    </div>
+
+    <div class="field">
+      <label>Fecha / Date</label>
+      <input type="date">
+    </div>
+
+    <div class="field">
+      <label>Hora / Time</label>
+      <input type="time">
+    </div>
+
+    <div class="field">
+      <label>Pasajeros / Passengers</label>
+      <select>
+        <option>1</option><option>2</option><option>3</option>
+        <option>4</option><option>5</option><option>6</option>
+      </select>
+    </div>
+
+    <button class="gold-button" type="submit">
+      Cotizar y Reservar / Get a Quote
+    </button>
+  </form>
 </section>
 
-<section id="servicios">
-  <div class="eyebrow">Descubre nuestros servicios</div>
-  <h2 class="section-title">Our Services</h2>
-  <div class="cards">
-    <article class="card">
-      <img src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=800&q=80" alt="Avión">
-      <div class="card-content">
-        <h3>Airport Transfers</h3>
-        <p>Traslados privados desde y hacia el aeropuerto SJD.</p>
-      </div>
-    </article>
-    <article class="card">
-      <img src="https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?auto=format&fit=crop&w=800&q=80" alt="Transporte privado">
-      <div class="card-content">
-        <h3>Private Transportation</h3>
-        <p>Comodidad y atención personalizada en cada recorrido.</p>
-      </div>
-    </article>
-    <article class="card">
-      <img src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=800&q=80" alt="Paisaje">
-      <div class="card-content">
-        <h3>Local Rides & Tours</h3>
-        <p>Descubre rincones y experiencias de Baja California Sur.</p>
-      </div>
-    </article>
+<section class="services">
+  <div class="service">
+    <span class="service-icon">✈</span>
+    Traslados al Aeropuerto<br>Airport Transfers
+  </div>
+  <div class="service">
+    <span class="service-icon">🚘</span>
+    Transporte Privado<br>Private Transportation
+  </div>
+  <div class="service">
+    <span class="service-icon">⌖</span>
+    Tours Locales<br>Local Tours
+  </div>
+  <div class="service">
+    <span class="service-icon">✧</span>
+    Experiencias en Los Cabos<br>Cabo Experiences
   </div>
 </section>
 
 <section class="fleet" id="flota">
-  <div class="eyebrow">Viaja a tu manera</div>
-  <h2 class="section-title">Our Fleet</h2>
-  <p class="fleet-note">Una opción para cada viaje. Próximamente incorporaremos fotografías reales y capacidades verificadas de nuestros vehículos.</p>
-  <div class="cards">
-    <article class="card"><div class="card-content"><h3>Volkswagen Jetta</h3><p>Negro · Transporte privado</p></div></article>
-    <article class="card"><div class="card-content"><h3>Volkswagen Atlas</h3><p>Blanca · Modelo 2019</p></div></article>
-    <article class="card"><div class="card-content"><h3>Volkswagen Tiguan</h3><p>Negra · Transporte privado</p></div></article>
+  <div class="section-kicker">Viaja con comodidad</div>
+  <h2 class="section-title">Nuestra Flota / Our Fleet</h2>
+
+  <div class="fleet-grid">
+
+    <article class="vehicle">
+      <div class="vehicle-photo">
+        <img src="images/jetta-negro.jpg" alt="Volkswagen Jetta negro">
+      </div>
+      <div class="vehicle-info">
+        <h3>Jetta</h3>
+        <p>Volkswagen · Negro<br>Hasta 4 pasajeros</p>
+        <a class="vehicle-link" href="#reservar">Ver detalles / View details ›</a>
+      </div>
+    </article>
+
+    <article class="vehicle">
+      <div class="vehicle-photo">
+        <!-- Atlas ORIGINAL también en la tarjeta -->
+        <img src="images/atlas-original.jpg" alt="Volkswagen Atlas blanca original">
+      </div>
+      <div class="vehicle-info">
+        <h3>Atlas</h3>
+        <p>Volkswagen · Blanca · 2019<br>Hasta 5 pasajeros</p>
+        <a class="vehicle-link" href="#reservar">Ver detalles / View details ›</a>
+      </div>
+    </article>
+
+    <article class="vehicle">
+      <div class="vehicle-photo">
+        <img src="images/tiguan-negra.jpg" alt="Volkswagen Tiguan negra">
+      </div>
+      <div class="vehicle-info">
+        <h3>Tiguan</h3>
+        <p>Volkswagen · Negra<br>Hasta 6 pasajeros</p>
+        <a class="vehicle-link" href="#reservar">Ver detalles / View details ›</a>
+      </div>
+    </article>
+
   </div>
 </section>
 
-<section id="experiencias">
-  <div class="eyebrow">Vive Baja California Sur</div>
-  <h2 class="section-title">Experiences</h2>
-  <p class="intro">El Arco, playas, paisajes desérticos, atardeceres, gastronomía mexicana y escapadas a pueblos con encanto. Descubre Los Cabos a tu ritmo.</p>
+<section class="experiences" id="experiencias">
+  <div class="section-kicker">Descubre Baja California Sur</div>
+  <h2 class="section-title">Experiencias / Experiences</h2>
+
+  <div class="experience-grid">
+    <article class="experience">
+      <h3>El Arco de Cabo San Lucas</h3>
+    </article>
+    <article class="experience">
+      <h3>Playas y atardeceres</h3>
+    </article>
+    <article class="experience">
+      <h3>Gastronomía y cultura mexicana</h3>
+    </article>
+  </div>
 </section>
 
-<section class="booking" id="reservar">
-  <div class="eyebrow">Tu viaje comienza aquí</div>
-  <h2 class="section-title">Book Your Ride</h2>
-  <p>Solicita información sobre tu próximo traslado o experiencia privada.</p>
-  <a class="btn" href="https://wa.me/" target="_blank" rel="noopener">Contactar por WhatsApp</a>
-  <p><small>Las solicitudes deberán confirmarse manualmente.</small></p>
+<section class="about" id="nosotros">
+  <div class="section-kicker">Nuestra esencia / Our spirit</div>
+  <h2 class="section-title">México se vive diferente</h2>
+  <p>
+    En Qué Onda Travel creemos que cada viaje puede convertirse
+    en una experiencia especial. Unimos hospitalidad mexicana,
+    atención bilingüe y transporte privado para que descubras
+    Los Cabos a tu manera.
+  </p>
 </section>
+
+<section class="reviews" id="resenas">
+  <div class="section-kicker">Historias de nuestros viajeros</div>
+  <h2 class="section-title">Experiencias Qué Onda</h2>
+  <p>Próximamente compartiremos las experiencias de nuestros viajeros.</p>
+</section>
+
+<section class="contact" id="contacto">
+  <h2>Tu aventura comienza aquí</h2>
+  <p>Mexican Experiences · Private Transportation</p>
+  <p>Los Cabos · Baja California Sur · México</p>
+</section>
+
 </main>
 
 <footer>
-  <div class="logo">Qué Onda <span>Travel</span></div>
-  <p>Mexican Experiences · Private Transportation</p>
-  <p>Los Cabos, Baja California Sur, México</p>
+  <div class="brand-logo">Qué Onda<span>TRAVEL</span></div>
+  <p>Mexican Experiences with Private Transportation</p>
   <p>© 2026 Qué Onda Travel</p>
 </footer>
+
 </body>
 </html>
