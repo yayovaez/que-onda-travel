@@ -2442,6 +2442,21 @@ const offerInput = document.getElementById('offer');
 const quotePreview = document.getElementById('quotePreview');
 const serviceSelect = document.getElementById('serviceType');
 const airportNote = document.getElementById('airportNote');
+const passengersSelect = bookingForm.querySelector('select[name="passengers"]');
+const vehicleCapacity = { Jetta: 4, Atlas: 5, Tiguan: 6 };
+
+function updatePassengerCapacity() {
+  const capacity = vehicleCapacity[vehicleSelect.value] || 6;
+  [...passengersSelect.options].forEach(option => {
+    option.disabled = Number(option.value) > capacity;
+    option.hidden = Number(option.value) > capacity;
+  });
+  if (Number(passengersSelect.value) > capacity) {
+    passengersSelect.value = String(capacity);
+  }
+}
+vehicleSelect.addEventListener('change', updatePassengerCapacity);
+updatePassengerCapacity();
 
 function updateBookingNotice() {
   airportNote.hidden = serviceSelect.value !== 'Traslado Aeropuerto (SJD)';
