@@ -456,10 +456,10 @@ footer {
 <section class="booking" id="reservar">
   <h2>✺ Reserva tu Traslado / Book Your Ride ✺</h2>
 
-  <form class="booking-form" onsubmit="event.preventDefault(); alert('El formulario todavía está en preparación. Contáctanos para solicitar tu traslado.');">
+  <form class="booking-form" id="bookingForm" onsubmit="sendBookingToWhatsApp(event)">
     <div class="field">
       <label>Tipo de servicio / Service</label>
-      <select>
+      <select name="service" required>
         <option>Traslado Aeropuerto (SJD)</option>
         <option>Transporte privado</option>
         <option>Tour local</option>
@@ -468,27 +468,27 @@ footer {
 
     <div class="field">
       <label>Origen / Pickup</label>
-      <input type="text" placeholder="Lugar de recogida">
+      <input name="pickup" type="text" placeholder="Lugar de recogida" required>
     </div>
 
     <div class="field">
       <label>Destino / Drop-off</label>
-      <input type="text" placeholder="Destino">
+      <input name="destination" type="text" placeholder="Destino" required>
     </div>
 
     <div class="field">
       <label>Fecha / Date</label>
-      <input type="date">
+      <input name="date" type="date" required>
     </div>
 
     <div class="field">
       <label>Hora / Time</label>
-      <input type="time">
+      <input name="time" type="time" required>
     </div>
 
     <div class="field">
       <label>Pasajeros / Passengers</label>
-      <select>
+      <select name="passengers" required>
         <option>1</option><option>2</option><option>3</option>
         <option>4</option><option>5</option><option>6</option>
       </select>
@@ -609,6 +609,28 @@ footer {
   <p>Mexican Experiences with Private Transportation</p>
   <p>© 2026 Qué Onda Travel</p>
 </footer>
+
+
+<script>
+function sendBookingToWhatsApp(event) {
+  event.preventDefault();
+  const form = document.getElementById('bookingForm');
+  if (!form.reportValidity()) return;
+  const data = new FormData(form);
+  const message = [
+    'Hello Qué Onda Travel! I would like to request a ride quote.',
+    '',
+    'Service: ' + data.get('service'),
+    'Pickup: ' + data.get('pickup'),
+    'Destination: ' + data.get('destination'),
+    'Date: ' + data.get('date'),
+    'Time: ' + data.get('time'),
+    'Passengers: ' + data.get('passengers')
+  ].join('\n');
+  const whatsappUrl = 'https://wa.me/16395255179?text=' + encodeURIComponent(message);
+  window.location.href = whatsappUrl;
+}
+</script>
 
 </body>
 </html>
