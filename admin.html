@@ -28,9 +28,41 @@ button.secondary{background:#333;color:white;border:1px solid #555}button:disabl
 <section id="authPanel" class="card auth">
 <div class="sub">Acceso restringido</div><h1>Bienvenido</h1><p>Ingresa con tu correo administrador para gestionar las reservaciones.</p>
 <div class="tabs"><button id="loginTab">Iniciar sesión</button><button id="signupTab" class="secondary">Crear acceso</button></div>
-<form id="authForm"><label>Correo administrador</label><input id="email" type="email" value="yairnarvaez58@gmail.com" required autocomplete="email"><label>Contraseña</label><input id="password" type="password" minlength="8" required autocomplete="current-password" placeholder="Mínimo 8 caracteres"><button id="authSubmit" type="submit" style="width:100%">Iniciar sesión</button></form>
+<form id="authForm" onsubmit="return window.__qotAdminLogin(event)"><label>Correo administrador</label><input id="email" type="email" value="yairnarvaez58@gmail.com" required autocomplete="username"><label>Contraseña</label><input id="password" type="password" minlength="8" required autocomplete="current-password" placeholder="Mínimo 8 caracteres"><button id="authSubmit" type="submit" style="width:100%">Iniciar sesión</button></form>
 <div id="authMsg" class="msg" role="status"></div>
 </section>
+<script>
+window.__qotAdminLogin = async function(event){
+  if(event) event.preventDefault();
+  const button=document.getElementById('authSubmit');
+  const message=document.getElementById('authMsg');
+  const email=document.getElementById('email').value.trim().toLowerCase();
+  const password=document.getElementById('password').value;
+  if(!button||!message)return false;
+  button.disabled=true;
+  button.textContent='Verificando acceso…';
+  message.textContent='Conectando con el servicio de acceso…';
+  try{
+    if(email!=='yairnarvaez58@gmail.com') throw new Error('Este correo no está autorizado para administrar las reservas.');
+    if(!window.supabase||!window.supabase.createClient) throw new Error('No se pudo cargar el servicio de acceso. Recarga la página e inténtalo de nuevo.');
+    if(!window.__qotAdminClient) window.__qotAdminClient=window.supabase.createClient('https://iyelnragqgriycdyqowq.supabase.co','sb_publishable_d-xqUkbQSgzZys3OfXzbiw_iyHzHItE');
+    const result=await window.__qotAdminClient.auth.signInWithPassword({email,password});
+    if(result.error) throw result.error;
+    message.textContent='Acceso correcto. Abriendo el panel…';
+    document.getElementById('authPanel').classList.add('hidden');
+    document.getElementById('dashboard').classList.remove('hidden');
+    document.getElementById('logout').classList.remove('hidden');
+    message.textContent='';
+    return false;
+  }catch(error){
+    message.textContent=error&&error.message?error.message:'No se pudo completar el acceso.';
+    return false;
+  }finally{
+    button.disabled=false;
+    button.textContent='Iniciar sesión';
+  }
+};
+</script>
 <section id="dashboard" class="hidden">
 <div class="intro"><div class="sub">Operación · Los Cabos, México</div><h1 id="viewTitle">Reservaciones</h1><p id="viewDescription">Consulta y actualiza el estado de cada solicitud.</p><div class="toolbar" style="margin-top:18px"><button id="reservationsTab">Reservaciones</button><button id="reviewsTab" class="secondary">Opiniones</button></div></div>
 <div id="reservationsSection"><div class="stats"><div class="stat"><strong id="totalCount">0</strong><span>Total</span></div><div class="stat"><strong id="pendingCount">0</strong><span>Pendientes</span></div><div class="stat"><strong id="confirmedCount">0</strong><span>Confirmadas</span></div></div>
@@ -46,11 +78,7 @@ let mode='login',rows=[];
 const $=id=>document.getElementById(id);
 function setMode(next){mode=next;$('loginTab').classList.toggle('secondary',mode!=='login');$('signupTab').classList.toggle('secondary',mode!=='signup');$('authSubmit').textContent=mode==='login'?'Iniciar sesión':'Crear acceso';$('password').autocomplete=mode==='login'?'current-password':'new-password';$('authMsg').textContent='';}
 $('loginTab').onclick=()=>setMode('login');$('signupTab').onclick=()=>setMode('signup');
-$('authForm').addEventListener('submit',async e=>{e.preventDefault();const email=$('email').value.trim().toLowerCase(),password=$('password').value;$('authSubmit').disabled=true;$('authMsg').textContent='Procesando…';
-try{await ensureSupabase();if(email!==ADMIN_EMAIL)throw new Error('Este correo no está autorizado para administrar las reservas.');
-if(mode==='signup'){const {data,error}=await db.auth.signUp({email,password,options:{emailRedirectTo:location.href.split('#')[0]}});if(error)throw error;$('authMsg').textContent=data.session?'Acceso creado. Entrando…':'Te enviamos un correo para confirmar tu acceso. Después inicia sesión aquí.';}
-else{const {error}=await db.auth.signInWithPassword({email,password});if(error)throw error;await showDashboard();}
-}catch(err){$('authMsg').textContent=err.message||'No se pudo completar el acceso.';}finally{$('authSubmit').disabled=false;}});
+// Inicio de sesión aislado en un bloque independiente.
 let dashboardPromise=null;async function showDashboard(){if(dashboardPromise)return dashboardPromise;dashboardPromise=(async()=>{const {data:{user},error}=await db.auth.getUser();if(error)throw error;if(!user||user.email?.toLowerCase()!==ADMIN_EMAIL){await db.auth.signOut();throw new Error('La sesión inició, pero esta cuenta no está autorizada para administrar el panel.');}$('authPanel').classList.add('hidden');$('dashboard').classList.remove('hidden');$('logout').classList.remove('hidden');$('authMsg').textContent='';await loadBookings();})();try{await dashboardPromise;}finally{dashboardPromise=null;}}
 $('logout').onclick=async()=>{await db.auth.signOut();$('dashboard').classList.add('hidden');$('logout').classList.add('hidden');$('authPanel').classList.remove('hidden');};
 function esc(v){return String(v??'—').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
