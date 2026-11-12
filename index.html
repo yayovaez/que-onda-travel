@@ -545,6 +545,120 @@ footer { border-top: 1px solid #c9a45b55; }
   .experience:before { font-size: 68px; }
 }
 
+
+/* PALETA INSPIRADA EN LA REFERENCIA VISUAL */
+:root {
+  --green: #07545a;
+  --green-dark: #062f3b;
+  --gold: #ffc629;
+  --cream: #fff1df;
+  --pink: #f02d91;
+  --turquoise: #16b8c1;
+  --ink: #102d3a;
+  --coral: #ff684f;
+  --blue: #1678c8;
+}
+body {
+  color: var(--ink);
+  background: var(--cream);
+}
+header {
+  background: linear-gradient(105deg, #062f3b 0%, #064d59 58%, #08717a 100%);
+  border-bottom: 3px solid var(--gold);
+}
+.brand-symbol { color: var(--pink); text-shadow: 0 0 16px #f02d9166; }
+.brand-logo span { color: var(--gold); }
+.language {
+  color: #082f3b;
+  background: linear-gradient(100deg, var(--cream) 0 50%, var(--gold) 50%);
+  border-color: var(--gold);
+  font-weight: 800;
+}
+nav a:hover { color: var(--gold); }
+.hero {
+  min-height: 640px;
+  background:
+    linear-gradient(90deg, rgba(3,38,48,.94), rgba(3,54,64,.72) 46%, rgba(3,38,48,.10)),
+    url("images/hero-arco.jpg") center 48% / cover no-repeat,
+    #07545a;
+}
+.hero h1 span { color: var(--gold); }
+.eyebrow { color: #ffd66d; }
+.hero-features span { color: #fff0c7; }
+.decoration-one { color: var(--pink); }
+.decoration-two { color: #45d46b; }
+.decoration-three { color: var(--turquoise); }
+.hero-cta {
+  background: linear-gradient(100deg, #ffd33f, #ffad16);
+  color: #123640;
+  border: 2px solid #fff0c7;
+  box-shadow: 0 8px 24px #001e2680;
+}
+.hero-cta:hover { background: #ffe17a; }
+.booking {
+  background: linear-gradient(115deg, #fff9ef, #ffe7cc);
+  border: 2px solid #f4c35c;
+  box-shadow: 0 16px 38px #542e1c2b;
+}
+.booking h2 { color: #092f3c; }
+.field input, .field select {
+  border: 1px solid #e3c8a5;
+  background: #fffdfa;
+}
+.gold-button {
+  background: linear-gradient(110deg, #ffd33f, #ffad16);
+  color: #123640;
+  border: 1px solid #e9a900;
+  box-shadow: 0 5px 14px #a86d1730;
+}
+.gold-button:hover { background: #ffe17a; }
+.services {
+  background: linear-gradient(100deg, #063b49, #08717a);
+  border-top: 1px solid #ffcf49;
+  border-bottom: 1px solid #ffcf49;
+}
+.service-icon { color: var(--gold); }
+.fleet { background: #fff6e9; }
+.section-kicker { color: #e64c88; font-weight: 800; }
+.section-title { color: #073f4c; }
+.vehicle {
+  background: #fffaf3;
+  border: 1px solid #edcf9f;
+  box-shadow: 0 9px 24px #5c40251a;
+}
+.vehicle-photo { background: linear-gradient(135deg, #f8d8b5, #b8e3df); }
+.vehicle-info h3 { color: #073f4c; }
+.vehicle-link {
+  color: #083d49;
+  border: 2px solid #f2b91f;
+  background: #fff8e9;
+}
+.vehicle-link:hover { background: #ffdf77; }
+.experiences { background: #ffe9d5; }
+.experience {
+  border: 2px solid #fff3df;
+  box-shadow: 0 12px 28px #56331f25;
+}
+.experience:nth-child(1) { background: linear-gradient(145deg, #07545a, #e34b86); }
+.experience:nth-child(2) { background: linear-gradient(145deg, #087b87, #1678c8); }
+.experience:nth-child(3) { background: linear-gradient(145deg, #a83f58, #f0a52d); }
+.experience:before { opacity: .95; }
+.about { background: #fff6e9; }
+.reviews { background: #ffe8d5; }
+.contact {
+  background: linear-gradient(120deg, #063744, #08717a);
+  border-top: 4px solid var(--gold);
+}
+.contact-button {
+  background: linear-gradient(100deg, #ffd33f, #ffad16);
+  color: #123640;
+}
+footer { background: #052d39; }
+@media(max-width: 620px) {
+  .hero { background-position: center; }
+  .booking { background: #fff6e9; }
+}
+
 </style>
 </head>
 
