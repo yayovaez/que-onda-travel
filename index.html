@@ -2465,7 +2465,14 @@ a:focus-visible,button:focus-visible{outline-color:#d4c1a2!important}
 .quick-location-buttons button:hover,.quick-location-buttons button:focus{background:#3a3023;border-color:#c9a45b;outline:none}
 .quick-location-tools>small{display:block;margin-top:8px;color:#b9ad9d;font-size:10px;line-height:1.5}
 
-/* Mapbox autocomplete and route feedback */
+.booking-map-details{grid-column:1/-1;margin:2px 0 8px;border:1px solid rgba(182,154,120,.35);border-radius:12px;background:#171512;overflow:hidden}
+.booking-map-details>summary{padding:13px 15px;color:#ead8bb;cursor:pointer;list-style:none;font-size:13px;font-weight:600;display:flex;justify-content:space-between;align-items:center}
+.booking-map-details>summary::-webkit-details-marker{display:none}
+.booking-map-details>summary:after{content:'＋';color:#c9a45b;font-size:17px}
+.booking-map-details[open]>summary:after{content:'−'}
+.booking-map-details>summary span{margin-left:auto;margin-right:12px;color:#b9ad9d;font-size:10px;font-weight:400}
+.booking-map-details .booking-map-panel{margin:0;border:0;border-top:1px solid rgba(182,154,120,.25);border-radius:0}
+\n/* Mapbox autocomplete and route feedback */
 .booking .field{position:relative}
 .mapbox-suggestions{position:absolute;z-index:50;top:100%;left:0;right:0;background:#171512;border:1px solid #b69a78;border-radius:10px;box-shadow:0 12px 30px rgba(0,0,0,.35);overflow:hidden;margin-top:5px}
 .mapbox-suggestions button{display:block;width:100%;padding:12px 14px;text-align:left;background:transparent;border:0;border-bottom:1px solid rgba(182,154,120,.2);color:#f5eee5;font:inherit;cursor:pointer}
@@ -2622,25 +2629,25 @@ a:focus-visible,button:focus-visible{outline-color:#d4c1a2!important}
  <h2>Reserva tu Traslado <span>/ Book Your Ride</span></h2>
 
   <form class="booking-form" id="bookingForm" onsubmit="submitBookingRequest(event)">
-    <div class="booking-step-heading"><span>01</span><div><strong>Tus datos de contacto</strong><small>Para poder atenderte y confirmar tu viaje</small></div></div>
+    <div class="booking-step-heading"><span>01</span><div><strong>Reserva tu traslado</strong><small>Completa lo esencial y te contactaremos para confirmar.</small></div></div>
     <div class="field">
-      <label>Nombre completo / Full name</label>
+      <label>Nombre</label>
       <input name="customerName" type="text" minlength="2" maxlength="100" autocomplete="name" placeholder="Tu nombre" required>
     </div>
 
     <div class="field">
-      <label>Correo electrónico / Email</label>
-      <input name="customerEmail" type="email" maxlength="254" autocomplete="email" placeholder="tucorreo@ejemplo.com" required>
+      <label>Correo electrónico (opcional)</label>
+      <input name="customerEmail" type="email" maxlength="254" autocomplete="email" placeholder="tucorreo@ejemplo.com">
     </div>
 
     <div class="field">
-      <label>WhatsApp / Teléfono</label>
+      <label>WhatsApp</label>
       <input name="customerPhone" type="tel" inputmode="tel" autocomplete="tel" maxlength="25" pattern="[+0-9() .-]{8,25}" placeholder="+52 624 123 4567" required>
-      <small>Incluye tu lada de país para poder contactarte.</small>
+      
     </div>
 
     <div class="field">
-      <label>Tipo de servicio / Service</label>
+      <label>Servicio</label>
       <select name="service" id="serviceType" required>
         <option>Traslado Aeropuerto (SJD)</option>
         <option>Transporte privado</option>
@@ -2649,7 +2656,7 @@ a:focus-visible,button:focus-visible{outline-color:#d4c1a2!important}
     </div>
 
     <div class="field">
-      <label>Tipo de viaje / Trip type</label>
+      <label>Viaje</label>
       <select name="tripType" id="tripType" required>
         <option value="Sencillo / One-way">Sencillo / One-way</option>
         <option value="Redondo / Round-trip">Redondo / Round-trip</option>
@@ -2657,7 +2664,7 @@ a:focus-visible,button:focus-visible{outline-color:#d4c1a2!important}
     </div>
 
     <div class="field">
-      <label>Vehículo / Vehicle</label>
+      <label>Vehículo</label>
       <select name="vehicle" id="vehicle" required>
         <option value="Jetta" data-rate="26">Volkswagen Jetta</option>
         <option value="Atlas" data-rate="70">Volkswagen Atlas</option>
@@ -2666,25 +2673,25 @@ a:focus-visible,button:focus-visible{outline-color:#d4c1a2!important}
     </div>
 
     <div class="field">
-      <label>Distancia de ida (km) / One-way distance</label>
+      <label>Distancia estimada (km)</label>
       <input name="distance" id="distance" type="number" min="1" max="2000" step="0.1" placeholder="Se calculará al elegir origen y destino" readonly required>
-      <small>Los kilómetros de ida se calcularán automáticamente con la ruta en carretera.</small>
+      
     </div>
 
     <div class="field">
-      <label>Origen / Pickup</label>
+      <label>¿Dónde te recogemos?</label>
       <input name="pickup" id="pickupLocation" type="text" placeholder="Escribe tu lugar de recogida" autocomplete="off" required>
       <div class="mapbox-suggestions" id="pickupSuggestions" role="listbox" aria-label="Sugerencias de recogida" hidden></div>
     </div>
 
     <div class="field">
-      <label>Destino / Drop-off</label>
+      <label>¿A dónde vas?</label>
       <input name="destination" id="destinationLocation" type="text" placeholder="Escribe tu destino" autocomplete="off" required>
       <div class="mapbox-suggestions" id="destinationSuggestions" role="listbox" aria-label="Sugerencias de destino" hidden></div>
     </div>
     <div class="booking-route-helper"><button type="button" id="openRouteMap" class="route-map-button">Calcular distancia y tarifa</button><small>Busca una dirección; si no aparece, toca el mapa para colocar el pin. Calculamos la distancia por carretera.</small></div>
     <p class="mapbox-route-status" id="mapboxRouteStatus" role="status" aria-live="polite"></p>
-    <div class="booking-map-panel">
+    <details class="booking-map-details"><summary>Ver mapa y ajustar ubicaciones <span>Opcional</span></summary><div class="booking-map-panel">
       <div class="booking-map-heading"><strong>Ubicación y recorrido</strong><small>Elige una zona rápida o toca el mapa para marcar el punto exacto.</small></div>
       <div class="quick-location-tools">
         <span class="quick-location-label">ACCESOS RÁPIDOS</span>
@@ -2705,29 +2712,24 @@ a:focus-visible,button:focus-visible{outline-color:#d4c1a2!important}
       <div class="booking-map-legend">
         <span><i class="map-dot pickup"></i> Recogida</span><span><i class="map-dot destination"></i> Destino</span><span><i class="map-dot airport"></i> Aeropuerto SJD (punto fijo)</span>
       </div>
-    </div>
+    </div></details>
 
     <div class="field">
-      <label>Fecha / Date</label>
+      <label>Fecha</label>
       <input name="date" type="date" required>
     </div>
 
     <div class="field">
-      <label>Hora / Time</label>
+      <label>Hora</label>
       <input name="time" type="time" required>
     </div>
 
     <div class="field">
-      <label>Pasajeros / Passengers</label>
+      <label>Pasajeros</label>
       <select name="passengers" required>
         <option>1</option><option>2</option><option>3</option>
         <option>4</option><option>5</option><option>6</option>
       </select>
-    </div>
-
-    <div class="field">
-      <label>Tu propuesta (MXN) / Your offer</label>
-      <input name="offer" id="offer" type="number" min="1" step="1" placeholder="Opcional / Optional">
     </div>
 
     <div class="booking-notice" role="note">
@@ -3055,7 +3057,7 @@ async function submitBookingRequest(event) {
     );
     const { error } = await client.from('booking_requests').insert({
       customer_name: String(data.get('customerName')).trim(),
-      customer_email: String(data.get('customerEmail')).trim(),
+      customer_email: String(data.get('customerEmail') || '').trim() || null,
       customer_phone: String(data.get('customerPhone')).trim(),
       service: data.get('service'),
       trip_type: String(data.get('tripType')).startsWith('Redondo') ? 'Redondo' : 'Sencillo',
@@ -3066,7 +3068,6 @@ async function submitBookingRequest(event) {
       travel_date: data.get('date'),
       travel_time: data.get('time'),
       passengers: Number(data.get('passengers')),
-      offer_mxn: data.get('offer') ? Number(data.get('offer')) : null,
       estimated_total_mxn: quote.total,
       status: 'pending'
     });
