@@ -2860,20 +2860,30 @@ function renderMapboxSuggestions(container, kind, features) {
     const detail = document.createElement('small');
     detail.textContent = feature.place_name || '';
     option.append(title, detail);
-    option.addEventListener('click', () => {
-      const [longitude, latitude] = feature.center || [];
-      if (!Number.isFinite(longitude) || !Number.isFinite(latitude)) return;
-      const input = kind === 'pickup' ? pickupInput : destinationInput;
-      input.value = feature.place_name || feature.text;
-      selectedPlaces[kind] = { longitude, latitude, label: input.value };
-      updateMapMarker(kind, selectedPlaces[kind]);
-      bookingMap.setView([latitude,longitude],13);
-      clearMapboxSuggestions(container);
-      distanceInput.value = '';
-      getQuote();
-      mapboxRouteStatus.textContent = kind === 'pickup'
-        ? 'Origen seleccionado. Ahora elige tu destino.'
-        : 'Destino seleccionado. Calcula la ruta para conocer los kilómetros y la tarifa.';
+    option.addEventListener('click', async () => {
+      option.disabled = true;
+      option.textContent = 'Obteniendo ubicación exacta…';
+      try {
+        const place = await callMapboxProxy({ action: 'googleDetails', place_id: feature.place_id });
+        const [longitude, latitude] = place.center || [];
+        if (!Number.isFinite(longitude) || !Number.isFinite(latitude)) throw new Error('No encontramos las coordenadas de este lugar.');
+        const input = kind === 'pickup' ? pickupInput : destinationInput;
+        input.value = place.place_name || place.text;
+        selectedPlaces[kind] = { longitude, latitude, label: input.value };
+        updateMapMarker(kind, selectedPlaces[kind]);
+        bookingMap.setView([latitude,longitude],15);
+        clearMapboxSuggestions(container);
+        distanceInput.value = '';
+        getQuote();
+        mapboxRouteStatus.textContent = kind === 'pickup'
+          ? 'Origen confirmado en el mapa. Ahora elige tu destino.'
+          : 'Destino confirmado en el mapa. Calcula la ruta para conocer los kilómetros y la tarifa.';
+      } catch (error) {
+        console.error(error);
+        mapboxRouteStatus.textContent = error.message || 'No pudimos confirmar ese lugar.';
+        option.disabled = false;
+        option.textContent = feature.place_name || feature.text;
+      }
     });
     container.appendChild(option);
   });
@@ -2883,9 +2893,9 @@ async function searchMapboxPlaces(input, container, kind) {
   const query = input.value.trim();
   if (query.length < 3) { clearMapboxSuggestions(container); return; }
   try {
-    const result = await callMapboxProxy({ action: 'geocode', query });
+    const result = await callMapboxProxy({ action: 'googleAutocomplete', input: query });
     if (input.value.trim() !== query) return;
-    renderMapboxSuggestions(container, kind, result.features || []);
+    renderMapboxSuggestions(container, kind, result.suggestions || []);
   } catch (error) {
     console.error(error);
     mapboxRouteStatus.textContent = error.message || 'No pudimos buscar esa dirección.';
