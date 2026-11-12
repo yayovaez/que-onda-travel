@@ -2849,6 +2849,7 @@ function fitMapToPoints(){
 }
 
 const routeSearchTimers = { pickup: null, destination: null };
+const routeSearchSequence = { pickup: 0, destination: 0 };
 
 async function callMapboxProxy(payload) {
   const response = await fetch(MAPBOX_PROXY_URL, {
@@ -2905,14 +2906,16 @@ function renderMapboxSuggestions(container, kind, features) {
 }
 async function searchMapboxPlaces(input, container, kind) {
   const query = input.value.trim();
-  if (query.length < 3) { clearMapboxSuggestions(container); return; }
+  const requestId = ++routeSearchSequence[kind];
+  if (query.length < 2) { clearMapboxSuggestions(container); return; }
   try {
     const result = await callMapboxProxy({ action: 'geocode', query });
-    if (input.value.trim() !== query) return;
+    if (requestId !== routeSearchSequence[kind] || input.value.trim() !== query) return;
     renderMapboxSuggestions(container, kind, result.features || []);
   } catch (error) {
-    console.error(error);
-    mapboxRouteStatus.textContent = error.message || 'No pudimos buscar esa dirección.';
+    if (requestId !== routeSearchSequence[kind]) return;
+    console.error('Mapbox autocomplete:', error);
+    mapboxRouteStatus.textContent = 'No pudimos completar la búsqueda. Revisa tu conexión e inténtalo otra vez.';
     clearMapboxSuggestions(container);
   }
 }
@@ -2925,12 +2928,13 @@ function attachMapboxAutocomplete(input, container, kind) {
     distanceInput.value = '';
     getQuote();
     mapboxRouteStatus.textContent = '';
+    routeSearchSequence[kind]++;
     clearTimeout(routeSearchTimers[kind]);
     routeSearchTimers[kind] = setTimeout(() => searchMapboxPlaces(input, container, kind), 350);
   });
   input.addEventListener('blur', () => setTimeout(() => clearMapboxSuggestions(container), 180));
   input.addEventListener('focus', () => {
-    if (input.value.trim().length >= 3 && !selectedPlaces[kind]) {
+    if (input.value.trim().length >= 2 && !selectedPlaces[kind]) {
       searchMapboxPlaces(input, container, kind);
     }
   });
