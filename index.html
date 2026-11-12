@@ -2483,7 +2483,9 @@ a:focus-visible,button:focus-visible{outline-color:#d4c1a2!important}
 .mapbox-suggestions button:last-child{border-bottom:0}
 .mapbox-suggestions button:hover,.mapbox-suggestions button:focus{background:#30271e;outline:none}
 .mapbox-suggestions small{display:block;color:#b9ad9d;font-size:11px;margin-top:3px}
-.mapbox-route-status{min-height:1.2em;color:#d4c1a2;font-size:12px;margin:4px 0 12px}
+.mapbox-route-status{min-height:1.2em;color:#f0dfbd;font-size:15px;line-height:1.5;font-weight:600;margin:8px 0 14px}
+.mapbox-route-status:not(:empty){display:block;padding:14px 16px;background:linear-gradient(110deg,rgba(201,164,91,.17),rgba(201,164,91,.07));border:1px solid rgba(201,164,91,.55);border-left:4px solid #c9a45b;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,.18)}
+@media(max-width:620px){.mapbox-route-status:not(:empty){font-size:15px;padding:14px;line-height:1.55}}
 .booking input[readonly]{opacity:.9;cursor:not-allowed}
 
 /* Uniformar controles de fecha y hora con el resto del formulario */
