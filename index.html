@@ -782,6 +782,92 @@ footer { background: #042b35; border-top: 2px solid #ffc62955; }
   .booking { margin-left: 3%; margin-right: 3%; }
 }
 
+
+/* IDENTIDAD CABO TROPICAL · México vivo, editorial y fotográfico */
+:root {
+  --green: #07545a;
+  --green-dark: #063642;
+  --gold: #ffd23f;
+  --cream: #fff4e4;
+  --pink: #f02d91;
+  --turquoise: #18b8bd;
+  --ink: #123542;
+  --coral: #ff705c;
+  --blue: #176bb1;
+}
+body { background: var(--cream); color: var(--ink); }
+header {
+  background: linear-gradient(110deg,#063642,#07545a 65%,#087b82);
+  border-bottom: 3px solid var(--gold);
+}
+.brand-symbol { color: var(--pink); }
+.brand-logo span { color: var(--gold); }
+.language { color: var(--green-dark); background: var(--gold); border-color: var(--gold); }
+.hero {
+  background:
+    linear-gradient(90deg,rgba(3,39,49,.91),rgba(3,52,62,.62) 48%,rgba(3,39,49,.08)),
+    url("https://cdn.northropandjohnson.com/uploads/Western-Mexico_Cabo-San-Lucas.jpg?auto=format&h=1&q=65") center 48% / cover no-repeat,
+    #063744;
+}
+.hero h1 span { color: var(--gold); }
+.eyebrow { color: #ffe18a; }
+.hero-cta { background: var(--pink); color: white; border: 2px solid #ffd8e9; }
+.hero-cta:hover { background: #d91f7d; }
+.booking { background: linear-gradient(120deg,#fffaf1,#ffe6cf); border: 2px solid var(--gold); }
+.booking h2,.section-title { color: var(--green-dark); }
+.gold-button { background: var(--gold); color: var(--green-dark); border-color: #e5aa00; }
+.gold-button:hover { background: #ffe27b; }
+.services { background: var(--green-dark); color: #fff8ec; border-block: 2px solid var(--turquoise); }
+.service-icon { color: var(--gold); }
+.fleet { background: #fff8ed; }
+.section-kicker { color: var(--pink); }
+.vehicle { border-color: #f1c5a5; background: #fffdf8; }
+.vehicle-link { color: var(--green-dark); border-color: var(--pink); }
+.vehicle-link:hover { background: #ffe2ef; }
+.experiences { background: #ffe8d7; }
+.experience-grid { grid-template-columns: repeat(3,minmax(0,1fr)); }
+.experience {
+  min-height: 290px;
+  padding: 0;
+  align-items: stretch;
+  background: #07545a;
+  border: 3px solid #fff7ea;
+  box-shadow: 0 12px 28px #49311e25;
+}
+.experience-photo {
+  min-height: 290px;
+  width: 100%;
+  display: flex;
+  align-items: end;
+  padding: 20px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  isolation: isolate;
+}
+.experience-photo:before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(0deg,rgba(4,34,42,.88),rgba(4,34,42,.02) 75%);
+}
+.experience h3 { color: white; font-size: 25px; }
+.experience p { color: #fff4e4; }
+.experience a { color: inherit; }
+.about { background: #fff8ed; }
+.reviews { background: #ffe8d7; }
+.contact { background: linear-gradient(125deg,#063642,#087b82); border-top: 4px solid var(--gold); }
+.contact-button { background: var(--pink); color: white; }
+footer { background: #042b35; border-top: 3px solid var(--gold); }
+@media(max-width:900px) {
+ .experience-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+}
+@media(max-width:620px) {
+ .experience-grid { grid-template-columns: 1fr; }
+ .experience,.experience-photo { min-height: 260px; }
+}
+
 </style>
 </head>
 
@@ -981,28 +1067,17 @@ footer { background: #042b35; border-top: 2px solid #ffc62955; }
 </section>
 
 <section class="experiences" id="experiencias">
-  <div class="section-kicker">Descubre Baja California Sur</div>
-  <h2 class="section-title">Experiencias / Experiences</h2>
+  <div class="section-kicker">México en colores · Baja California Sur y más allá</div>
+  <h2 class="section-title">Un viaje con sabor a México</h2>
+  <p class="experience-intro">Del desierto de Baja al corazón artesanal de México: lugares, sabores y tradiciones que se quedan contigo.</p>
 
   <div class="experience-grid">
-    <article class="experience" data-symbol="🌵">
-      <div>
-        <h3>El Arco de Cabo San Lucas</h3>
-        <p>Un ícono natural que merece ser parte de tu viaje</p>
-      </div>
-    </article>
-    <article class="experience" data-symbol="🌊">
-      <div>
-        <h3>Playas y atardeceres</h3>
-        <p>El lado más relajado y espectacular de Baja California Sur</p>
-      </div>
-    </article>
-    <article class="experience" data-symbol="🪅">
-      <div>
-        <h3>Cultura y sabor mexicano</h3>
-        <p>Colores, artesanía y tradiciones que hacen único a México</p>
-      </div>
-    </article>
+    <article class="experience"><div class="experience-photo" style="background-image:url('https://cdn.northropandjohnson.com/uploads/Western-Mexico_Cabo-San-Lucas.jpg?auto=format&h=1&q=65')"><div><h3>El Arco de Cabo</h3><p>Donde el desierto se encuentra con el mar</p></div></div></article>
+    <article class="experience"><div class="experience-photo" style="background-image:url('https://cdn1.yumping.com.mx/emp/fotos/301/P/065230/640/p-65230-san-antonio_15871235913173.jpg')"><div><h3>Desierto de Baja</h3><p>Cactus gigantes, montañas y mar turquesa</p></div></div></article>
+    <article class="experience"><div class="experience-photo" style="background-image:url('https://www.travelersguidemexico.com/uploads/muneca-lele-mexicana_652889-171765288401.jpg')"><div><h3>Muñeca Lele</h3><p>El arte textil y los colores de nuestras raíces</p></div></div></article>
+    <article class="experience"><div class="experience-photo" style="background-image:url('https://lugares.inah.gob.mx/sites/default/files/2023-05/ZDR-ParroquiaSantaPriscaDJI_0813.jpg')"><div><h3>Taxco, Guerrero</h3><p>Calles blancas, plata y la belleza de Santa Prisca</p></div></div></article>
+    <article class="experience"><div class="experience-photo" style="background-image:url('https://thursd.com/storage/media/97450/Girl-in-a-field-of-marigolds.jpg')"><div><h3>La Catrina</h3><p>Una celebración llena de flores, memoria y vida</p></div></div></article>
+    <article class="experience"><div class="experience-photo" style="background-image:url('https://images.squarespace-cdn.com/content/v1/64f8f151dba4110da14fc2ff/e655f8a5-0067-4467-8af6-559476f9e085/2023-08-23_WebsiteSocialLaunch-LocosKitchen-155.jpg')"><div><h3>Comida mexicana</h3><p>Tacos, sabores tradicionales y buenos momentos</p></div></div></article>
   </div>
 </section>
 
