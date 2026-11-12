@@ -2348,11 +2348,12 @@ header,.site-header{border-bottom:0!important;box-shadow:none}
     </div>
 
     <div class="booking-notice" role="note">
-      <strong>Información importante sobre tu traslado</strong>
-      El pago del servicio se realiza en efectivo al momento de la recogida o la dejada.
+      <div class="notice-heading"><span class="notice-kicker">DETALLES DE SU SERVICIO · SERVICE DETAILS</span><strong>Una experiencia cómoda, clara y sin contratiempos.</strong></div>
+      <p>Para su comodidad, el pago del traslado se realiza en <strong>efectivo</strong>, directamente con nuestro conductor, al momento de finalizar el servicio.</p>
       <div class="airport-note" id="airportNote" hidden>
-        <strong>Traslados al aeropuerto SJD</strong>
-        La recogida y la dejada se realizan en el estacionamiento ubicado frente al aeropuerto.
+        <span class="notice-kicker">TRASLADOS AEROPUERTO SJD · AIRPORT TRANSFERS</span>
+        <strong>Encuentro y descenso en el estacionamiento frente al aeropuerto.</strong>
+        <p>Para facilitar su llegada o salida, tanto la recogida como la dejada se realizan en el estacionamiento ubicado frente a la terminal.</p>
       </div>
     </div>
 
@@ -2547,3 +2548,52 @@ async function submitBookingRequest(event) {
 
 </body>
 </html>
+
+
+/* AVISO DE RESERVACIÓN · ACABADO PREMIUM QOT */
+.booking-notice{
+ grid-column:1/-1!important;
+ padding:20px 22px!important;
+ border:1px solid #684052!important;
+ border-left:3px solid #d8ad51!important;
+ border-radius:16px!important;
+ background:linear-gradient(135deg,#211922 0%,#17141b 65%,#21151e 100%)!important;
+ color:#f7eaf1!important;
+ box-shadow:inset 0 1px 0 #ffffff0b,0 8px 24px #0003!important;
+ font-family:"Avenir Next",Avenir,"Segoe UI",Arial,sans-serif!important;
+ font-size:14px!important;
+ line-height:1.7!important;
+}
+.booking-notice .notice-heading{margin-bottom:9px}
+.booking-notice .notice-kicker{
+ display:block!important;
+ margin-bottom:7px!important;
+ color:#e8bd75!important;
+ font-size:9px!important;
+ font-weight:700!important;
+ letter-spacing:1.7px!important;
+ line-height:1.5!important;
+}
+.booking-notice strong{
+ display:block!important;
+ margin:0 0 5px!important;
+ color:#fff5fa!important;
+ font-family:Georgia,serif!important;
+ font-size:16px!important;
+ font-weight:600!important;
+ line-height:1.4!important;
+}
+.booking-notice p{margin:5px 0 0!important;color:#e6d8e0!important}
+.booking-notice .airport-note{
+ margin-top:15px!important;
+ padding:13px 15px!important;
+ border:1px solid #70435a!important;
+ border-radius:11px!important;
+ background:linear-gradient(110deg,#321d2b,#241923)!important;
+}
+.booking-notice .airport-note[hidden]{display:none!important}
+@media(max-width:620px){
+ .booking-notice{padding:16px 15px!important;border-radius:13px!important;font-size:13px!important}
+ .booking-notice strong{font-size:15px!important}
+ .booking-notice .airport-note{padding:12px!important}
+}
