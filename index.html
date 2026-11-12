@@ -2112,6 +2112,18 @@ header nav a:hover,header nav a:focus{
  text-shadow:0 0 6px #ffffff,0 0 14px #ffffff,0 0 25px rgba(255,255,255,1)!important;
 }
  
+
+/* Menú desplegable compacto */
+.nav-dropdown{margin-left:auto;position:relative;z-index:30}
+.menu-dropdown{position:relative}
+.menu-dropdown summary{list-style:none;display:flex;align-items:center;gap:11px;padding:11px 15px;border:1px solid #ff4da6;border-radius:30px;color:#fff;cursor:pointer;font-size:12px;font-weight:800;letter-spacing:2px;text-shadow:0 0 8px #ff4da6;box-shadow:0 0 13px #ff3e9d30}
+.menu-dropdown summary::-webkit-details-marker{display:none}
+.menu-icon{display:grid;gap:4px;width:19px}
+.menu-icon i{height:2px;width:19px;border-radius:2px;background:#ff72b8;box-shadow:0 0 6px #ff3e9d}
+.menu-panel{position:absolute;right:0;top:calc(100% + 12px);min-width:190px;padding:9px;background:#100a10;border:1px solid #a52d6d;border-radius:14px;box-shadow:0 12px 32px #0009,0 0 18px #ff3e9d35;display:grid;gap:3px}
+.menu-panel a{display:block;padding:12px 13px;border-radius:8px;color:#fff!important;text-shadow:0 0 8px #ff3e9d!important;font-size:13px}
+.menu-panel a:hover{background:#351329;color:#ff9bc9!important}
+@media(max-width:620px){.nav-dropdown{width:auto;margin:0}.menu-panel{right:0;min-width:205px}}
 </style>
 </head>
 
@@ -2128,12 +2140,17 @@ header nav a:hover,header nav a:focus{
     </div>
   </div>
 
-  <nav aria-label="Navegación principal" class="neon-white-nav">
-    <a href="#inicio" style="color:#ffffff!important;text-shadow:0 0 5px #ffffff,0 0 12px #eaf7ff,0 0 22px #bfe8ff;">Inicio</a>
-    <a href="#experiencias" style="color:#ffffff!important;text-shadow:0 0 5px #ffffff,0 0 12px #eaf7ff,0 0 22px #bfe8ff;">Experiencias</a>
-    <a href="opiniones.html" style="color:#ffffff!important;text-shadow:0 0 5px #ffffff,0 0 12px #eaf7ff,0 0 22px #bfe8ff;">Opiniones</a>
-    <a href="#reservar" style="color:#ffffff!important;text-shadow:0 0 5px #ffffff,0 0 12px #eaf7ff,0 0 22px #bfe8ff;">Reservar</a>
-    <a href="#contacto" style="color:#ffffff!important;text-shadow:0 0 5px #ffffff,0 0 12px #eaf7ff,0 0 22px #bfe8ff;">Contacto</a>
+  <nav aria-label="Navegación principal" class="neon-white-nav nav-dropdown">
+    <details class="menu-dropdown">
+      <summary aria-label="Abrir menú de navegación"><span class="menu-label">MENÚ</span><span class="menu-icon" aria-hidden="true"><i></i><i></i><i></i></span></summary>
+      <div class="menu-panel">
+        <a href="#inicio">Inicio</a>
+        <a href="#experiencias">Experiencias</a>
+        <a href="#reservar">Reservar</a>
+        <a href="opiniones.html">Opiniones</a>
+        <a href="#contacto">Contacto</a>
+      </div>
+    </details>
   </nav>
 </header>
 
