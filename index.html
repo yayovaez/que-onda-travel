@@ -2298,6 +2298,12 @@ header,.site-header{border-bottom:0!important;box-shadow:none}
     </div>
 
     <div class="field">
+      <label>WhatsApp / Teléfono</label>
+      <input name="customerPhone" type="tel" inputmode="tel" autocomplete="tel" maxlength="25" pattern="[+0-9() .-]{8,25}" placeholder="+52 624 123 4567" required>
+      <small>Incluye tu lada de país para poder contactarte.</small>
+    </div>
+
+    <div class="field">
       <label>Tipo de servicio / Service</label>
       <select name="service" required>
         <option>Traslado Aeropuerto (SJD)</option>
@@ -2436,6 +2442,7 @@ async function submitBookingRequest(event) {
     const { error } = await client.from('booking_requests').insert({
       customer_name: String(data.get('customerName')).trim(),
       customer_email: String(data.get('customerEmail')).trim(),
+      customer_phone: String(data.get('customerPhone')).trim(),
       service: data.get('service'),
       trip_type: String(data.get('tripType')).startsWith('Redondo') ? 'Redondo' : 'Sencillo',
       vehicle: data.get('vehicle'),
