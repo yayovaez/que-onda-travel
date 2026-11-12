@@ -899,6 +899,27 @@ footer { background: #042b35; border-top: 3px solid var(--gold); }
   }
 }
 
+
+/* PORTADA LIMPIA · SIN FOTO DE VEHÍCULO */
+.hero {
+  grid-template-columns: minmax(0, 1fr) !important;
+  min-height: 570px;
+}
+.hero-copy {
+  grid-column: 1 !important;
+  width: min(100%, 760px);
+  max-width: 760px;
+  margin: 0 auto;
+}
+@media(max-width:620px) {
+  .hero {
+    min-height: 560px;
+    padding-top: 48px;
+    padding-bottom: 48px;
+  }
+  .hero-copy { width: 100%; }
+}
+
 </style>
 </head>
 
@@ -945,12 +966,6 @@ footer { background: #042b35; border-top: 3px solid var(--gold); }
       <span>✧ Servicio bilingüe</span>
       <span>✧ Vehículos premium</span>
     </div>
-  </div>
-
-  <div class="hero-car">
-    <!-- Atlas ORIGINAL, sin decoración -->
-    <img src="images/atlas-blanca-2019.jpg"
-         alt="Volkswagen Atlas blanca original de Qué Onda Travel">
   </div>
 </section>
 
