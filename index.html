@@ -2458,6 +2458,13 @@ a:focus-visible,button:focus-visible{outline-color:#d4c1a2!important}
 .leaflet-popup-content-wrapper,.leaflet-popup-tip{background:#fff8ed;color:#203b36}
 @media(max-width:620px){#bookingMap{height:280px}.booking-map-heading{align-items:flex-start;flex-direction:column}}
 
+.quick-location-tools{margin:0 0 12px;padding:12px;border:1px solid rgba(182,154,120,.35);border-radius:12px;background:#201c17}
+.quick-location-label{display:block;color:#c9a45b;font-size:9px;letter-spacing:1.7px;font-weight:700;margin-bottom:8px}
+.quick-location-buttons{display:flex;flex-wrap:wrap;gap:7px}
+.quick-location-buttons button{border:1px solid #8d765b;border-radius:18px;padding:8px 11px;background:#171512;color:#ead8bb;font-size:11px;cursor:pointer;transition:background .2s,border-color .2s}
+.quick-location-buttons button:hover,.quick-location-buttons button:focus{background:#3a3023;border-color:#c9a45b;outline:none}
+.quick-location-tools>small{display:block;margin-top:8px;color:#b9ad9d;font-size:10px;line-height:1.5}
+
 /* Mapbox autocomplete and route feedback */
 .booking .field{position:relative}
 .mapbox-suggestions{position:absolute;z-index:50;top:100%;left:0;right:0;background:#171512;border:1px solid #b69a78;border-radius:10px;box-shadow:0 12px 30px rgba(0,0,0,.35);overflow:hidden;margin-top:5px}
@@ -2678,7 +2685,18 @@ a:focus-visible,button:focus-visible{outline-color:#d4c1a2!important}
     <div class="booking-route-helper"><button type="button" id="openRouteMap" class="route-map-button">Calcular distancia y tarifa</button><small>Busca una dirección; si no aparece, toca el mapa para colocar el pin. Calculamos la distancia por carretera.</small></div>
     <p class="mapbox-route-status" id="mapboxRouteStatus" role="status" aria-live="polite"></p>
     <div class="booking-map-panel">
-      <div class="booking-map-heading"><strong>Ubicación y recorrido</strong><small>Toca el mapa para marcar el punto del campo seleccionado; también puedes mover los pines.</small></div>
+      <div class="booking-map-heading"><strong>Ubicación y recorrido</strong><small>Elige una zona rápida o toca el mapa para marcar el punto exacto.</small></div>
+      <div class="quick-location-tools">
+        <span class="quick-location-label">ACCESOS RÁPIDOS</span>
+        <div class="quick-location-buttons">
+          <button type="button" data-map-zone="costco">Costco · El Tezal</button>
+          <button type="button" data-map-zone="marina">Marina de Cabo</button>
+          <button type="button" data-map-zone="medano">Playa El Médano</button>
+          <button type="button" data-map-zone="hotel">Corredor hotelero</button>
+          <button type="button" data-map-zone="sjc">Centro San José</button>
+        </div>
+        <small>Primero selecciona el campo de recogida o destino. El acceso rápido acerca el mapa a esa zona; después toca el punto exacto.</small>
+      </div>
       <div id="bookingMap" role="application" aria-label="Mapa para seleccionar origen y destino"></div>
       <div class="booking-map-actions">
         <button type="button" id="useAirportPickup">📍 Usar aeropuerto SJD como origen</button>
@@ -2973,6 +2991,23 @@ document.getElementById('useAirportPickup').addEventListener('click',()=>{
   if(selectedPlaces.destination)calculateMapboxRoute();
 });
 document.getElementById('fitBookingMap').addEventListener('click',fitMapToPoints);
+document.querySelectorAll('[data-map-zone]').forEach(button=>{
+  button.addEventListener('click',()=>{
+    const zones={
+      costco:{lat:22.912, lng:-109.89, zoom:15, label:'Costco · El Tezal'},
+      marina:{lat:22.881, lng:-109.91, zoom:15, label:'Marina de Cabo San Lucas'},
+      medano:{lat:22.887, lng:-109.90, zoom:15, label:'Playa El Médano'},
+      hotel:{lat:22.94, lng:-109.82, zoom:12, label:'Corredor hotelero'},
+      sjc:{lat:23.061, lng:-109.70, zoom:15, label:'Centro de San José del Cabo'}
+    };
+    const zone=zones[button.dataset.mapZone];
+    if(!zone||!bookingMap)return;
+    const field=activeRouteField==='pickup'?'recogida':'destino';
+    bookingMap.setView([zone.lat,zone.lng],zone.zoom);
+    mapboxRouteStatus.textContent='Zona '+zone.label+' enfocada para '+field+'. Toca el mapa para colocar el pin exacto.';
+  });
+});
+
 initBookingMap();
 
 function updateBookingNotice() {
