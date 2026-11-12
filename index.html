@@ -2473,9 +2473,11 @@ a:focus-visible,button:focus-visible{outline-color:#d4c1a2!important}
 .booking-map-details>summary span{margin-left:auto;margin-right:12px;color:#b9ad9d;font-size:10px;font-weight:400}
 .booking-map-details .booking-map-panel{margin:0;border:0;border-top:1px solid rgba(182,154,120,.25);border-radius:0}
 \n/* Mapbox autocomplete and route feedback */
-.booking .field{position:relative}
-.mapbox-suggestions{position:absolute;z-index:50;top:100%;left:0;right:0;background:#171512;border:1px solid #b69a78;border-radius:10px;box-shadow:0 12px 30px rgba(0,0,0,.35);overflow:hidden;margin-top:5px}
-.mapbox-suggestions button{display:block;width:100%;padding:12px 14px;text-align:left;background:transparent;border:0;border-bottom:1px solid rgba(182,154,120,.2);color:#f5eee5;font:inherit;cursor:pointer}
+.booking .field{position:relative;z-index:1}
+.booking .field:focus-within{z-index:80}
+.mapbox-suggestions{position:absolute;z-index:100;top:100%;left:0;right:0;display:block;background:#171512;border:1px solid #b69a78;border-radius:10px;box-shadow:0 12px 30px rgba(0,0,0,.45);overflow:hidden;margin-top:5px;max-height:260px;overflow-y:auto}
+.mapbox-suggestions[hidden]{display:none!important}
+.mapbox-suggestions button{display:block;width:100%;min-height:48px;padding:12px 14px;text-align:left;background:#171512;border:0;border-bottom:1px solid rgba(182,154,120,.2);color:#f5eee5;font:inherit;cursor:pointer;touch-action:manipulation}
 .mapbox-suggestions button:last-child{border-bottom:0}
 .mapbox-suggestions button:hover,.mapbox-suggestions button:focus{background:#30271e;outline:none}
 .mapbox-suggestions small{display:block;color:#b9ad9d;font-size:11px;margin-top:3px}
@@ -2922,6 +2924,10 @@ async function searchMapboxPlaces(input, container, kind) {
   }
 }
 function attachMapboxAutocomplete(input, container, kind) {
+  // Evita que Safari móvil quite el foco antes de procesar el toque en una sugerencia.
+  container.addEventListener('pointerdown', event => {
+    if (event.target.closest('button')) event.preventDefault();
+  });
   input.addEventListener('focus',()=>{activeRouteField=kind;});
   input.addEventListener('click',()=>{activeRouteField=kind;});
   input.addEventListener('input', () => {
@@ -2934,7 +2940,9 @@ function attachMapboxAutocomplete(input, container, kind) {
     clearTimeout(routeSearchTimers[kind]);
     routeSearchTimers[kind] = setTimeout(() => searchMapboxPlaces(input, container, kind), 250);
   });
-  input.addEventListener('blur', () => setTimeout(() => clearMapboxSuggestions(container), 180));
+  input.addEventListener('blur', () => setTimeout(() => {
+    if (!container.matches(':hover') && !container.contains(document.activeElement)) clearMapboxSuggestions(container);
+  }, 450));
   input.addEventListener('focus', () => {
     if (input.value.trim().length >= 2 && !selectedPlaces[kind]) {
       searchMapboxPlaces(input, container, kind);
