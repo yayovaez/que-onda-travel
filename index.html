@@ -3591,66 +3591,12 @@ async function calculateMapboxRoute() {
     }
     const quote = getQuote();
     const priceSummary = quote
-      ? ' · Tarifa estimada: 
-    console.error(error);
-    mapboxRouteStatus.textContent = error.message || 'No pudimos calcular la ruta.';
-    distanceInput.value = '';
-    getQuote();
-  } finally {
-    button.disabled = false;
-    button.textContent = 'Calcular distancia y tarifa';
-  }
-}
-document.getElementById('openRouteMap').addEventListener('click', calculateMapboxRoute);
-document.getElementById('useAirportPickup').addEventListener('click',()=>{
-  selectedPlaces.pickup={...AIRPORT_SJD};pickupInput.value=AIRPORT_SJD.label;
-  updateMapMarker('pickup',selectedPlaces.pickup);bookingMap.setView([AIRPORT_SJD.latitude,AIRPORT_SJD.longitude],14);
-  distanceInput.value='';getQuote();
-  mapboxRouteStatus.textContent='Aeropuerto SJD fijado como punto de recogida. Selecciona el destino y calcula la ruta.';
-  if(selectedPlaces.destination)calculateMapboxRoute();
-});
-document.getElementById('fitBookingMap').addEventListener('click',fitMapToPoints);
-document.querySelectorAll('[data-map-zone]').forEach(button=>{
-  button.addEventListener('click',()=>{
-    const zones={
-      costco:{lat:22.912, lng:-109.89, zoom:15, label:'Costco · El Tezal'},
-      marina:{lat:22.881, lng:-109.91, zoom:15, label:'Marina de Cabo San Lucas'},
-      medano:{lat:22.887, lng:-109.90, zoom:15, label:'Playa El Médano'},
-      hotel:{lat:22.94, lng:-109.82, zoom:12, label:'Corredor hotelero'},
-      sjc:{lat:23.061, lng:-109.70, zoom:15, label:'Centro de San José del Cabo'}
-    };
-    const zone=zones[button.dataset.mapZone];
-    if(!zone||!bookingMap)return;
-    const field=activeRouteField==='pickup'?'recogida':'destino';
-    bookingMap.setView([zone.lat,zone.lng],zone.zoom);
-    mapboxRouteStatus.textContent='Zona '+zone.label+' enfocada para '+field+'. Toca el mapa para colocar el pin exacto.';
-  });
-});
-
-initBookingMap();
-
-function updateBookingNotice() {
-  airportNote.hidden = serviceSelect.value !== 'Traslado Aeropuerto (SJD)';
-}
-serviceSelect.addEventListener('change', updateBookingNotice);
-updateBookingNotice();
-
-let usdMxnRate = null;
-let usdRateDate = null;
-async function loadBanxicoFixRate() {
-  try {
-    const response = await fetch("https://hubfiscal.mx/api/v1/public/fx/today", { cache: "no-store" });
-    if (!response.ok) throw new Error("No se pudo consultar el FIX de Banxico.");
-    const data = await response.json();
-    const fix = Number(data.rate);
-    if (!Number.isFinite(fix) || fix <= 1) throw new Error("El FIX recibido no es válido.");
-    usdMxnRate = fix - 1;
-    usdRateDate = data.date || "";
-    getQuote();
-    document.querySelectorAll(".vehicle-rate").forEach((el, index) => {
-      const rates = [26, 70, 75];
-      el.textContent = "Desde $" + rates[index] + " MXN / $" + (rates[index] / usdMxnRate).toFixed(2) + " USD por km";
-    });
+      ? ' · Tarifa estimada: $' + quote.total.toLocaleString('es-MX') + ' MXN' +
+        (quote.totalUsd ? ' (≈ $' + quote.totalUsd + ' USD)' : '')
+      : '';
+    mapboxRouteStatus.textContent = 'Ruta calculada: ' + distanceKm.toLocaleString('es-MX') +
+      ' km de ida · Tiempo estimado: ' + Number(result.duration_minutes).toLocaleString('es-MX') +
+      ' min' + priceSummary + '. El precio final se confirma en pesos mexicanos.';
   } catch (error) {
     console.warn("Tipo de cambio FIX:", error);
     quotePreview.dataset.fxStatus = "unavailable";
