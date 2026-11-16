@@ -2862,10 +2862,14 @@ let bookingMap, pickupMarker, destinationMarker, airportMarker, routeLine;
 function initBookingMap(){
   if(!window.L||bookingMap)return;
   bookingMap=L.map('bookingMap',{scrollWheelZoom:false}).setView([23.15,-109.75],9);
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{
-    maxZoom:19,
-    subdomains:'abcd',
-    attribution:'&copy; OpenStreetMap &copy; CARTO'
+  L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',{
+    maxZoom:16,
+    attribution:'Tiles &copy; Esri &mdash; Esri, HERE, Garmin, OpenStreetMap contributors'
+  }).addTo(bookingMap);
+  L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}',{
+    maxZoom:16,
+    pane:'overlayPane',
+    attribution:''
   }).addTo(bookingMap);
   airportMarker=L.marker([AIRPORT_SJD.latitude,AIRPORT_SJD.longitude]).addTo(bookingMap).bindPopup('Aeropuerto Internacional de Los Cabos (SJD) · punto fijo de encuentro');
   airportMarker.setIcon(L.divIcon({className:'',html:'<div style="background:#c9a45b;border:2px solid white;border-radius:50%;width:18px;height:18px;box-shadow:0 1px 7px #0008"></div>',iconSize:[18,18],iconAnchor:[9,9]}));
