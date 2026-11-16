@@ -2616,7 +2616,127 @@ footer a:hover{color:#FFD36E!important}
 .quote-preview,.quote-preview strong,.quote-preview small,.booking-notice,.booking-notice p,.booking-notice strong{color:#244F52!important;opacity:1!important}
 .mapbox-suggestions button,.mapbox-suggestions small{color:#FFFDF5!important}
 a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #E91E63!important;outline-offset:3px}
-@media(prefers-reduced-motion:reduce){.route-flow{animation:none!important}}
+
+/* FLOTA: tarjetas con color, profundidad y movimiento sutil */
+.fleet{
+ background:
+  radial-gradient(ellipse at 8% 12%,rgba(0,166,166,.16),transparent 34%),
+  radial-gradient(ellipse at 92% 82%,rgba(233,30,99,.10),transparent 30%),
+  linear-gradient(135deg,#FFF0D5 0%,#FFF9EC 48%,#E1F3E9 100%)!important;
+ position:relative;isolation:isolate;overflow:hidden;
+}
+.fleet .section-kicker{color:#087A69!important}
+.fleet .section-title{color:#075B63!important}
+.fleet-grid{gap:24px!important;align-items:stretch}
+.vehicle{
+ position:relative;overflow:hidden;border:1px solid rgba(0,166,166,.35)!important;
+ border-radius:22px!important;background:linear-gradient(160deg,#FFFFFF 0%,#FFF8E9 100%)!important;
+ box-shadow:0 9px 24px rgba(7,91,99,.10)!important;
+ transform:translateY(0);transition:transform .35s ease,box-shadow .35s ease,border-color .35s ease!important;
+}
+.vehicle:before{
+ content:"";position:absolute;z-index:2;top:0;left:0;right:0;height:6px;
+ background:linear-gradient(90deg,#00A6A6,#16805D 48%,#F2B84B 78%,#E91E63);
+ background-size:200% 100%;animation:fleetShimmer 7s linear infinite;
+}
+.vehicle:nth-child(2){border-color:rgba(242,184,75,.65)!important}
+.vehicle:nth-child(3){border-color:rgba(233,30,99,.28)!important}
+.vehicle-photo{overflow:hidden;background:linear-gradient(135deg,#C9EEE2,#FFE6B8)!important}
+.vehicle-photo img{transition:transform .65s cubic-bezier(.2,.7,.2,1),filter .45s ease!important}
+.vehicle-info{padding:22px!important}
+.vehicle-info h3{color:#075B63!important}
+.vehicle-info p{color:#31595A!important}
+.vehicle-rate{
+ display:inline-block;padding:9px 12px;border-radius:12px;
+ background:linear-gradient(100deg,#E0F5E9,#FFF1CE)!important;
+ color:#08734F!important;border:1px solid rgba(22,128,93,.18);
+}
+.vehicle-link{
+ display:inline-flex;align-items:center;justify-content:center;
+ border-radius:24px!important;padding:11px 17px!important;
+ background:#075B63!important;color:#FFFFFF!important;border:1px solid #075B63!important;
+ transition:transform .25s ease,background .25s ease,box-shadow .25s ease!important;
+}
+.vehicle-link:hover{background:#16805D!important;color:#FFFFFF!important;transform:translateY(-2px);box-shadow:0 7px 16px rgba(7,91,99,.22)!important}
+@media(hover:hover){
+ .vehicle:hover{transform:translateY(-8px);box-shadow:0 18px 36px rgba(7,91,99,.18)!important;border-color:#00A6A6!important}
+ .vehicle:hover .vehicle-photo img{transform:scale(1.055);filter:saturate(1.12)}
+}
+
+/* RESERVACIONES: panel tropical luminoso, manteniendo campos claros */
+.booking{
+ position:relative;isolation:isolate;overflow:hidden;
+ background:
+  radial-gradient(ellipse at 0% 0%,rgba(0,166,166,.34),transparent 38%),
+  radial-gradient(ellipse at 100% 100%,rgba(233,30,99,.16),transparent 34%),
+  linear-gradient(135deg,#075B63 0%,#16805D 52%,#0A7778 100%)!important;
+ border:0!important;border-top:5px solid #F2B84B!important;
+ border-radius:26px!important;box-shadow:0 18px 42px rgba(7,91,99,.20)!important;
+ color:#FFFDF5!important;
+}
+.booking:before{
+ content:"";position:absolute;z-index:-1;inset:0;pointer-events:none;opacity:.22;
+ background:repeating-linear-gradient(135deg,transparent 0 34px,rgba(255,255,255,.12) 35px 36px,transparent 37px 72px);
+ animation:bookingPattern 24s linear infinite;
+}
+.booking .booking-festive-top{position:relative;margin-bottom:18px}
+.booking .booking-kicker{
+ display:inline-block;padding:9px 15px;border-radius:30px;
+ background:rgba(255,255,255,.13)!important;border:1px solid rgba(255,255,255,.42);
+ color:#FFE29A!important;font-weight:800;letter-spacing:1.1px;
+}
+.booking h2{color:#FFFFFF!important;text-shadow:0 2px 10px rgba(0,0,0,.18)}
+.booking h2 span{color:#FFE29A!important}
+.booking .booking-form{
+ position:relative;padding:clamp(18px,3vw,30px)!important;
+ border:1px solid rgba(255,255,255,.72)!important;border-radius:22px!important;
+ background:linear-gradient(145deg,rgba(255,253,247,.98),rgba(255,240,213,.97))!important;
+ box-shadow:0 14px 32px rgba(0,35,39,.20)!important;
+}
+.booking .booking-step-heading{
+ padding:13px 15px;border-radius:15px;
+ background:linear-gradient(100deg,#DDF5E9,#FFF0D0)!important;
+ border:1px solid rgba(22,128,93,.20);
+}
+.booking .booking-step-heading>span{
+ background:#16805D!important;color:#FFFFFF!important;border-color:#16805D!important;
+ box-shadow:0 4px 10px rgba(22,128,93,.2);
+}
+.booking .booking-step-heading strong{color:#075B63!important}
+.booking .booking-step-heading small{color:#42666A!important}
+.booking .field label{color:#075B63!important;font-weight:750!important}
+.booking .field input,.booking .field select,.booking .field textarea{
+ border:1.5px solid #B7D8C9!important;border-radius:12px!important;
+ background:#FFFFFF!important;color:#164B50!important;
+ transition:border-color .2s ease,box-shadow .2s ease,background .2s ease!important;
+}
+.booking .field input:focus,.booking .field select:focus,.booking .field textarea:focus{
+ border-color:#00A6A6!important;box-shadow:0 0 0 4px rgba(0,166,166,.14)!important;background:#FFFFFF!important;
+}
+.booking .booking-notice,.booking .quote-preview{
+ border-radius:14px!important;border:1px solid #E8C879!important;
+ box-shadow:0 5px 14px rgba(7,91,99,.06);
+}
+.booking #bookingSubmit{
+ background:linear-gradient(100deg,#16805D,#00A6A6)!important;
+ background-color:#16805D!important;border:0!important;border-radius:28px!important;
+ color:#FFFFFF!important;padding:15px 24px!important;
+ box-shadow:0 8px 18px rgba(7,91,99,.25)!important;
+ transition:transform .25s ease,box-shadow .25s ease,filter .25s ease!important;
+}
+.booking #bookingSubmit:hover{background:linear-gradient(100deg,#075B63,#16805D)!important;transform:translateY(-2px);box-shadow:0 12px 24px rgba(7,91,99,.32)!important;filter:saturate(1.12)}
+@keyframes fleetShimmer{0%{background-position:0% 50%}100%{background-position:200% 50%}}
+@keyframes bookingPattern{from{background-position:0 0}to{background-position:180px 180px}}
+@media(max-width:620px){
+ .fleet-grid{gap:18px!important}
+ .vehicle{border-radius:18px!important}
+ .booking{border-radius:20px!important}
+ .booking .booking-form{padding:16px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ .route-flow,.vehicle:before,.booking:before{animation:none!important}
+ .vehicle,.vehicle-photo img,.vehicle-link,.booking #bookingSubmit{transition:none!important}
+}
 </style>
 
 </head>
