@@ -2256,6 +2256,65 @@ button:disabled{opacity:.65;cursor:wait;transform:none!important}
  .hero-cta,.gold-button,.contact-button,.primary-button,.hero-cta::after,.gold-button::after,.contact-button::after,.primary-button::after{animation:none!important;transition:none!important}
 }
 
+
+/* EXPERIENCIAS · FONDO COSTERO PROFUNDO Y TIPOGRAFIA DE ALTO CONTRASTE */
+#experiencias.experiences{
+  position:relative!important;
+  overflow:hidden!important;
+  background:
+    radial-gradient(ellipse at 12% 8%,rgba(0,166,166,.22),transparent 42%),
+    radial-gradient(ellipse at 92% 82%,rgba(233,30,99,.12),transparent 38%),
+    linear-gradient(145deg,#073f49 0%,#075b63 52%,#0b665b 100%)!important;
+  color:#fffaf0!important;
+  border-top:2px solid #e8bd62!important;
+  border-bottom:2px solid #e8bd62!important;
+}
+#experiencias .section-kicker{
+  color:#ffd36e!important;
+  font-weight:850!important;
+  letter-spacing:2px!important;
+  text-shadow:0 2px 8px rgba(0,0,0,.28)!important;
+}
+#experiencias .section-title,
+#experiencias h2{
+  color:#fffaf0!important;
+  text-shadow:0 3px 14px rgba(0,0,0,.3)!important;
+}
+#experiencias .experience-intro{
+  color:#f1f7ed!important;
+  font-size:clamp(16px,2vw,19px)!important;
+  font-weight:500!important;
+  line-height:1.75!important;
+  text-shadow:0 2px 8px rgba(0,0,0,.22)!important;
+  max-width:720px!important;
+}
+#experiencias .experience{
+  border:1.5px solid rgba(255,211,110,.72)!important;
+  background:#123f46!important;
+  box-shadow:0 14px 30px rgba(0,0,0,.25)!important;
+}
+#experiencias .experience-photo:before{
+  background:linear-gradient(0deg,rgba(3,25,30,.94) 0%,rgba(3,25,30,.55) 38%,rgba(3,25,30,.03) 82%)!important;
+}
+#experiencias .experience h3{
+  color:#fffaf0!important;
+  font-weight:800!important;
+  text-shadow:0 3px 12px rgba(0,0,0,.7)!important;
+}
+#experiencias .experience p{
+  color:#fff4dc!important;
+  font-weight:600!important;
+  text-shadow:0 2px 8px rgba(0,0,0,.75)!important;
+}
+#experiencias .experience .photo-credit{
+  color:#ffdc91!important;
+  text-shadow:0 2px 7px rgba(0,0,0,.8)!important;
+  opacity:1!important;
+}
+@media(max-width:620px){
+  #experiencias .experience-intro{font-size:16px!important;line-height:1.65!important}
+}
+
 </style>
 
 <style>
