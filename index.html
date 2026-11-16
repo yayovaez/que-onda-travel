@@ -2206,6 +2206,14 @@ button:disabled{opacity:.65;cursor:wait;transform:none!important}
  .gold-button,.contact-button{width:100%}
 }
 
+
+/* ALERTAS PUSH PARA ADMINISTRACIÓN */
+.push-setup{max-width:900px;margin:28px auto 34px;padding:18px 20px;border:1px solid #d9c18d;border-radius:16px;background:#fff8ec;color:#153943;text-align:center;box-shadow:0 8px 22px #173b4312}
+.push-setup p{margin:6px 0 12px;font-size:13px;line-height:1.5}
+.push-setup button{border:0;border-radius:24px;padding:12px 20px;background:#063744;color:#fff;font-weight:700;cursor:pointer}
+.push-setup button:disabled{opacity:.6;cursor:wait}
+#pushSetupStatus{display:block;min-height:20px;margin-top:10px;font-size:13px}
+
 </style>
 
 <style>
@@ -2513,6 +2521,14 @@ a:focus-visible,button:focus-visible{outline-color:#d4c1a2!important}
 </style>
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#063744">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Qué Onda Travel">
+<link rel="apple-touch-icon" href="./icons/icon.svg">
+
 </head>
 
 <body>
@@ -2783,6 +2799,14 @@ a:focus-visible,button:focus-visible{outline-color:#d4c1a2!important}
   <p>Mexican Experiences · Private Transportation</p>
   <p>Los Cabos · Baja California Sur · México</p>
   <a class="contact-button" href="https://wa.me/16395255179" target="_blank" rel="noopener">Hablemos por WhatsApp · Let's talk</a>
+</section>
+
+
+<section class="push-setup" aria-label="Notificaciones administrativas">
+  <strong>Alertas de nuevas reservaciones</strong>
+  <p>Activa las notificaciones en este dispositivo. Esta opción es únicamente para administración de Qué Onda Travel.</p>
+  <button type="button" id="enableBookingPush">Activar notificaciones</button>
+  <span id="pushSetupStatus" role="status" aria-live="polite"></span>
 </section>
 
 </main>
@@ -3238,6 +3262,61 @@ async function submitBookingRequest(event) {
 
 
 
+
+
+<script>
+(() => {
+  const button = document.getElementById("enableBookingPush");
+  const status = document.getElementById("pushSetupStatus");
+  if (!button || !status) return;
+  const SUPABASE_URL = "https://iyelnragqgriycdyqowq.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_d-xqUkbQSgzZys3OfXzbiw_iyHzHItE";
+  const VAPID_PUBLIC_KEY = "BBJ5Ykz_ggtxKfkMBIzjpV8sgEtCjk1M2KhDCOQaxq92eIXhVvTx6c_aryX2Mfv0t_myvfNqa2hgH8cODGCmupo";
+  const toUint8Array = value => {
+    const padding = "=".repeat((4 - value.length % 4) % 4);
+    const base64 = (value + padding).replace(/-/g, "+").replace(/_/g, "/");
+    return Uint8Array.from(atob(base64), char => char.charCodeAt(0));
+  };
+  async function enablePush() {
+    button.disabled = true;
+    status.textContent = "Preparando las alertas…";
+    try {
+      if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
+        throw new Error("Este navegador no admite notificaciones Push. Abre Qué Onda Travel desde su icono en la pantalla de inicio.");
+      }
+      if (!("Notification" in window)) throw new Error("Las notificaciones no están disponibles en este navegador.");
+      const permission = await Notification.requestPermission();
+      if (permission !== "granted") throw new Error("No se concedió permiso para mostrar notificaciones.");
+      const registration = await navigator.serviceWorker.register("./service-worker.js", { scope: "./" });
+      await navigator.serviceWorker.ready;
+      let subscription = await registration.pushManager.getSubscription();
+      if (!subscription) {
+        subscription = await registration.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: toUint8Array(VAPID_PUBLIC_KEY)
+        });
+      }
+      const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      const { error } = await client.from("push_subscriptions").insert({
+        endpoint: subscription.endpoint,
+        subscription: subscription.toJSON()
+      });
+      if (error && error.code !== "23505") throw error;
+      status.textContent = "¡Listo! Este iPhone quedó registrado para recibir alertas de nuevas reservaciones.";
+      button.textContent = "Notificaciones activadas";
+    } catch (error) {
+      console.error("Push setup:", error);
+      status.textContent = error.message || "No pudimos activar las notificaciones. Inténtalo de nuevo.";
+    } finally {
+      button.disabled = false;
+    }
+  }
+  button.addEventListener("click", enablePush);
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("./service-worker.js", { scope: "./" }).catch(error => console.warn("Service Worker:", error));
+  }
+})();
+</script>
 
 </body>
 </html>
