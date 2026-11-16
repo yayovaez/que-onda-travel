@@ -2462,8 +2462,14 @@ a:focus-visible,button:focus-visible{outline-color:#d4c1a2!important}
 .booking-map-legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:10px;color:#d5c7b3;font-size:11px}
 .booking-map-legend span{display:flex;align-items:center;gap:6px}
 .map-dot{display:inline-block;width:9px;height:9px;border-radius:50%}
-.map-dot.pickup{background:#1f9d76}.map-dot.destination{background:#d94b86}.map-dot.airport{background:#d6ad61}
-.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:#fff8ed;color:#203b36}
+.map-dot.pickup{background:#4d9b83}.map-dot.destination{background:#c9a45b}.map-dot.airport{background:#f0d6a0}
+.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:#201c17;color:#f2e4cb;border:1px solid #b69a78}
+.leaflet-popup-content{font-family:inherit;font-size:12px}
+.leaflet-control-attribution{background:rgba(20,18,15,.78)!important;color:#b9ad9d!important}
+.leaflet-control-attribution a{color:#d8bd8d!important}
+.route-flow{stroke-dasharray:10 13;animation:routeFlow 1.15s linear infinite;filter:drop-shadow(0 0 3px rgba(240,214,160,.55))}
+@keyframes routeFlow{to{stroke-dashoffset:-46}}
+@media(prefers-reduced-motion:reduce){.route-flow{animation:none}}
 @media(max-width:620px){#bookingMap{height:280px}.booking-map-heading{align-items:flex-start;flex-direction:column}}
 
 .quick-location-tools{margin:0 0 12px;padding:12px;border:1px solid rgba(182,154,120,.35);border-radius:12px;background:#201c17}
@@ -2863,7 +2869,11 @@ let bookingMap, pickupMarker, destinationMarker, airportMarker, routeLine;
 function initBookingMap(){
   if(!window.L||bookingMap)return;
   bookingMap=L.map('bookingMap',{scrollWheelZoom:false}).setView([23.15,-109.75],9);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap'}).addTo(bookingMap);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{
+    maxZoom:19,
+    subdomains:'abcd',
+    attribution:'&copy; OpenStreetMap &copy; CARTO'
+  }).addTo(bookingMap);
   airportMarker=L.marker([AIRPORT_SJD.latitude,AIRPORT_SJD.longitude]).addTo(bookingMap).bindPopup('Aeropuerto Internacional de Los Cabos (SJD) · punto fijo de encuentro');
   airportMarker.setIcon(L.divIcon({className:'',html:'<div style="background:#c9a45b;border:2px solid white;border-radius:50%;width:18px;height:18px;box-shadow:0 1px 7px #0008"></div>',iconSize:[18,18],iconAnchor:[9,9]}));
   bookingMap.on('click',(event)=>{
@@ -2877,12 +2887,18 @@ function initBookingMap(){
   });
   setTimeout(()=>bookingMap.invalidateSize(),250);
 }
-function makeMapIcon(color){return L.divIcon({className:'',html:'<div style="width:22px;height:22px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:'+color+';border:3px solid white;box-shadow:0 2px 8px #0008"></div>',iconSize:[22,22],iconAnchor:[11,22]});}
+function makeMapIcon(color){
+  return L.divIcon({
+    className:'',
+    html:'<div style="width:22px;height:22px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:'+color+';border:2px solid #f7ead2;box-shadow:0 0 0 4px rgba(201,164,91,.20),0 4px 12px #000b"></div>',
+    iconSize:[22,22],iconAnchor:[11,22]
+  });
+}
 function updateMapMarker(kind,point){
   if(!bookingMap||!point)return;
   const isPickup=kind==='pickup';
   let marker=isPickup?pickupMarker:destinationMarker;
-  if(!marker)marker=L.marker([point.latitude,point.longitude],{draggable:true,icon:makeMapIcon(isPickup?'#1f9d76':'#d94b86')}).addTo(bookingMap);
+  if(!marker)marker=L.marker([point.latitude,point.longitude],{draggable:true,icon:makeMapIcon(isPickup?'#4d9b83':'#c9a45b')}).addTo(bookingMap);
   marker.setLatLng([point.latitude,point.longitude]).bindPopup(isPickup?'Punto de recogida':'Destino');
   marker.off('dragend');
   marker.on('dragend',()=>{
@@ -3107,8 +3123,14 @@ async function calculateMapboxRoute() {
     distanceInput.value = distanceKm;
     if(routeLine)bookingMap.removeLayer(routeLine);
     if(result.geometry&&result.geometry.coordinates){
-      routeLine=L.geoJSON(result.geometry,{style:{color:'#c9a45b',weight:5,opacity:.9}}).addTo(bookingMap);
-      bookingMap.fitBounds(routeLine.getBounds(),{padding:[30,30]});
+      const routeHalo=L.geoJSON(result.geometry,{
+        style:{color:'#c9a45b',weight:11,opacity:.28,lineCap:'round',lineJoin:'round'}
+      });
+      const routeCore=L.geoJSON(result.geometry,{
+        style:{color:'#f0d6a0',weight:4.5,opacity:1,lineCap:'round',lineJoin:'round',className:'route-flow'}
+      });
+      routeLine=L.layerGroup([routeHalo,routeCore]).addTo(bookingMap);
+      bookingMap.fitBounds(routeCore.getBounds(),{padding:[38,38]});
     }
     getQuote();
     mapboxRouteStatus.textContent = 'Ruta calculada: ' + distanceKm.toLocaleString('es-MX') +
