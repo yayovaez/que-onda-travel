@@ -3621,53 +3621,42 @@ async function submitBookingRequest(event) {
 @media(max-width:700px){header{flex-wrap:wrap}.qot-language{margin-left:auto}.brand-description{display:none}}
 </style>
 <script>
-(() => {
- const translations = {
- en: {
- "Mexican Experiences":"Mexican Experiences","with Private Transportation":"with Private Transportation",
- "Inicio":"Home","Experiencias":"Exper<script>
 (function(){
- const dictionaries={"en":{"MENÚ":"MENU","IDIOMA":"LANGUAGE","Inicio":"Home","Experiencias":"Experiences","Reservar":"Book now","Opiniones":"Reviews","Contacto":"Contact","Traslados al Aeropuerto":"Airport Transfers","Transporte Privado":"Private Transportation","Tours Locales":"Local Tours","Experiencias en Los Cabos":"Los Cabos Experiences","México en colores · Baja California Sur y más allá":"Mexico in colour · Baja California Sur and beyond","Un viaje con sabor a México":"A journey with the spirit of Mexico","Viaja con comodidad":"Travel in comfort","Nuestra Flota":"Our Fleet","Reserva tu Traslado":"Book Your Transfer","Reserva tu traslado":"Book your transfer","Completa lo esencial y te contactaremos para confirmar.":"Fill in the details and we'll contact you to confirm.","Nombre":"Name","Tu nombre":"Your name","Correo electrónico":"Email address","Servicio":"Service","Traslado Aeropuerto (SJD)":"Airport Transfer (SJD)","Transporte privado":"Private transportation","Tour local":"Local tour","Viaje":"Trip","Sencillo / One-way":"One-way","Redondo / Round-trip":"Round trip","Vehículo":"Vehicle","¿Dónde te recogemos?":"Pickup location","¿A dónde vas?":"Where are you going?","Calcular distancia y tarifa":"Calculate distance and fare","Ver mapa y ajustar ubicaciones":"View map and adjust locations","Opcional":"Optional","Ubicación y recorrido":"Locations and route","ACCESOS RÁPIDOS":"QUICK LOCATIONS","Recogida":"Pickup","Destino":"Destination","Fecha":"Date","Hora":"Time","Pasajeros":"Passengers","DETALLES DE TU SERVICIO":"YOUR SERVICE DETAILS","Una experiencia cómoda, clara y sin contratiempos.":"A comfortable, clear and seamless experience.","efectivo":"cash","Enviar solicitud":"Send booking request","Tu aventura comienza aquí":"Your adventure starts here","Hablemos por WhatsApp":"Chat with us on WhatsApp"},"fr":{"MENÚ":"MENU","IDIOMA":"LANGUE","Inicio":"Accueil","Experiencias":"Expériences","Reservar":"Réserver","Opiniones":"Avis","Contacto":"Contact","Traslados al Aeropuerto":"Transferts aéroport","Transporte Privado":"Transport privé","Tours Locales":"Excursions locales","Experiencias en Los Cabos":"Expériences à Los Cabos","México en colores · Baja California Sur y más allá":"Le Mexique en couleurs · Basse-Californie du Sud et ailleurs","Un viaje con sabor a México":"Un voyage aux couleurs du Mexique","Viaja con comodidad":"Voyagez confortablement","Nuestra Flota":"Notre flotte","Reserva tu Traslado":"Réservez votre transfert","Reserva tu traslado":"Réservez votre transfert","Completa lo esencial y te contactaremos para confirmar.":"Renseignez les informations essentielles et nous vous contacterons pour confirmer.","Nombre":"Nom","Tu nombre":"Votre nom","Correo electrónico":"Adresse e-mail","Servicio":"Service","Traslado Aeropuerto (SJD)":"Transfert aéroport (SJD)","Transporte privado":"Transport privé","Tour local":"Excursion locale","Viaje":"Trajet","Sencillo / One-way":"Aller simple","Redondo / Round-trip":"Aller-retour","Vehículo":"Véhicule","¿Dónde te recogemos?":"Lieu de prise en charge","¿A dónde vas?":"Où allez-vous ?","Calcular distancia y tarifa":"Calculer la distance et le tarif","Ver mapa y ajustar ubicaciones":"Voir la carte et ajuster les lieux","Opcional":"Facultatif","Ubicación y recorrido":"Lieux et itinéraire","ACCESOS RÁPIDOS":"ACCÈS RAPIDES","Recogida":"Prise en charge","Destino":"Destination","Fecha":"Date","Hora":"Heure","Pasajeros":"Passagers","DETALLES DE TU SERVICIO":"DÉTAILS DE VOTRE SERVICE","Una experiencia cómoda, clara y sin contratiempos.":"Une expérience confortable, claire et sans souci.","efectivo":"espèces","Enviar solicitud":"Envoyer la demande","Tu aventura comienza aquí":"Votre aventure commence ici","Hablemos por WhatsApp":"Contactez-nous sur WhatsApp"}};
- const sourceNodes=[];
- const sourceAttrs=[];
+ const dictionaries={
+  en:{"MENÚ":"MENU","IDIOMA":"LANGUAGE","Inicio":"Home","Experiencias":"Experiences","Reservar":"Book now","Opiniones":"Reviews","Contacto":"Contact","Traslados al Aeropuerto":"Airport Transfers","Transporte Privado":"Private Transportation","Tours Locales":"Local Tours","Experiencias en Los Cabos":"Los Cabos Experiences","Nuestra Flota":"Our Fleet","Reserva tu Traslado":"Book Your Transfer","Reserva tu traslado":"Book your transfer","Nombre":"Name","Tu nombre":"Your name","Correo electrónico":"Email address","Servicio":"Service","Traslado Aeropuerto (SJD)":"Airport Transfer (SJD)","Transporte privado":"Private transportation","Tour local":"Local tour","Viaje":"Trip","Vehículo":"Vehicle","¿Dónde te recogemos?":"Pickup location","¿A dónde vas?":"Where are you going?","Calcular distancia y tarifa":"Calculate distance and fare","Ver mapa y ajustar ubicaciones":"View map and adjust locations","Opcional":"Optional","Ubicación y recorrido":"Locations and route","ACCESOS RÁPIDOS":"QUICK LOCATIONS","Recogida":"Pickup","Destino":"Destination","Fecha":"Date","Hora":"Time","Pasajeros":"Passengers","DETALLES DE TU SERVICIO":"YOUR SERVICE DETAILS","Enviar solicitud":"Send booking request","Tu aventura comienza aquí":"Your adventure starts here","Hablemos por WhatsApp":"Chat with us on WhatsApp","Opiniones de nuestros viajeros":"Reviews from our travellers","Reserva ahora":"Book now","Experiencias locales":"Local experiences","Tu nombre completo":"Your full name","Teléfono":"Phone","Correo":"Email","Selecciona":"Select","Sencillo":"One-way","Redondo":"Round trip","Pago en efectivo al finalizar el servicio":"Cash payment at the end of the service"},
+  fr:{"MENÚ":"MENU","IDIOMA":"LANGUE","Inicio":"Accueil","Experiencias":"Expériences","Reservar":"Réserver","Opiniones":"Avis","Contacto":"Contact","Traslados al Aeropuerto":"Transferts aéroport","Transporte Privado":"Transport privé","Tours Locales":"Excursions locales","Experiencias en Los Cabos":"Expériences à Los Cabos","Nuestra Flota":"Notre flotte","Reserva tu Traslado":"Réservez votre transfert","Reserva tu traslado":"Réservez votre transfert","Nombre":"Nom","Tu nombre":"Votre nom","Correo electrónico":"Adresse e-mail","Servicio":"Service","Traslado Aeropuerto (SJD)":"Transfert aéroport (SJD)","Transporte privado":"Transport privé","Tour local":"Excursion locale","Viaje":"Trajet","Vehículo":"Véhicule","¿Dónde te recogemos?":"Lieu de prise en charge","¿A dónde vas?":"Où allez-vous ?","Calcular distancia y tarifa":"Calculer la distance et le tarif","Ver mapa y ajustar ubicaciones":"Voir la carte et ajuster les lieux","Opcional":"Facultatif","Ubicación y recorrido":"Lieux et itinéraire","ACCESOS RÁPIDOS":"ACCÈS RAPIDES","Recogida":"Prise en charge","Destino":"Destination","Fecha":"Date","Hora":"Heure","Pasajeros":"Passagers","DETALLES DE TU SERVICIO":"DÉTAILS DE VOTRE SERVICE","Enviar solicitud":"Envoyer la demande","Tu aventura comienza aquí":"Votre aventure commence ici","Hablemos por WhatsApp":"Contactez-nous sur WhatsApp","Opiniones de nuestros viajeros":"Avis de nos voyageurs","Reserva ahora":"Réserver","Experiencias locales":"Expériences locales","Tu nombre completo":"Votre nom complet","Teléfono":"Téléphone","Correo":"E-mail","Selecciona":"Sélectionner","Sencillo":"Aller simple","Redondo":"Aller-retour","Pago en efectivo al finalizar el servicio":"Paiement en espèces à la fin du trajet"}
+ };
+ let sourceNodes=[],sourceAttrs=[];
  function init(){
   const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);
-  let n;while(n=walker.nextNode())sourceNodes.push({node:n,text:n.nodeValue});
+  let node;while((node=walker.nextNode()))sourceNodes.push({node,text:node.nodeValue});
   document.querySelectorAll('[placeholder]').forEach(el=>sourceAttrs.push({el,attr:'placeholder',value:el.getAttribute('placeholder')}));
-  document.querySelectorAll('option').forEach(el=>sourceAttrs.push({el,attr:'text',value:el.textContent}));
+  document.querySelectorAll('option').forEach(el=>{if(el.id!=='qotLanguage')sourceAttrs.push({el,attr:'text',value:el.textContent})});
  }
  function apply(lang){
-  const d=dictionaries[lang]||{};
+  const dict=dictionaries[lang]||{};
   document.documentElement.lang=lang;
-  sourceNodes.forEach(({node,text})=>{
-   const key=text.trim();
-   if(!key)return;
-   node.nodeValue=text.replace(key,d[key]||key);
-  });
-  sourceAttrs.forEach(({el,attr,value})=>{
-   if(attr==='placeholder')el.setAttribute(attr,d[value]||value);
-   else el.textContent=d[value]||value;
-  });
-  const l=document.querySelector('.qot-language-label');
-  if(l)l.textContent=lang==='fr'?'LANGUE':lang==='en'?'LANGUAGE':'IDIOMA';
-  const m=document.querySelector('.menu-dropdown summary');
-  if(m)m.setAttribute('aria-label',lang==='fr'?'Ouvrir le menu de navigation':lang==='en'?'Open navigation menu':'Abrir menú de navegación');
+  sourceNodes.forEach(({node,text})=>{if(node.isConnected){const key=text.trim();if(key&&dict[key])node.nodeValue=text.replace(key,dict[key]);}});
+  sourceAttrs.forEach(({el,attr,value})=>{if(el.isConnected){if(attr==='placeholder')el.setAttribute(attr,dict[value]||value);else el.textContent=dict[value]||value;}});
+  const label=document.querySelector('.qot-language-label');
+  if(label)label.textContent=lang==='fr'?'LANGUE':lang==='en'?'LANGUAGE':'IDIOMA';
+  const menu=document.querySelector('.menu-dropdown summary');
+  if(menu)menu.setAttribute('aria-label',lang==='fr'?'Ouvrir le menu de navigation':lang==='en'?'Open navigation menu':'Abrir menú de navegación');
   try{localStorage.setItem('qot-language',lang)}catch(e){}
  }
  window.qotSetLanguage=apply;
  function start(){
-   init();
-   const saved=(()=>{try{return localStorage.getItem('qot-language')||'es'}catch(e){return'es'}})();
-   const selector=document.getElementById('qotLanguage');
-   if(selector){
-     selector.value=saved;
-     selector.addEventListener('change',()=>apply(selector.value));
-   }
-   apply(saved);
+  init();
+  const selector=document.getElementById('qotLanguage');
+  let saved='es';try{saved=localStorage.getItem('qot-language')||'es'}catch(e){}
+  if(selector){selector.value=saved;selector.addEventListener('change',()=>apply(selector.value));}
+  apply(saved);
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
 })();
-</script>px!important;
+</script>
+<style>
+
   color:#164b50!important;
   box-shadow:0 9px 22px rgba(7,91,99,.10),inset 0 1px 0 #fff!important;
 }
