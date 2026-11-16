@@ -3655,11 +3655,17 @@ async function submitBookingRequest(event) {
   try{localStorage.setItem('qot-language',lang)}catch(e){}
  }
  window.qotSetLanguage=apply;
- if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
- const saved=(()=>{try{return localStorage.getItem('qot-language')||'es'}catch(e){return'es'}})();
- const selector=document.getElementById('qotLanguage');
- if(selector){selector.value=saved;selector.addEventListener('change',()=>apply(selector.value));}
- apply(saved);
+ function start(){
+   init();
+   const saved=(()=>{try{return localStorage.getItem('qot-language')||'es'}catch(e){return'es'}})();
+   const selector=document.getElementById('qotLanguage');
+   if(selector){
+     selector.value=saved;
+     selector.addEventListener('change',()=>apply(selector.value));
+   }
+   apply(saved);
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
 })();
 </script>px!important;
   color:#164b50!important;
