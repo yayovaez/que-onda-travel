@@ -3391,10 +3391,888 @@ async function calculateMapboxRoute() {
       routeLine=L.layerGroup([routeHalo,routeCore]).addTo(bookingMap);
       bookingMap.fitBounds(routeCore.getBounds(),{padding:[38,38]});
     }
+    const quote = getQuote();
+    const priceSummary = quote
+      ? ' · Tarifa estimada: 
+  } catch (error) {
+    console.error(error);
+    mapboxRouteStatus.textContent = error.message || 'No pudimos calcular la ruta.';
+    distanceInput.value = '';
     getQuote();
+  } finally {
+    button.disabled = false;
+    button.textContent = 'Calcular distancia y tarifa';
+  }
+}
+document.getElementById('openRouteMap').addEventListener('click', calculateMapboxRoute);
+document.getElementById('useAirportPickup').addEventListener('click',()=>{
+  selectedPlaces.pickup={...AIRPORT_SJD};pickupInput.value=AIRPORT_SJD.label;
+  updateMapMarker('pickup',selectedPlaces.pickup);bookingMap.setView([AIRPORT_SJD.latitude,AIRPORT_SJD.longitude],14);
+  distanceInput.value='';getQuote();
+  mapboxRouteStatus.textContent='Aeropuerto SJD fijado como punto de recogida. Selecciona el destino y calcula la ruta.';
+  if(selectedPlaces.destination)calculateMapboxRoute();
+});
+document.getElementById('fitBookingMap').addEventListener('click',fitMapToPoints);
+document.querySelectorAll('[data-map-zone]').forEach(button=>{
+  button.addEventListener('click',()=>{
+    const zones={
+      costco:{lat:22.912, lng:-109.89, zoom:15, label:'Costco · El Tezal'},
+      marina:{lat:22.881, lng:-109.91, zoom:15, label:'Marina de Cabo San Lucas'},
+      medano:{lat:22.887, lng:-109.90, zoom:15, label:'Playa El Médano'},
+      hotel:{lat:22.94, lng:-109.82, zoom:12, label:'Corredor hotelero'},
+      sjc:{lat:23.061, lng:-109.70, zoom:15, label:'Centro de San José del Cabo'}
+    };
+    const zone=zones[button.dataset.mapZone];
+    if(!zone||!bookingMap)return;
+    const field=activeRouteField==='pickup'?'recogida':'destino';
+    bookingMap.setView([zone.lat,zone.lng],zone.zoom);
+    mapboxRouteStatus.textContent='Zona '+zone.label+' enfocada para '+field+'. Toca el mapa para colocar el pin exacto.';
+  });
+});
+
+initBookingMap();
+
+function updateBookingNotice() {
+  airportNote.hidden = serviceSelect.value !== 'Traslado Aeropuerto (SJD)';
+}
+serviceSelect.addEventListener('change', updateBookingNotice);
+updateBookingNotice();
+
+let usdMxnRate = null;
+let usdRateDate = null;
+async function loadBanxicoFixRate() {
+  try {
+    const response = await fetch("https://hubfiscal.mx/api/v1/public/fx/today", { cache: "no-store" });
+    if (!response.ok) throw new Error("No se pudo consultar el FIX de Banxico.");
+    const data = await response.json();
+    const fix = Number(data.rate);
+    if (!Number.isFinite(fix) || fix <= 1) throw new Error("El FIX recibido no es válido.");
+    usdMxnRate = fix - 1;
+    usdRateDate = data.date || "";
+    getQuote();
+    document.querySelectorAll(".vehicle-rate").forEach((el, index) => {
+      const rates = [26, 70, 75];
+      el.textContent = "Desde $" + rates[index] + " MXN / $" + (rates[index] / usdMxnRate).toFixed(2) + " USD por km";
+    });
+  } catch (error) {
+    console.warn("Tipo de cambio FIX:", error);
+    quotePreview.dataset.fxStatus = "unavailable";
+  }
+}
+function getQuote() {
+  const distance = Number(distanceInput.value);
+  const selectedVehicle = vehicleSelect.options[vehicleSelect.selectedIndex];
+  const rate = Number(selectedVehicle.dataset.rate);
+  const multiplier = tripTypeSelect.value.startsWith('Redondo') ? 2 : 1;
+  if (!Number.isFinite(distance) || distance <= 0) {
+    quotePreview.textContent = 'Completa la distancia para consultar una tarifa estimada en MXN y USD.';
+    return null;
+  }
+  const totalKm = distance * multiplier;
+  const total = Math.round(totalKm * rate);
+  const usd = usdMxnRate ? (total / usdMxnRate).toFixed(2) : null;
+  const perKmUsd = usdMxnRate ? (rate / usdMxnRate).toFixed(2) : null;
+  quotePreview.innerHTML = 'Tarifa estimada: $' + total.toLocaleString('es-MX') + ' MXN' +
+    (usd ? ' <span class="quote-usd">≈ $' + usd + ' USD</span>' : '') +
+    '<small>' + selectedVehicle.value + ' · ' + totalKm.toLocaleString('es-MX') +
+    ' km totales · $' + rate + ' MXN' + (perKmUsd ? ' / $' + perKmUsd + ' USD' : '') + ' por km</small>' +
+    '<small class="quote-exchange">' + (usdMxnRate ? 'Tipo de cambio aplicado: $' + usdMxnRate.toFixed(4) + ' MXN/USD (FIX Banxico menos $1.00)' + (usdRateDate ? ' · FIX del ' + usdRateDate : '') : 'Consultando tipo de cambio FIX de Banxico…') +
+    '. El precio final se confirma en pesos mexicanos.</small>';
+  return { distance, totalKm, rate, total, totalUsd: usd, vehicle: selectedVehicle.value };
+}
+loadBanxicoFixRate();
+
+[vehicleSelect, distanceInput, tripTypeSelect].forEach(el => el.addEventListener('input', getQuote));
+[vehicleSelect, distanceInput, tripTypeSelect].forEach(el => el.addEventListener('change', getQuote));
+
+async function submitBookingRequest(event) {
+  event.preventDefault();
+  if (!bookingForm.reportValidity()) return;
+  const quote = getQuote();
+  if (!quote) { distanceInput.focus(); return; }
+
+  const data = new FormData(bookingForm);
+  const status = document.getElementById('bookingStatus');
+  const button = document.getElementById('bookingSubmit');
+  button.disabled = true;
+  status.textContent = 'Enviando tu solicitud…';
+
+  try {
+    const client = window.supabase.createClient(
+      'https://iyelnragqgriycdyqowq.supabase.co',
+      'sb_publishable_d-xqUkbQSgzZys3OfXzbiw_iyHzHItE'
+    );
+    const { error } = await client.from('booking_requests').insert({
+      customer_name: String(data.get('customerName')).trim(),
+      customer_email: String(data.get('customerEmail') || '').trim() || null,
+      customer_phone: String(data.get('customerPhone')).trim(),
+      service: data.get('service'),
+      trip_type: String(data.get('tripType')).startsWith('Redondo') ? 'Redondo' : 'Sencillo',
+      vehicle: data.get('vehicle'),
+      distance_km: quote.totalKm,
+      pickup: String(data.get('pickup')).trim(),
+      destination: String(data.get('destination')).trim(),
+      travel_date: data.get('date'),
+      travel_time: data.get('time'),
+      passengers: Number(data.get('passengers')),
+      estimated_total_mxn: quote.total,
+      status: 'pending'
+    });
+    if (error) throw error;
+    bookingForm.reset();
+    quotePreview.textContent = 'Solicitud recibida. La tarifa es estimada y confirmaremos disponibilidad y precio.';
+    status.textContent = '¡Listo! Recibimos tu solicitud. Qué Onda Travel se pondrá en contacto contigo para confirmar tu reservación.';
+  } catch (error) {
+    console.error(error);
+    status.textContent = 'No pudimos enviar tu solicitud. Inténtalo de nuevo o contáctanos por WhatsApp.';
+  } finally {
+    button.disabled = false;
+  }
+}
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(() => {
+  const SUPABASE_URL = "https://iyelnragqgriycdyqowq.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_d-xqUkbQSgzZys3OfXzbiw_iyHzHItE";
+  const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  const form = document.getElementById("reviewForm");
+  const status = document.getElementById("reviewStatus");
+  const list = document.getElementById("approvedReviews");
+  const endpoint = SUPABASE_URL + "/functions/v1/approved-reviews";
+
+  async function loadApprovedReviews() {
+    try {
+      const response = await fetch(endpoint, { headers: { apikey: SUPABASE_KEY } });
+      if (!response.ok) throw new Error("No se pudieron cargar las opiniones.");
+      const payload = await response.json();
+      if (!payload.reviews || !payload.reviews.length) return;
+      list.innerHTML = "";
+      payload.reviews.forEach(review => {
+        const card = document.createElement("article");
+        card.className = "review-card";
+        const stars = document.createElement("div");
+        stars.className = "review-stars";
+        stars.textContent = review.rating ? "★".repeat(review.rating) : "0 estrellas";
+        const name = document.createElement("strong");
+        name.textContent = review.customer_name;
+        const body = document.createElement("p");
+        body.textContent = review.review_text;
+        card.append(stars, name, body);
+        if (review.media_url) {
+          const media = document.createElement(review.media_type === "video" ? "video" : "img");
+          media.src = review.media_url;
+          if (review.media_type === "video") media.controls = true;
+          else media.alt = "Fotografía compartida por " + review.customer_name;
+          card.append(media);
+        }
+        list.append(card);
+      });
+    } catch (error) { console.warn(error); }
+  }
+
+  form.addEventListener("submit", async event => {
+    event.preventDefault();
+    if (!form.reportValidity()) return;
+    const submit = form.querySelector("button[type=submit]");
+    submit.disabled = true;
+    status.textContent = "Enviando tu recomendación...";
+    try {
+      const data = new FormData(form);
+      const file = document.getElementById("reviewMedia").files[0];
+      let mediaPath = null, mediaType = null;
+      if (file) {
+        if (file.size > 50 * 1024 * 1024) throw new Error("El archivo supera el límite de 50 MB.");
+        const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+        mediaPath = crypto.randomUUID() + "/" + safeName;
+        mediaType = file.type.startsWith("video/") ? "video" : "image";
+        const { error: uploadError } = await client.storage.from("review-media").upload(mediaPath, file, { contentType: file.type, upsert: false });
+        if (uploadError) throw uploadError;
+      }
+      const { error } = await client.from("customer_reviews").insert({
+        customer_name: data.get("customer_name").trim(),
+        rating: Number(data.get("rating")),
+        review_text: data.get("review_text").trim(),
+        media_path: mediaPath,
+        media_type: mediaType
+      });
+      if (error) throw error;
+      form.reset();
+      status.textContent = "¡Gracias! Recibimos tu recomendación. La revisaremos antes de publicarla.";
+    } catch (error) {
+      console.error(error);
+      status.textContent = error.message || "No pudimos enviar tu recomendación. Inténtalo de nuevo.";
+    } finally { submit.disabled = false; }
+  });
+  loadApprovedReviews();
+})();
+</script>
+
+
+
+
+<style>
+.qot-language{display:flex;align-items:center;gap:8px;color:#f2d79a;font-size:11px;font-weight:800;letter-spacing:1px;white-space:nowrap}
+.qot-language select{background:#103d3a;color:#fff;border:1px solid #d8ad51;border-radius:22px;padding:10px 13px;font-weight:700;cursor:pointer}
+.qot-language select option{background:#103d3a;color:#fff}
+@media(max-width:700px){header{flex-wrap:wrap}.qot-language{margin-left:auto}.brand-description{display:none}}
+</style>
+<script>
+(function(){
+ const dictionaries={
+  en:{"¡Quiero mi aventura!":"Book my adventure!"},
+  fr:{"¡Quiero mi aventura!":"Je réserve mon aventure !"},
+  es:{},
+  en:{"MENÚ":"MENU","IDIOMA":"LANGUAGE","Inicio":"Home","Experiencias":"Experiences","Reservar":"Book now","Opiniones":"Reviews","Contacto":"Contact","Traslados al Aeropuerto":"Airport Transfers","Transporte Privado":"Private Transportation","Tours Locales":"Local Tours","Experiencias en Los Cabos":"Los Cabos Experiences","Nuestra Flota":"Our Fleet","Reserva tu Traslado":"Book Your Transfer","Reserva tu traslado":"Book your transfer","Nombre":"Name","Tu nombre":"Your name","Correo electrónico":"Email address","Servicio":"Service","Traslado Aeropuerto (SJD)":"Airport Transfer (SJD)","Transporte privado":"Private transportation","Tour local":"Local tour","Viaje":"Trip","Vehículo":"Vehicle","¿Dónde te recogemos?":"Pickup location","¿A dónde vas?":"Where are you going?","Calcular distancia y tarifa":"Calculate distance and fare","Ver mapa y ajustar ubicaciones":"View map and adjust locations","Opcional":"Optional","Ubicación y recorrido":"Locations and route","ACCESOS RÁPIDOS":"QUICK LOCATIONS","Recogida":"Pickup","Destino":"Destination","Fecha":"Date","Hora":"Time","Pasajeros":"Passengers","DETALLES DE TU SERVICIO":"YOUR SERVICE DETAILS","Enviar solicitud":"Send booking request","Tu aventura comienza aquí":"Your adventure starts here","Hablemos por WhatsApp":"Chat with us on WhatsApp","Opiniones de nuestros viajeros":"Reviews from our travellers","Reserva ahora":"Book now","Experiencias locales":"Local experiences","Tu nombre completo":"Your full name","Teléfono":"Phone","Correo":"Email","Selecciona":"Select","Sencillo":"One-way","Redondo":"Round trip","Pago en efectivo al finalizar el servicio":"Cash payment at the end of the service"},
+  fr:{"MENÚ":"MENU","IDIOMA":"LANGUE","Inicio":"Accueil","Experiencias":"Expériences","Reservar":"Réserver","Opiniones":"Avis","Contacto":"Contact","Traslados al Aeropuerto":"Transferts aéroport","Transporte Privado":"Transport privé","Tours Locales":"Excursions locales","Experiencias en Los Cabos":"Expériences à Los Cabos","Nuestra Flota":"Notre flotte","Reserva tu Traslado":"Réservez votre transfert","Reserva tu traslado":"Réservez votre transfert","Nombre":"Nom","Tu nombre":"Votre nom","Correo electrónico":"Adresse e-mail","Servicio":"Service","Traslado Aeropuerto (SJD)":"Transfert aéroport (SJD)","Transporte privado":"Transport privé","Tour local":"Excursion locale","Viaje":"Trajet","Vehículo":"Véhicule","¿Dónde te recogemos?":"Lieu de prise en charge","¿A dónde vas?":"Où allez-vous ?","Calcular distancia y tarifa":"Calculer la distance et le tarif","Ver mapa y ajustar ubicaciones":"Voir la carte et ajuster les lieux","Opcional":"Facultatif","Ubicación y recorrido":"Lieux et itinéraire","ACCESOS RÁPIDOS":"ACCÈS RAPIDES","Recogida":"Prise en charge","Destino":"Destination","Fecha":"Date","Hora":"Heure","Pasajeros":"Passagers","DETALLES DE TU SERVICIO":"DÉTAILS DE VOTRE SERVICE","Enviar solicitud":"Envoyer la demande","Tu aventura comienza aquí":"Votre aventure commence ici","Hablemos por WhatsApp":"Contactez-nous sur WhatsApp","Opiniones de nuestros viajeros":"Avis de nos voyageurs","Reserva ahora":"Réserver","Experiencias locales":"Expériences locales","Tu nombre completo":"Votre nom complet","Teléfono":"Téléphone","Correo":"E-mail","Selecciona":"Sélectionner","Sencillo":"Aller simple","Redondo":"Aller-retour","Pago en efectivo al finalizar el servicio":"Paiement en espèces à la fin du trajet"}
+ };
+
+ Object.assign(dictionaries.en,{
+  "Qué Onda":"What's Up","Travel":"Travel",
+  "En Los Cabos, no solo te llevamos a tu destino: te damos la bienvenida y cuidamos cada detalle de tu viaje.":"In Los Cabos, we do more than take you to your destination: we welcome you and take care of every detail of your journey.",
+  "Creemos que la excelencia se nota en el trato. Por eso ofrecemos transporte privado y experiencias locales con puntualidad, atención personalizada y la calidez de quienes conocen y aman esta tierra. Queremos que disfrutes cada momento, desde que llegas hasta que te despides.":"We believe excellence is reflected in the way we treat you. That is why we offer private transportation and local experiences with punctual service, personal attention and the warmth of people who know and love this land. We want you to enjoy every moment, from arrival to farewell.",
+  "DESCUBRE EXPERIENCIAS":"DISCOVER EXPERIENCES","RESERVA TU VIAJE":"BOOK YOUR RIDE",
+  "Atención bilingüe y personalizada":"Bilingual, personalised service","Traslados privados para viajar con tranquilidad":"Private transfers for a worry-free journey","Conocimiento local para descubrir Los Cabos":"Local knowledge to discover Los Cabos",
+  "Traslados al Aeropuerto":"Airport Transfers","Transporte Privado":"Private Transportation","Tours Locales":"Local Tours","Experiencias en Los Cabos":"Los Cabos Experiences",
+  "México en colores · Baja California Sur y más allá":"Mexico in colour · Baja California Sur and beyond",
+  "Un viaje con sabor a México":"A journey with the spirit of Mexico",
+  "Del desierto de Baja al corazón artesanal de México: lugares, sabores y tradiciones que se quedan contigo.":"From the Baja desert to the artisan heart of Mexico: places, flavours and traditions that stay with you.",
+  "El Arco de Cabo":"The Cabo Arch","Donde el desierto se encuentra con el mar":"Where the desert meets the sea",
+  "Marina de Cabo San Lucas":"Cabo San Lucas Marina","Yates, aguas azules y una vista panorámica del puerto":"Yachts, blue waters and panoramic harbour views",
+  "Balandra":"Balandra"
+ });
+ Object.assign(dictionaries.fr,{
+  "Qué Onda":"Qué Onda","Travel":"Travel",
+  "En Los Cabos, no solo te llevamos a tu destino: te damos la bienvenida y cuidamos cada detalle de tu viaje.":"À Los Cabos, nous ne faisons pas que vous conduire à destination : nous vous souhaitons la bienvenue et prenons soin de chaque détail de votre voyage.",
+  "Creemos que la excelencia se nota en el trato. Por eso ofrecemos transporte privado y experiencias locales con puntualidad, atención personalizada y la calidez de quienes conocen y aman esta tierra. Queremos que disfrutes cada momento, desde que llegas hasta que te despides.":"Nous croyons que l’excellence se ressent dans l’accueil. C’est pourquoi nous proposons des transports privés et des expériences locales, avec ponctualité, attention personnalisée et la chaleur de ceux qui connaissent et aiment cette région. Nous souhaitons que vous profitiez de chaque instant, de votre arrivée à votre départ.",
+  "DESCUBRE EXPERIENCIAS":"DÉCOUVRIR LES EXPÉRIENCES","RESERVA TU VIAJE":"RÉSERVER VOTRE TRAJET",
+  "Atención bilingüe y personalizada":"Service bilingue et personnalisé","Traslados privados para viajar con tranquilidad":"Transferts privés en toute tranquillité","Conocimiento local para descubrir Los Cabos":"Une connaissance locale pour découvrir Los Cabos",
+  "Traslados al Aeropuerto":"Transferts aéroport","Transporte Privado":"Transport privé","Tours Locales":"Excursions locales","Experiencias en Los Cabos":"Expériences à Los Cabos",
+  "México en colores · Baja California Sur y más allá":"Le Mexique en couleurs · Basse-Californie du Sud et ailleurs",
+  "Un viaje con sabor a México":"Un voyage aux couleurs du Mexique",
+  "Del desierto de Baja al corazón artesanal de México: lugares, sabores y tradiciones que se quedan contigo.":"Du désert de Basse-Californie au cœur artisanal du Mexique : des lieux, des saveurs et des traditions inoubliables.",
+  "El Arco de Cabo":"L’Arche de Cabo","Donde el desierto se encuentra con el mar":"Là où le désert rencontre la mer",
+  "Marina de Cabo San Lucas":"La marina de Cabo San Lucas","Yates, aguas azules y una vista panorámica del puerto":"Yachts, eaux turquoise et vue panoramique sur le port",
+  "Balandra":"Balandra"
+ });
+
+ let sourceNodes=[],sourceAttrs=[];
+ function init(){
+  const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);
+  let node;while((node=walker.nextNode()))sourceNodes.push({node,text:node.nodeValue});
+  document.querySelectorAll('[placeholder]').forEach(el=>sourceAttrs.push({el,attr:'placeholder',value:el.getAttribute('placeholder')}));
+  document.querySelectorAll('option').forEach(el=>{if(el.id!=='qotLanguage')sourceAttrs.push({el,attr:'text',value:el.textContent})});
+ }
+ function apply(lang){
+  const dict=dictionaries[lang]||{};
+  document.documentElement.lang=lang;
+  sourceNodes.forEach(({node,text})=>{if(node.isConnected){const key=text.trim();if(key)node.nodeValue=text.replace(key,dict[key]||key);}});
+  sourceAttrs.forEach(({el,attr,value})=>{if(el.isConnected){if(attr==='placeholder')el.setAttribute(attr,dict[value]||value);else el.textContent=dict[value]||value;}});
+  const label=document.querySelector('.qot-language-label');
+  if(label)label.textContent=lang==='fr'?'LANGUE':lang==='en'?'LANGUAGE':'IDIOMA';
+  const menu=document.querySelector('.menu-dropdown summary');
+  if(menu)menu.setAttribute('aria-label',lang==='fr'?'Ouvrir le menu de navigation':lang==='en'?'Open navigation menu':'Abrir menú de navegación');
+  try{localStorage.setItem('qot-language',lang)}catch(e){}
+ }
+ window.qotSetLanguage=apply;
+ function start(){
+  init();
+  const selector=document.getElementById('qotLanguage');
+  let saved='es';try{saved=localStorage.getItem('qot-language')||'es'}catch(e){}
+  if(selector){selector.value=saved;selector.addEventListener('change',()=>apply(selector.value));}
+  apply(saved);
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
+})();
+</script>
+<style>
+
+  color:#164b50!important;
+  box-shadow:0 9px 22px rgba(7,91,99,.10),inset 0 1px 0 #fff!important;
+}
+.booking .booking-notice .notice-kicker{
+  color:#d51d69!important;
+  font-size:10px!important;
+  font-weight:800!important;
+  letter-spacing:1.5px!important;
+}
+.booking .booking-notice .notice-heading strong,
+.booking .booking-notice strong{
+  color:#075b63!important;
+  text-shadow:none!important;
+}
+.booking .booking-notice p{
+  color:#365d60!important;
+}
+.booking .booking-notice .airport-note{
+  background:linear-gradient(120deg,#dff4ed 0%,#eaf7f4 58%,#fff0d5 100%)!important;
+  border:1.5px solid #65b8a1!important;
+  border-left:5px solid #00a6a6!important;
+  border-radius:14px!important;
+  box-shadow:inset 0 1px 0 #fff!important;
+}
+.booking .booking-notice .airport-note .notice-kicker{
+  color:#d51d69!important;
+}
+.booking .booking-notice .airport-note strong{
+  color:#075b63!important;
+}
+.booking .booking-notice .airport-note p{
+  color:#365d60!important;
+}
+.booking .quote-preview{
+  background:linear-gradient(115deg,#075b63 0%,#087c78 55%,#16805d 100%)!important;
+  color:#fffaf0!important;
+  border:2px solid #f2b84b!important;
+  border-radius:18px!important;
+  padding:22px 20px!important;
+  box-shadow:0 10px 22px rgba(7,91,99,.18)!important;
+}
+.booking .quote-preview,
+.booking .quote-preview strong{
+  color:#fffaf0!important;
+}
+.booking .quote-preview small{
+  color:#ffedc5!important;
+}
+.booking .quote-preview:empty{display:none}
+@media(max-width:620px){
+ .booking .booking-notice{padding:18px 16px!important;border-radius:16px!important}
+ .booking .booking-notice .airport-note{padding:14px!important}
+ .booking .quote-preview{padding:19px 17px!important;font-size:16px!important}
+}
+
+/* PALETA ACTUALIZADA · VERDE PETRÓLEO, CREMA Y ROSA MEXICANO */
+:root{
+  --qot-black:#123f43;
+  --qot-black-soft:#1c5b5c;
+  --qot-champagne:#e4bd72;
+  --qot-champagne-light:#f4dfb3;
+  --qot-ivory:#fff8ed;
+}
+html,body{background:#fff4e5!important;color:#173d40!important}
+header,.site-header,.navbar{
+  background:linear-gradient(110deg,#07545a 0%,#08777a 58%,#15939a 100%)!important;
+  color:#fffaf2!important;border-bottom:2px solid #e9bd59!important;
+  box-shadow:0 5px 18px rgba(7,65,69,.16)!important
+}
+nav a,.nav a{color:#fffaf2!important}
+.language{background:#e5f4ef!important;color:#07545a!important;border:1px solid #f0c66a!important}
+.services{
+  background:linear-gradient(105deg,#0b6266,#168b88)!important;
+  color:#fffaf2!important;border-block:1px solid #e9bd59!important
+}
+.service{background:transparent!important;color:#fffaf2!important}
+.service-icon{background:#dff1e8!important;color:#08777a!important;border-color:#f0c66a!important}
+.vehicle-link,.hero-cta,.gold-button,.contact-button,.primary-button{
+  color:#fffaf2!important;
+  border:1px solid #f0c66a!important;
+  background:linear-gradient(120deg,#e62e83,#c91f70)!important;
+  box-shadow:0 5px 14px rgba(151,36,91,.16)!important
+}
+.vehicle-link:hover,.hero-cta:hover,.gold-button:hover,.contact-button:hover,.primary-button:hover{
+  color:#fff!important;background:linear-gradient(120deg,#bd1c68,#a9185d)!important
+}
+.hero-cta-secondary{
+  color:#fffaf2!important;background:rgba(7,84,90,.72)!important;border:1px solid #f0c66a!important
+}
+.booking-notice{
+  background:linear-gradient(120deg,#e4f3e9,#fff0d9)!important;
+  color:#365d60!important;border-color:#8bc5ad!important;border-left-color:#0b8985!important
+}
+.booking-notice strong{color:#075b63!important}
+.booking-notice p{color:#365d60!important}
+.booking-notice .airport-note{background:linear-gradient(120deg,#dff4ed,#fff0d5)!important;border-color:#65b8a1!important}
+.menu-panel{background:#fff8ed!important;border:1px solid #d8bd86!important;color:#17484a!important;box-shadow:0 12px 30px rgba(7,65,69,.18)!important}
+.menu-panel a{color:#17484a!important}
+.menu-panel a:hover{background:#e2f1e9!important;color:#07545a!important}
+.menu-dropdown summary{color:#fff8ed!important;border-color:#f0c66a!important}
+.menu-icon i{background:#f0c66a!important}
+.contact{
+  background:linear-gradient(120deg,#07545a,#16817e)!important;
+  color:#fffaf2!important;border-top:3px solid #e9bd59!important
+}
+.contact h2{color:#ffe2a4!important}
+footer{background:linear-gradient(110deg,#06434a,#075b60)!important;color:#fff3df!important;border-top:2px solid #e9bd59!important}
+input:focus,select:focus,textarea:focus{border-color:#0b8985!important;box-shadow:0 0 0 3px rgba(11,137,133,.16)!important}
+::selection{background:#f2c45e;color:#123f43}
+
+/* SELECTOR DE IDIOMA · ESTILO MENÚ, SIN FONDO NEGRO */
+.qot-language{
+  display:flex!important;align-items:center!important;gap:10px!important;
+  color:#ffe2a4!important;
+}
+.qot-language select,
+#qotLanguage{
+  appearance:none!important;-webkit-appearance:none!important;
+  min-width:116px!important;padding:12px 42px 12px 17px!important;
+  border:1.5px solid #f0c66a!important;border-radius:999px!important;
+  background-color:#e4f3e9!important;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23075b63' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m7 10 5 5 5-5'/%3E%3C/svg%3E")!important;
+  background-repeat:no-repeat!important;background-position:right 15px center!important;
+  color:#075b63!important;font-size:14px!important;font-weight:750!important;
+  box-shadow:0 4px 12px rgba(7,91,99,.12)!important;cursor:pointer!important;
+}
+.qot-language select option,#qotLanguage option{
+  background:#fff8ed!important;color:#075b63!important;font-weight:600!important;
+}
+.qot-language select:focus,#qotLanguage:focus{
+  outline:3px solid rgba(240,198,106,.35)!important;outline-offset:2px!important;
+  border-color:#fff0b8!important;
+}
+@media(max-width:620px){
+ .qot-language{gap:8px!important}
+ .qot-language select,#qotLanguage{min-width:112px!important;padding:11px 38px 11px 14px!important}
+}
+</style>
+
+</body>
+</html>
+ + quote.total.toLocaleString('es-MX') + ' MXN' +
+        (quote.totalUsd ? ' (≈ 
+  } catch (error) {
+    console.error(error);
+    mapboxRouteStatus.textContent = error.message || 'No pudimos calcular la ruta.';
+    distanceInput.value = '';
+    getQuote();
+  } finally {
+    button.disabled = false;
+    button.textContent = 'Calcular distancia y tarifa';
+  }
+}
+document.getElementById('openRouteMap').addEventListener('click', calculateMapboxRoute);
+document.getElementById('useAirportPickup').addEventListener('click',()=>{
+  selectedPlaces.pickup={...AIRPORT_SJD};pickupInput.value=AIRPORT_SJD.label;
+  updateMapMarker('pickup',selectedPlaces.pickup);bookingMap.setView([AIRPORT_SJD.latitude,AIRPORT_SJD.longitude],14);
+  distanceInput.value='';getQuote();
+  mapboxRouteStatus.textContent='Aeropuerto SJD fijado como punto de recogida. Selecciona el destino y calcula la ruta.';
+  if(selectedPlaces.destination)calculateMapboxRoute();
+});
+document.getElementById('fitBookingMap').addEventListener('click',fitMapToPoints);
+document.querySelectorAll('[data-map-zone]').forEach(button=>{
+  button.addEventListener('click',()=>{
+    const zones={
+      costco:{lat:22.912, lng:-109.89, zoom:15, label:'Costco · El Tezal'},
+      marina:{lat:22.881, lng:-109.91, zoom:15, label:'Marina de Cabo San Lucas'},
+      medano:{lat:22.887, lng:-109.90, zoom:15, label:'Playa El Médano'},
+      hotel:{lat:22.94, lng:-109.82, zoom:12, label:'Corredor hotelero'},
+      sjc:{lat:23.061, lng:-109.70, zoom:15, label:'Centro de San José del Cabo'}
+    };
+    const zone=zones[button.dataset.mapZone];
+    if(!zone||!bookingMap)return;
+    const field=activeRouteField==='pickup'?'recogida':'destino';
+    bookingMap.setView([zone.lat,zone.lng],zone.zoom);
+    mapboxRouteStatus.textContent='Zona '+zone.label+' enfocada para '+field+'. Toca el mapa para colocar el pin exacto.';
+  });
+});
+
+initBookingMap();
+
+function updateBookingNotice() {
+  airportNote.hidden = serviceSelect.value !== 'Traslado Aeropuerto (SJD)';
+}
+serviceSelect.addEventListener('change', updateBookingNotice);
+updateBookingNotice();
+
+let usdMxnRate = null;
+let usdRateDate = null;
+async function loadBanxicoFixRate() {
+  try {
+    const response = await fetch("https://hubfiscal.mx/api/v1/public/fx/today", { cache: "no-store" });
+    if (!response.ok) throw new Error("No se pudo consultar el FIX de Banxico.");
+    const data = await response.json();
+    const fix = Number(data.rate);
+    if (!Number.isFinite(fix) || fix <= 1) throw new Error("El FIX recibido no es válido.");
+    usdMxnRate = fix - 1;
+    usdRateDate = data.date || "";
+    getQuote();
+    document.querySelectorAll(".vehicle-rate").forEach((el, index) => {
+      const rates = [26, 70, 75];
+      el.textContent = "Desde $" + rates[index] + " MXN / $" + (rates[index] / usdMxnRate).toFixed(2) + " USD por km";
+    });
+  } catch (error) {
+    console.warn("Tipo de cambio FIX:", error);
+    quotePreview.dataset.fxStatus = "unavailable";
+  }
+}
+function getQuote() {
+  const distance = Number(distanceInput.value);
+  const selectedVehicle = vehicleSelect.options[vehicleSelect.selectedIndex];
+  const rate = Number(selectedVehicle.dataset.rate);
+  const multiplier = tripTypeSelect.value.startsWith('Redondo') ? 2 : 1;
+  if (!Number.isFinite(distance) || distance <= 0) {
+    quotePreview.textContent = 'Completa la distancia para consultar una tarifa estimada en MXN y USD.';
+    return null;
+  }
+  const totalKm = distance * multiplier;
+  const total = Math.round(totalKm * rate);
+  const usd = usdMxnRate ? (total / usdMxnRate).toFixed(2) : null;
+  const perKmUsd = usdMxnRate ? (rate / usdMxnRate).toFixed(2) : null;
+  quotePreview.innerHTML = 'Tarifa estimada: $' + total.toLocaleString('es-MX') + ' MXN' +
+    (usd ? ' <span class="quote-usd">≈ $' + usd + ' USD</span>' : '') +
+    '<small>' + selectedVehicle.value + ' · ' + totalKm.toLocaleString('es-MX') +
+    ' km totales · $' + rate + ' MXN' + (perKmUsd ? ' / $' + perKmUsd + ' USD' : '') + ' por km</small>' +
+    '<small class="quote-exchange">' + (usdMxnRate ? 'Tipo de cambio aplicado: $' + usdMxnRate.toFixed(4) + ' MXN/USD (FIX Banxico menos $1.00)' + (usdRateDate ? ' · FIX del ' + usdRateDate : '') : 'Consultando tipo de cambio FIX de Banxico…') +
+    '. El precio final se confirma en pesos mexicanos.</small>';
+  return { distance, totalKm, rate, total, totalUsd: usd, vehicle: selectedVehicle.value };
+}
+loadBanxicoFixRate();
+
+[vehicleSelect, distanceInput, tripTypeSelect].forEach(el => el.addEventListener('input', getQuote));
+[vehicleSelect, distanceInput, tripTypeSelect].forEach(el => el.addEventListener('change', getQuote));
+
+async function submitBookingRequest(event) {
+  event.preventDefault();
+  if (!bookingForm.reportValidity()) return;
+  const quote = getQuote();
+  if (!quote) { distanceInput.focus(); return; }
+
+  const data = new FormData(bookingForm);
+  const status = document.getElementById('bookingStatus');
+  const button = document.getElementById('bookingSubmit');
+  button.disabled = true;
+  status.textContent = 'Enviando tu solicitud…';
+
+  try {
+    const client = window.supabase.createClient(
+      'https://iyelnragqgriycdyqowq.supabase.co',
+      'sb_publishable_d-xqUkbQSgzZys3OfXzbiw_iyHzHItE'
+    );
+    const { error } = await client.from('booking_requests').insert({
+      customer_name: String(data.get('customerName')).trim(),
+      customer_email: String(data.get('customerEmail') || '').trim() || null,
+      customer_phone: String(data.get('customerPhone')).trim(),
+      service: data.get('service'),
+      trip_type: String(data.get('tripType')).startsWith('Redondo') ? 'Redondo' : 'Sencillo',
+      vehicle: data.get('vehicle'),
+      distance_km: quote.totalKm,
+      pickup: String(data.get('pickup')).trim(),
+      destination: String(data.get('destination')).trim(),
+      travel_date: data.get('date'),
+      travel_time: data.get('time'),
+      passengers: Number(data.get('passengers')),
+      estimated_total_mxn: quote.total,
+      status: 'pending'
+    });
+    if (error) throw error;
+    bookingForm.reset();
+    quotePreview.textContent = 'Solicitud recibida. La tarifa es estimada y confirmaremos disponibilidad y precio.';
+    status.textContent = '¡Listo! Recibimos tu solicitud. Qué Onda Travel se pondrá en contacto contigo para confirmar tu reservación.';
+  } catch (error) {
+    console.error(error);
+    status.textContent = 'No pudimos enviar tu solicitud. Inténtalo de nuevo o contáctanos por WhatsApp.';
+  } finally {
+    button.disabled = false;
+  }
+}
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(() => {
+  const SUPABASE_URL = "https://iyelnragqgriycdyqowq.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_d-xqUkbQSgzZys3OfXzbiw_iyHzHItE";
+  const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  const form = document.getElementById("reviewForm");
+  const status = document.getElementById("reviewStatus");
+  const list = document.getElementById("approvedReviews");
+  const endpoint = SUPABASE_URL + "/functions/v1/approved-reviews";
+
+  async function loadApprovedReviews() {
+    try {
+      const response = await fetch(endpoint, { headers: { apikey: SUPABASE_KEY } });
+      if (!response.ok) throw new Error("No se pudieron cargar las opiniones.");
+      const payload = await response.json();
+      if (!payload.reviews || !payload.reviews.length) return;
+      list.innerHTML = "";
+      payload.reviews.forEach(review => {
+        const card = document.createElement("article");
+        card.className = "review-card";
+        const stars = document.createElement("div");
+        stars.className = "review-stars";
+        stars.textContent = review.rating ? "★".repeat(review.rating) : "0 estrellas";
+        const name = document.createElement("strong");
+        name.textContent = review.customer_name;
+        const body = document.createElement("p");
+        body.textContent = review.review_text;
+        card.append(stars, name, body);
+        if (review.media_url) {
+          const media = document.createElement(review.media_type === "video" ? "video" : "img");
+          media.src = review.media_url;
+          if (review.media_type === "video") media.controls = true;
+          else media.alt = "Fotografía compartida por " + review.customer_name;
+          card.append(media);
+        }
+        list.append(card);
+      });
+    } catch (error) { console.warn(error); }
+  }
+
+  form.addEventListener("submit", async event => {
+    event.preventDefault();
+    if (!form.reportValidity()) return;
+    const submit = form.querySelector("button[type=submit]");
+    submit.disabled = true;
+    status.textContent = "Enviando tu recomendación...";
+    try {
+      const data = new FormData(form);
+      const file = document.getElementById("reviewMedia").files[0];
+      let mediaPath = null, mediaType = null;
+      if (file) {
+        if (file.size > 50 * 1024 * 1024) throw new Error("El archivo supera el límite de 50 MB.");
+        const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+        mediaPath = crypto.randomUUID() + "/" + safeName;
+        mediaType = file.type.startsWith("video/") ? "video" : "image";
+        const { error: uploadError } = await client.storage.from("review-media").upload(mediaPath, file, { contentType: file.type, upsert: false });
+        if (uploadError) throw uploadError;
+      }
+      const { error } = await client.from("customer_reviews").insert({
+        customer_name: data.get("customer_name").trim(),
+        rating: Number(data.get("rating")),
+        review_text: data.get("review_text").trim(),
+        media_path: mediaPath,
+        media_type: mediaType
+      });
+      if (error) throw error;
+      form.reset();
+      status.textContent = "¡Gracias! Recibimos tu recomendación. La revisaremos antes de publicarla.";
+    } catch (error) {
+      console.error(error);
+      status.textContent = error.message || "No pudimos enviar tu recomendación. Inténtalo de nuevo.";
+    } finally { submit.disabled = false; }
+  });
+  loadApprovedReviews();
+})();
+</script>
+
+
+
+
+<style>
+.qot-language{display:flex;align-items:center;gap:8px;color:#f2d79a;font-size:11px;font-weight:800;letter-spacing:1px;white-space:nowrap}
+.qot-language select{background:#103d3a;color:#fff;border:1px solid #d8ad51;border-radius:22px;padding:10px 13px;font-weight:700;cursor:pointer}
+.qot-language select option{background:#103d3a;color:#fff}
+@media(max-width:700px){header{flex-wrap:wrap}.qot-language{margin-left:auto}.brand-description{display:none}}
+</style>
+<script>
+(function(){
+ const dictionaries={
+  en:{"¡Quiero mi aventura!":"Book my adventure!"},
+  fr:{"¡Quiero mi aventura!":"Je réserve mon aventure !"},
+  es:{},
+  en:{"MENÚ":"MENU","IDIOMA":"LANGUAGE","Inicio":"Home","Experiencias":"Experiences","Reservar":"Book now","Opiniones":"Reviews","Contacto":"Contact","Traslados al Aeropuerto":"Airport Transfers","Transporte Privado":"Private Transportation","Tours Locales":"Local Tours","Experiencias en Los Cabos":"Los Cabos Experiences","Nuestra Flota":"Our Fleet","Reserva tu Traslado":"Book Your Transfer","Reserva tu traslado":"Book your transfer","Nombre":"Name","Tu nombre":"Your name","Correo electrónico":"Email address","Servicio":"Service","Traslado Aeropuerto (SJD)":"Airport Transfer (SJD)","Transporte privado":"Private transportation","Tour local":"Local tour","Viaje":"Trip","Vehículo":"Vehicle","¿Dónde te recogemos?":"Pickup location","¿A dónde vas?":"Where are you going?","Calcular distancia y tarifa":"Calculate distance and fare","Ver mapa y ajustar ubicaciones":"View map and adjust locations","Opcional":"Optional","Ubicación y recorrido":"Locations and route","ACCESOS RÁPIDOS":"QUICK LOCATIONS","Recogida":"Pickup","Destino":"Destination","Fecha":"Date","Hora":"Time","Pasajeros":"Passengers","DETALLES DE TU SERVICIO":"YOUR SERVICE DETAILS","Enviar solicitud":"Send booking request","Tu aventura comienza aquí":"Your adventure starts here","Hablemos por WhatsApp":"Chat with us on WhatsApp","Opiniones de nuestros viajeros":"Reviews from our travellers","Reserva ahora":"Book now","Experiencias locales":"Local experiences","Tu nombre completo":"Your full name","Teléfono":"Phone","Correo":"Email","Selecciona":"Select","Sencillo":"One-way","Redondo":"Round trip","Pago en efectivo al finalizar el servicio":"Cash payment at the end of the service"},
+  fr:{"MENÚ":"MENU","IDIOMA":"LANGUE","Inicio":"Accueil","Experiencias":"Expériences","Reservar":"Réserver","Opiniones":"Avis","Contacto":"Contact","Traslados al Aeropuerto":"Transferts aéroport","Transporte Privado":"Transport privé","Tours Locales":"Excursions locales","Experiencias en Los Cabos":"Expériences à Los Cabos","Nuestra Flota":"Notre flotte","Reserva tu Traslado":"Réservez votre transfert","Reserva tu traslado":"Réservez votre transfert","Nombre":"Nom","Tu nombre":"Votre nom","Correo electrónico":"Adresse e-mail","Servicio":"Service","Traslado Aeropuerto (SJD)":"Transfert aéroport (SJD)","Transporte privado":"Transport privé","Tour local":"Excursion locale","Viaje":"Trajet","Vehículo":"Véhicule","¿Dónde te recogemos?":"Lieu de prise en charge","¿A dónde vas?":"Où allez-vous ?","Calcular distancia y tarifa":"Calculer la distance et le tarif","Ver mapa y ajustar ubicaciones":"Voir la carte et ajuster les lieux","Opcional":"Facultatif","Ubicación y recorrido":"Lieux et itinéraire","ACCESOS RÁPIDOS":"ACCÈS RAPIDES","Recogida":"Prise en charge","Destino":"Destination","Fecha":"Date","Hora":"Heure","Pasajeros":"Passagers","DETALLES DE TU SERVICIO":"DÉTAILS DE VOTRE SERVICE","Enviar solicitud":"Envoyer la demande","Tu aventura comienza aquí":"Votre aventure commence ici","Hablemos por WhatsApp":"Contactez-nous sur WhatsApp","Opiniones de nuestros viajeros":"Avis de nos voyageurs","Reserva ahora":"Réserver","Experiencias locales":"Expériences locales","Tu nombre completo":"Votre nom complet","Teléfono":"Téléphone","Correo":"E-mail","Selecciona":"Sélectionner","Sencillo":"Aller simple","Redondo":"Aller-retour","Pago en efectivo al finalizar el servicio":"Paiement en espèces à la fin du trajet"}
+ };
+
+ Object.assign(dictionaries.en,{
+  "Qué Onda":"What's Up","Travel":"Travel",
+  "En Los Cabos, no solo te llevamos a tu destino: te damos la bienvenida y cuidamos cada detalle de tu viaje.":"In Los Cabos, we do more than take you to your destination: we welcome you and take care of every detail of your journey.",
+  "Creemos que la excelencia se nota en el trato. Por eso ofrecemos transporte privado y experiencias locales con puntualidad, atención personalizada y la calidez de quienes conocen y aman esta tierra. Queremos que disfrutes cada momento, desde que llegas hasta que te despides.":"We believe excellence is reflected in the way we treat you. That is why we offer private transportation and local experiences with punctual service, personal attention and the warmth of people who know and love this land. We want you to enjoy every moment, from arrival to farewell.",
+  "DESCUBRE EXPERIENCIAS":"DISCOVER EXPERIENCES","RESERVA TU VIAJE":"BOOK YOUR RIDE",
+  "Atención bilingüe y personalizada":"Bilingual, personalised service","Traslados privados para viajar con tranquilidad":"Private transfers for a worry-free journey","Conocimiento local para descubrir Los Cabos":"Local knowledge to discover Los Cabos",
+  "Traslados al Aeropuerto":"Airport Transfers","Transporte Privado":"Private Transportation","Tours Locales":"Local Tours","Experiencias en Los Cabos":"Los Cabos Experiences",
+  "México en colores · Baja California Sur y más allá":"Mexico in colour · Baja California Sur and beyond",
+  "Un viaje con sabor a México":"A journey with the spirit of Mexico",
+  "Del desierto de Baja al corazón artesanal de México: lugares, sabores y tradiciones que se quedan contigo.":"From the Baja desert to the artisan heart of Mexico: places, flavours and traditions that stay with you.",
+  "El Arco de Cabo":"The Cabo Arch","Donde el desierto se encuentra con el mar":"Where the desert meets the sea",
+  "Marina de Cabo San Lucas":"Cabo San Lucas Marina","Yates, aguas azules y una vista panorámica del puerto":"Yachts, blue waters and panoramic harbour views",
+  "Balandra":"Balandra"
+ });
+ Object.assign(dictionaries.fr,{
+  "Qué Onda":"Qué Onda","Travel":"Travel",
+  "En Los Cabos, no solo te llevamos a tu destino: te damos la bienvenida y cuidamos cada detalle de tu viaje.":"À Los Cabos, nous ne faisons pas que vous conduire à destination : nous vous souhaitons la bienvenue et prenons soin de chaque détail de votre voyage.",
+  "Creemos que la excelencia se nota en el trato. Por eso ofrecemos transporte privado y experiencias locales con puntualidad, atención personalizada y la calidez de quienes conocen y aman esta tierra. Queremos que disfrutes cada momento, desde que llegas hasta que te despides.":"Nous croyons que l’excellence se ressent dans l’accueil. C’est pourquoi nous proposons des transports privés et des expériences locales, avec ponctualité, attention personnalisée et la chaleur de ceux qui connaissent et aiment cette région. Nous souhaitons que vous profitiez de chaque instant, de votre arrivée à votre départ.",
+  "DESCUBRE EXPERIENCIAS":"DÉCOUVRIR LES EXPÉRIENCES","RESERVA TU VIAJE":"RÉSERVER VOTRE TRAJET",
+  "Atención bilingüe y personalizada":"Service bilingue et personnalisé","Traslados privados para viajar con tranquilidad":"Transferts privés en toute tranquillité","Conocimiento local para descubrir Los Cabos":"Une connaissance locale pour découvrir Los Cabos",
+  "Traslados al Aeropuerto":"Transferts aéroport","Transporte Privado":"Transport privé","Tours Locales":"Excursions locales","Experiencias en Los Cabos":"Expériences à Los Cabos",
+  "México en colores · Baja California Sur y más allá":"Le Mexique en couleurs · Basse-Californie du Sud et ailleurs",
+  "Un viaje con sabor a México":"Un voyage aux couleurs du Mexique",
+  "Del desierto de Baja al corazón artesanal de México: lugares, sabores y tradiciones que se quedan contigo.":"Du désert de Basse-Californie au cœur artisanal du Mexique : des lieux, des saveurs et des traditions inoubliables.",
+  "El Arco de Cabo":"L’Arche de Cabo","Donde el desierto se encuentra con el mar":"Là où le désert rencontre la mer",
+  "Marina de Cabo San Lucas":"La marina de Cabo San Lucas","Yates, aguas azules y una vista panorámica del puerto":"Yachts, eaux turquoise et vue panoramique sur le port",
+  "Balandra":"Balandra"
+ });
+
+ let sourceNodes=[],sourceAttrs=[];
+ function init(){
+  const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);
+  let node;while((node=walker.nextNode()))sourceNodes.push({node,text:node.nodeValue});
+  document.querySelectorAll('[placeholder]').forEach(el=>sourceAttrs.push({el,attr:'placeholder',value:el.getAttribute('placeholder')}));
+  document.querySelectorAll('option').forEach(el=>{if(el.id!=='qotLanguage')sourceAttrs.push({el,attr:'text',value:el.textContent})});
+ }
+ function apply(lang){
+  const dict=dictionaries[lang]||{};
+  document.documentElement.lang=lang;
+  sourceNodes.forEach(({node,text})=>{if(node.isConnected){const key=text.trim();if(key)node.nodeValue=text.replace(key,dict[key]||key);}});
+  sourceAttrs.forEach(({el,attr,value})=>{if(el.isConnected){if(attr==='placeholder')el.setAttribute(attr,dict[value]||value);else el.textContent=dict[value]||value;}});
+  const label=document.querySelector('.qot-language-label');
+  if(label)label.textContent=lang==='fr'?'LANGUE':lang==='en'?'LANGUAGE':'IDIOMA';
+  const menu=document.querySelector('.menu-dropdown summary');
+  if(menu)menu.setAttribute('aria-label',lang==='fr'?'Ouvrir le menu de navigation':lang==='en'?'Open navigation menu':'Abrir menú de navegación');
+  try{localStorage.setItem('qot-language',lang)}catch(e){}
+ }
+ window.qotSetLanguage=apply;
+ function start(){
+  init();
+  const selector=document.getElementById('qotLanguage');
+  let saved='es';try{saved=localStorage.getItem('qot-language')||'es'}catch(e){}
+  if(selector){selector.value=saved;selector.addEventListener('change',()=>apply(selector.value));}
+  apply(saved);
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
+})();
+</script>
+<style>
+
+  color:#164b50!important;
+  box-shadow:0 9px 22px rgba(7,91,99,.10),inset 0 1px 0 #fff!important;
+}
+.booking .booking-notice .notice-kicker{
+  color:#d51d69!important;
+  font-size:10px!important;
+  font-weight:800!important;
+  letter-spacing:1.5px!important;
+}
+.booking .booking-notice .notice-heading strong,
+.booking .booking-notice strong{
+  color:#075b63!important;
+  text-shadow:none!important;
+}
+.booking .booking-notice p{
+  color:#365d60!important;
+}
+.booking .booking-notice .airport-note{
+  background:linear-gradient(120deg,#dff4ed 0%,#eaf7f4 58%,#fff0d5 100%)!important;
+  border:1.5px solid #65b8a1!important;
+  border-left:5px solid #00a6a6!important;
+  border-radius:14px!important;
+  box-shadow:inset 0 1px 0 #fff!important;
+}
+.booking .booking-notice .airport-note .notice-kicker{
+  color:#d51d69!important;
+}
+.booking .booking-notice .airport-note strong{
+  color:#075b63!important;
+}
+.booking .booking-notice .airport-note p{
+  color:#365d60!important;
+}
+.booking .quote-preview{
+  background:linear-gradient(115deg,#075b63 0%,#087c78 55%,#16805d 100%)!important;
+  color:#fffaf0!important;
+  border:2px solid #f2b84b!important;
+  border-radius:18px!important;
+  padding:22px 20px!important;
+  box-shadow:0 10px 22px rgba(7,91,99,.18)!important;
+}
+.booking .quote-preview,
+.booking .quote-preview strong{
+  color:#fffaf0!important;
+}
+.booking .quote-preview small{
+  color:#ffedc5!important;
+}
+.booking .quote-preview:empty{display:none}
+@media(max-width:620px){
+ .booking .booking-notice{padding:18px 16px!important;border-radius:16px!important}
+ .booking .booking-notice .airport-note{padding:14px!important}
+ .booking .quote-preview{padding:19px 17px!important;font-size:16px!important}
+}
+
+/* PALETA ACTUALIZADA · VERDE PETRÓLEO, CREMA Y ROSA MEXICANO */
+:root{
+  --qot-black:#123f43;
+  --qot-black-soft:#1c5b5c;
+  --qot-champagne:#e4bd72;
+  --qot-champagne-light:#f4dfb3;
+  --qot-ivory:#fff8ed;
+}
+html,body{background:#fff4e5!important;color:#173d40!important}
+header,.site-header,.navbar{
+  background:linear-gradient(110deg,#07545a 0%,#08777a 58%,#15939a 100%)!important;
+  color:#fffaf2!important;border-bottom:2px solid #e9bd59!important;
+  box-shadow:0 5px 18px rgba(7,65,69,.16)!important
+}
+nav a,.nav a{color:#fffaf2!important}
+.language{background:#e5f4ef!important;color:#07545a!important;border:1px solid #f0c66a!important}
+.services{
+  background:linear-gradient(105deg,#0b6266,#168b88)!important;
+  color:#fffaf2!important;border-block:1px solid #e9bd59!important
+}
+.service{background:transparent!important;color:#fffaf2!important}
+.service-icon{background:#dff1e8!important;color:#08777a!important;border-color:#f0c66a!important}
+.vehicle-link,.hero-cta,.gold-button,.contact-button,.primary-button{
+  color:#fffaf2!important;
+  border:1px solid #f0c66a!important;
+  background:linear-gradient(120deg,#e62e83,#c91f70)!important;
+  box-shadow:0 5px 14px rgba(151,36,91,.16)!important
+}
+.vehicle-link:hover,.hero-cta:hover,.gold-button:hover,.contact-button:hover,.primary-button:hover{
+  color:#fff!important;background:linear-gradient(120deg,#bd1c68,#a9185d)!important
+}
+.hero-cta-secondary{
+  color:#fffaf2!important;background:rgba(7,84,90,.72)!important;border:1px solid #f0c66a!important
+}
+.booking-notice{
+  background:linear-gradient(120deg,#e4f3e9,#fff0d9)!important;
+  color:#365d60!important;border-color:#8bc5ad!important;border-left-color:#0b8985!important
+}
+.booking-notice strong{color:#075b63!important}
+.booking-notice p{color:#365d60!important}
+.booking-notice .airport-note{background:linear-gradient(120deg,#dff4ed,#fff0d5)!important;border-color:#65b8a1!important}
+.menu-panel{background:#fff8ed!important;border:1px solid #d8bd86!important;color:#17484a!important;box-shadow:0 12px 30px rgba(7,65,69,.18)!important}
+.menu-panel a{color:#17484a!important}
+.menu-panel a:hover{background:#e2f1e9!important;color:#07545a!important}
+.menu-dropdown summary{color:#fff8ed!important;border-color:#f0c66a!important}
+.menu-icon i{background:#f0c66a!important}
+.contact{
+  background:linear-gradient(120deg,#07545a,#16817e)!important;
+  color:#fffaf2!important;border-top:3px solid #e9bd59!important
+}
+.contact h2{color:#ffe2a4!important}
+footer{background:linear-gradient(110deg,#06434a,#075b60)!important;color:#fff3df!important;border-top:2px solid #e9bd59!important}
+input:focus,select:focus,textarea:focus{border-color:#0b8985!important;box-shadow:0 0 0 3px rgba(11,137,133,.16)!important}
+::selection{background:#f2c45e;color:#123f43}
+
+/* SELECTOR DE IDIOMA · ESTILO MENÚ, SIN FONDO NEGRO */
+.qot-language{
+  display:flex!important;align-items:center!important;gap:10px!important;
+  color:#ffe2a4!important;
+}
+.qot-language select,
+#qotLanguage{
+  appearance:none!important;-webkit-appearance:none!important;
+  min-width:116px!important;padding:12px 42px 12px 17px!important;
+  border:1.5px solid #f0c66a!important;border-radius:999px!important;
+  background-color:#e4f3e9!important;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23075b63' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m7 10 5 5 5-5'/%3E%3C/svg%3E")!important;
+  background-repeat:no-repeat!important;background-position:right 15px center!important;
+  color:#075b63!important;font-size:14px!important;font-weight:750!important;
+  box-shadow:0 4px 12px rgba(7,91,99,.12)!important;cursor:pointer!important;
+}
+.qot-language select option,#qotLanguage option{
+  background:#fff8ed!important;color:#075b63!important;font-weight:600!important;
+}
+.qot-language select:focus,#qotLanguage:focus{
+  outline:3px solid rgba(240,198,106,.35)!important;outline-offset:2px!important;
+  border-color:#fff0b8!important;
+}
+@media(max-width:620px){
+ .qot-language{gap:8px!important}
+ .qot-language select,#qotLanguage{min-width:112px!important;padding:11px 38px 11px 14px!important}
+}
+</style>
+
+</body>
+</html>
+ + quote.totalUsd + ' USD)' : '')
+      : '';
     mapboxRouteStatus.textContent = 'Ruta calculada: ' + distanceKm.toLocaleString('es-MX') +
       ' km de ida · Tiempo estimado: ' + Number(result.duration_minutes).toLocaleString('es-MX') +
-      ' min. La tarifa es estimada.';
+      ' min' + priceSummary + '. El precio final se confirma en pesos mexicanos.';
   } catch (error) {
     console.error(error);
     mapboxRouteStatus.textContent = error.message || 'No pudimos calcular la ruta.';
