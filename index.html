@@ -3777,6 +3777,34 @@ nav a,.nav a{color:#fffaf2!important}
 footer{background:linear-gradient(110deg,#06434a,#075b60)!important;color:#fff3df!important;border-top:2px solid #e9bd59!important}
 input:focus,select:focus,textarea:focus{border-color:#0b8985!important;box-shadow:0 0 0 3px rgba(11,137,133,.16)!important}
 ::selection{background:#f2c45e;color:#123f43}
+
+/* SELECTOR DE IDIOMA · ESTILO MENÚ, SIN FONDO NEGRO */
+.qot-language{
+  display:flex!important;align-items:center!important;gap:10px!important;
+  color:#ffe2a4!important;
+}
+.qot-language select,
+#qotLanguage{
+  appearance:none!important;-webkit-appearance:none!important;
+  min-width:116px!important;padding:12px 42px 12px 17px!important;
+  border:1.5px solid #f0c66a!important;border-radius:999px!important;
+  background-color:#e4f3e9!important;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23075b63' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m7 10 5 5 5-5'/%3E%3C/svg%3E")!important;
+  background-repeat:no-repeat!important;background-position:right 15px center!important;
+  color:#075b63!important;font-size:14px!important;font-weight:750!important;
+  box-shadow:0 4px 12px rgba(7,91,99,.12)!important;cursor:pointer!important;
+}
+.qot-language select option,#qotLanguage option{
+  background:#fff8ed!important;color:#075b63!important;font-weight:600!important;
+}
+.qot-language select:focus,#qotLanguage:focus{
+  outline:3px solid rgba(240,198,106,.35)!important;outline-offset:2px!important;
+  border-color:#fff0b8!important;
+}
+@media(max-width:620px){
+ .qot-language{gap:8px!important}
+ .qot-language select,#qotLanguage{min-width:112px!important;padding:11px 38px 11px 14px!important}
+}
 </style>
 
 </body>
