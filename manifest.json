@@ -1,0 +1,19 @@
+{
+  "id": "./",
+  "name": "Qué Onda Travel",
+  "short_name": "Qué Onda",
+  "description": "Experiencias mexicanas y transporte privado en Los Cabos.",
+  "start_url": "./?source=pwa",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#fff1df",
+  "theme_color": "#063744",
+  "icons": [
+    {
+      "src": "./icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
