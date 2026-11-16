@@ -2737,6 +2737,53 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
  .route-flow,.vehicle:before,.booking:before{animation:none!important}
  .vehicle,.vehicle-photo img,.vehicle-link,.booking #bookingSubmit{transition:none!important}
 }
+
+/* SERVICIOS: fotografías reales en lugar de iconos decorativos */
+.services{
+ display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
+ gap:18px!important;padding:34px clamp(16px,4vw,54px)!important;
+ background:linear-gradient(135deg,#075B63,#16805D)!important;
+}
+.services .service{
+ position:relative!important;isolation:isolate;overflow:hidden;
+ display:flex!important;flex-direction:column!important;justify-content:flex-end!important;
+ align-items:flex-start!important;text-align:left!important;
+ min-height:260px!important;padding:22px!important;
+ border:1px solid rgba(255,255,255,.42)!important;border-radius:20px!important;
+ background-color:#075B63!important;background-position:center!important;background-size:cover!important;
+ box-shadow:0 10px 26px rgba(0,35,39,.22)!important;
+ color:#FFFFFF!important;font-size:clamp(15px,1.5vw,19px)!important;
+ line-height:1.45!important;font-weight:750!important;
+ transition:transform .35s ease,box-shadow .35s ease!important;
+}
+.services .service:before{
+ content:"";position:absolute;z-index:-1;inset:0;
+ background:linear-gradient(180deg,rgba(3,32,35,.04) 5%,rgba(3,32,35,.20) 38%,rgba(3,32,35,.88) 100%);
+}
+.services .service:after{
+ content:"";position:absolute;z-index:-1;inset:0;border:3px solid transparent;border-radius:inherit;
+ background:linear-gradient(135deg,rgba(0,166,166,.7),rgba(242,184,75,.65),rgba(233,30,99,.55)) border-box;
+ -webkit-mask:linear-gradient(#fff 0 0) padding-box,linear-gradient(#fff 0 0);
+ -webkit-mask-composite:xor;mask-composite:exclude;opacity:.7;pointer-events:none;
+}
+.services .service-icon{display:none!important}
+.services .service:nth-child(1){background-image:url("https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=1000&q=85")!important}
+.services .service:nth-child(2){background-image:url("images/jetta-negro-2019.jpg")!important}
+.services .service:nth-child(3){background-image:url("https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1000&q=85")!important}
+.services .service:nth-child(4){background-image:url("https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=1000&q=85")!important}
+@media(hover:hover){
+ .services .service:hover{transform:translateY(-7px);box-shadow:0 18px 34px rgba(0,30,34,.32)!important}
+}
+@media(max-width:850px){
+ .services{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .services .service{min-height:230px!important}
+}
+@media(max-width:520px){
+ .services{gap:12px!important;padding:22px 14px!important}
+ .services .service{min-height:205px!important;padding:15px!important;border-radius:16px!important;font-size:14px!important}
+}
+@media(prefers-reduced-motion:reduce){.services .service{transition:none!important}}
+
 </style>
 
 </head>
