@@ -2214,6 +2214,48 @@ button:disabled{opacity:.65;cursor:wait;transform:none!important}
 .push-setup button:disabled{opacity:.6;cursor:wait}
 #pushSetupStatus{display:block;min-height:20px;margin-top:10px;font-size:13px}
 
+
+/* HERO REFRESH · COLOR COSTERO Y BOTONES CON MOVIMIENTO SUTIL */
+.hero{
+  background:
+    linear-gradient(105deg,rgba(4,55,61,.92),rgba(5,112,103,.78) 58%,rgba(8,91,99,.30)),
+    url("images/hero-arco.jpg") center 48%/cover no-repeat,#075b63!important;
+}
+.hero h1{color:#fffaf0!important;text-shadow:0 3px 20px rgba(0,0,0,.22)!important}
+.hero h1 span{color:#ffd36e!important;text-shadow:0 2px 12px rgba(0,0,0,.15)!important}
+.hero-copy p{color:#fffaf0!important;text-shadow:0 1px 9px rgba(0,0,0,.16)!important}
+.hero-lead{color:#fff0cf!important;font-weight:700!important}
+.hero-features span{color:#fff0cf!important}
+.hero-cta,.gold-button,.contact-button,.primary-button{
+  position:relative;isolation:isolate;overflow:hidden;
+  background:linear-gradient(115deg,#e91e63,#f05b72 52%,#d91e78)!important;
+  border:1.5px solid #ffd36e!important;color:#fff!important;
+  box-shadow:0 9px 22px rgba(12,42,43,.24),0 0 0 1px rgba(255,255,255,.12) inset!important;
+  transition:transform .25s ease,box-shadow .25s ease,filter .25s ease!important;
+  animation:qotButtonFloat 4.8s ease-in-out infinite;
+}
+.hero-cta-secondary{
+  background:linear-gradient(115deg,rgba(255,211,110,.96),rgba(255,238,190,.96))!important;
+  color:#124d52!important;border:1.5px solid #fff0c4!important;
+  box-shadow:0 8px 20px rgba(9,49,48,.2)!important;
+}
+.hero-cta::after,.gold-button::after,.contact-button::after,.primary-button::after{
+  content:"";position:absolute;inset:-2px;z-index:-1;pointer-events:none;
+  background:linear-gradient(110deg,transparent 20%,rgba(255,255,255,.28) 48%,transparent 72%);
+  transform:translateX(-130%);animation:qotButtonShine 5.5s ease-in-out infinite;
+}
+.hero-cta:hover,.gold-button:hover,.contact-button:hover,.primary-button:hover{
+  transform:translateY(-4px) scale(1.025)!important;
+  filter:saturate(1.12) brightness(1.06);
+  box-shadow:0 14px 28px rgba(12,42,43,.3)!important;
+}
+.hero-cta-secondary:hover{background:#fff0c4!important;color:#075b63!important}
+@keyframes qotButtonFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
+@keyframes qotButtonShine{0%,68%,100%{transform:translateX(-130%)}82%{transform:translateX(130%)}}
+@media(prefers-reduced-motion:reduce){
+ .hero-cta,.gold-button,.contact-button,.primary-button,.hero-cta::after,.gold-button::after,.contact-button::after,.primary-button::after{animation:none!important;transition:none!important}
+}
+
 </style>
 
 <style>
@@ -2828,16 +2870,16 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 <section class="hero" id="inicio">
   <div class="hero-copy">
     <h1>Qué Onda<br><span>Travel</span></h1>
-    <p class="hero-lead">En Los Cabos, no solo te llevamos a tu destino: te damos la bienvenida y cuidamos cada detalle de tu viaje.</p>
-    <p>Creemos que la excelencia se nota en el trato. Por eso ofrecemos transporte privado y experiencias locales con puntualidad, atención personalizada y la calidez de quienes conocen y aman esta tierra. Queremos que disfrutes cada momento, desde que llegas hasta que te despides.</p>
+    <p class="hero-lead">Los Cabos merece vivirse sin prisas. Nosotros nos encargamos del camino para que tú disfrutes cada instante.</p>
+    <p>Tu viaje comienza desde el primer saludo. Muévete por Los Cabos con comodidad, estilo y atención cercana. Descubre rincones increíbles, disfruta el paisaje y déjanos los detalles a nosotros. Aquí cada trayecto se convierte en parte de la experiencia.</p>
     <div class="hero-actions">
-      <a class="hero-cta" href="#experiencias">DESCUBRE EXPERIENCIAS</a>
-      <a class="hero-cta hero-cta-secondary" href="#reservar">RESERVA TU VIAJE</a>
+      <a class="hero-cta" href="#experiencias">VIVE LOS CABOS</a>
+      <a class="hero-cta hero-cta-secondary" href="#reservar">RESERVA TU EXPERIENCIA</a>
           </div>
     <div class="hero-features">
-      <span>Atención bilingüe y personalizada</span>
-      <span>Traslados privados para viajar con tranquilidad</span>
-      <span>Conocimiento local para descubrir Los Cabos</span>
+      <span>Atención cercana, en tu idioma</span>
+      <span>Traslados cómodos, puntuales y privados</span>
+      <span>Experiencias con auténtico sabor local</span>
     </div>
   </div>
 </section>
@@ -3631,10 +3673,10 @@ async function submitBookingRequest(event) {
 
  Object.assign(dictionaries.en,{
   "Qué Onda":"What's Up","Travel":"Travel",
-  "En Los Cabos, no solo te llevamos a tu destino: te damos la bienvenida y cuidamos cada detalle de tu viaje.":"In Los Cabos, we do more than take you to your destination: we welcome you and take care of every detail of your journey.",
-  "Creemos que la excelencia se nota en el trato. Por eso ofrecemos transporte privado y experiencias locales con puntualidad, atención personalizada y la calidez de quienes conocen y aman esta tierra. Queremos que disfrutes cada momento, desde que llegas hasta que te despides.":"We believe excellence is reflected in the way we treat you. That is why we offer private transportation and local experiences with punctual service, personal attention and the warmth of people who know and love this land. We want you to enjoy every moment, from arrival to farewell.",
-  "DESCUBRE EXPERIENCIAS":"DISCOVER EXPERIENCES","RESERVA TU VIAJE":"BOOK YOUR RIDE",
-  "Atención bilingüe y personalizada":"Bilingual, personalised service","Traslados privados para viajar con tranquilidad":"Private transfers for a worry-free journey","Conocimiento local para descubrir Los Cabos":"Local knowledge to discover Los Cabos",
+  "Los Cabos merece vivirse sin prisas. Nosotros nos encargamos del camino para que tú disfrutes cada instante.":"In Los Cabos, we do more than take you to your destination: we welcome you and take care of every detail of your journey.",
+  "Tu viaje comienza desde el primer saludo. Muévete por Los Cabos con comodidad, estilo y atención cercana. Descubre rincones increíbles, disfruta el paisaje y déjanos los detalles a nosotros. Aquí cada trayecto se convierte en parte de la experiencia.":"Your journey begins with a warm welcome. Explore Los Cabos in comfort and style, with thoughtful personal service. Discover remarkable places, enjoy the scenery, and leave the details to us. Here, every ride becomes part of the experience.",
+  "VIVE LOS CABOS":"EXPERIENCE LOS CABOS","RESERVA TU EXPERIENCIA":"BOOK YOUR EXPERIENCE",
+  "Atención cercana, en tu idioma":"Personal service, in your language","Traslados cómodos, puntuales y privados":"Comfortable, punctual private transfers","Experiencias con auténtico sabor local":"Authentic local experiences",
   "Traslados al Aeropuerto":"Airport Transfers","Transporte Privado":"Private Transportation","Tours Locales":"Local Tours","Experiencias en Los Cabos":"Los Cabos Experiences",
   "México en colores · Baja California Sur y más allá":"Mexico in colour · Baja California Sur and beyond",
   "Un viaje con sabor a México":"A journey with the spirit of Mexico",
@@ -3645,10 +3687,10 @@ async function submitBookingRequest(event) {
  });
  Object.assign(dictionaries.fr,{
   "Qué Onda":"Qué Onda","Travel":"Travel",
-  "En Los Cabos, no solo te llevamos a tu destino: te damos la bienvenida y cuidamos cada detalle de tu viaje.":"À Los Cabos, nous ne faisons pas que vous conduire à destination : nous vous souhaitons la bienvenue et prenons soin de chaque détail de votre voyage.",
-  "Creemos que la excelencia se nota en el trato. Por eso ofrecemos transporte privado y experiencias locales con puntualidad, atención personalizada y la calidez de quienes conocen y aman esta tierra. Queremos que disfrutes cada momento, desde que llegas hasta que te despides.":"Nous croyons que l’excellence se ressent dans l’accueil. C’est pourquoi nous proposons des transports privés et des expériences locales, avec ponctualité, attention personnalisée et la chaleur de ceux qui connaissent et aiment cette région. Nous souhaitons que vous profitiez de chaque instant, de votre arrivée à votre départ.",
-  "DESCUBRE EXPERIENCIAS":"DÉCOUVRIR LES EXPÉRIENCES","RESERVA TU VIAJE":"RÉSERVER VOTRE TRAJET",
-  "Atención bilingüe y personalizada":"Service bilingue et personnalisé","Traslados privados para viajar con tranquilidad":"Transferts privés en toute tranquillité","Conocimiento local para descubrir Los Cabos":"Une connaissance locale pour découvrir Los Cabos",
+  "Los Cabos merece vivirse sin prisas. Nosotros nos encargamos del camino para que tú disfrutes cada instante.":"À Los Cabos, nous ne faisons pas que vous conduire à destination : nous vous souhaitons la bienvenue et prenons soin de chaque détail de votre voyage.",
+  "Tu viaje comienza desde el primer saludo. Muévete por Los Cabos con comodidad, estilo y atención cercana. Descubre rincones increíbles, disfruta el paisaje y déjanos los detalles a nosotros. Aquí cada trayecto se convierte en parte de la experiencia.":"Los Cabos se découvre à votre rythme. Nous prenons soin du trajet pour que vous profitiez de chaque instant, avec confort, élégance et une attention personnalisée. Découvrez des lieux magnifiques et laissez-nous nous occuper des détails. Ici, chaque trajet fait partie de l’expérience.",
+  "VIVE LOS CABOS":"VIVRE LOS CABOS","RESERVA TU EXPERIENCIA":"RÉSERVER VOTRE EXPÉRIENCE",
+  "Atención cercana, en tu idioma":"Un accueil personnalisé, dans votre langue","Traslados cómodos, puntuales y privados":"Des transferts privés, confortables et ponctuels","Experiencias con auténtico sabor local":"Des expériences au cœur de la culture locale",
   "Traslados al Aeropuerto":"Transferts aéroport","Transporte Privado":"Transport privé","Tours Locales":"Excursions locales","Experiencias en Los Cabos":"Expériences à Los Cabos",
   "México en colores · Baja California Sur y más allá":"Le Mexique en couleurs · Basse-Californie du Sud et ailleurs",
   "Un viaje con sabor a México":"Un voyage aux couleurs du Mexique",
@@ -4069,10 +4111,10 @@ async function submitBookingRequest(event) {
 
  Object.assign(dictionaries.en,{
   "Qué Onda":"What's Up","Travel":"Travel",
-  "En Los Cabos, no solo te llevamos a tu destino: te damos la bienvenida y cuidamos cada detalle de tu viaje.":"In Los Cabos, we do more than take you to your destination: we welcome you and take care of every detail of your journey.",
-  "Creemos que la excelencia se nota en el trato. Por eso ofrecemos transporte privado y experiencias locales con puntualidad, atención personalizada y la calidez de quienes conocen y aman esta tierra. Queremos que disfrutes cada momento, desde que llegas hasta que te despides.":"We believe excellence is reflected in the way we treat you. That is why we offer private transportation and local experiences with punctual service, personal attention and the warmth of people who know and love this land. We want you to enjoy every moment, from arrival to farewell.",
-  "DESCUBRE EXPERIENCIAS":"DISCOVER EXPERIENCES","RESERVA TU VIAJE":"BOOK YOUR RIDE",
-  "Atención bilingüe y personalizada":"Bilingual, personalised service","Traslados privados para viajar con tranquilidad":"Private transfers for a worry-free journey","Conocimiento local para descubrir Los Cabos":"Local knowledge to discover Los Cabos",
+  "Los Cabos merece vivirse sin prisas. Nosotros nos encargamos del camino para que tú disfrutes cada instante.":"In Los Cabos, we do more than take you to your destination: we welcome you and take care of every detail of your journey.",
+  "Tu viaje comienza desde el primer saludo. Muévete por Los Cabos con comodidad, estilo y atención cercana. Descubre rincones increíbles, disfruta el paisaje y déjanos los detalles a nosotros. Aquí cada trayecto se convierte en parte de la experiencia.":"Your journey begins with a warm welcome. Explore Los Cabos in comfort and style, with thoughtful personal service. Discover remarkable places, enjoy the scenery, and leave the details to us. Here, every ride becomes part of the experience.",
+  "VIVE LOS CABOS":"EXPERIENCE LOS CABOS","RESERVA TU EXPERIENCIA":"BOOK YOUR EXPERIENCE",
+  "Atención cercana, en tu idioma":"Personal service, in your language","Traslados cómodos, puntuales y privados":"Comfortable, punctual private transfers","Experiencias con auténtico sabor local":"Authentic local experiences",
   "Traslados al Aeropuerto":"Airport Transfers","Transporte Privado":"Private Transportation","Tours Locales":"Local Tours","Experiencias en Los Cabos":"Los Cabos Experiences",
   "México en colores · Baja California Sur y más allá":"Mexico in colour · Baja California Sur and beyond",
   "Un viaje con sabor a México":"A journey with the spirit of Mexico",
@@ -4083,10 +4125,10 @@ async function submitBookingRequest(event) {
  });
  Object.assign(dictionaries.fr,{
   "Qué Onda":"Qué Onda","Travel":"Travel",
-  "En Los Cabos, no solo te llevamos a tu destino: te damos la bienvenida y cuidamos cada detalle de tu viaje.":"À Los Cabos, nous ne faisons pas que vous conduire à destination : nous vous souhaitons la bienvenue et prenons soin de chaque détail de votre voyage.",
-  "Creemos que la excelencia se nota en el trato. Por eso ofrecemos transporte privado y experiencias locales con puntualidad, atención personalizada y la calidez de quienes conocen y aman esta tierra. Queremos que disfrutes cada momento, desde que llegas hasta que te despides.":"Nous croyons que l’excellence se ressent dans l’accueil. C’est pourquoi nous proposons des transports privés et des expériences locales, avec ponctualité, attention personnalisée et la chaleur de ceux qui connaissent et aiment cette région. Nous souhaitons que vous profitiez de chaque instant, de votre arrivée à votre départ.",
-  "DESCUBRE EXPERIENCIAS":"DÉCOUVRIR LES EXPÉRIENCES","RESERVA TU VIAJE":"RÉSERVER VOTRE TRAJET",
-  "Atención bilingüe y personalizada":"Service bilingue et personnalisé","Traslados privados para viajar con tranquilidad":"Transferts privés en toute tranquillité","Conocimiento local para descubrir Los Cabos":"Une connaissance locale pour découvrir Los Cabos",
+  "Los Cabos merece vivirse sin prisas. Nosotros nos encargamos del camino para que tú disfrutes cada instante.":"À Los Cabos, nous ne faisons pas que vous conduire à destination : nous vous souhaitons la bienvenue et prenons soin de chaque détail de votre voyage.",
+  "Tu viaje comienza desde el primer saludo. Muévete por Los Cabos con comodidad, estilo y atención cercana. Descubre rincones increíbles, disfruta el paisaje y déjanos los detalles a nosotros. Aquí cada trayecto se convierte en parte de la experiencia.":"Los Cabos se découvre à votre rythme. Nous prenons soin du trajet pour que vous profitiez de chaque instant, avec confort, élégance et une attention personnalisée. Découvrez des lieux magnifiques et laissez-nous nous occuper des détails. Ici, chaque trajet fait partie de l’expérience.",
+  "VIVE LOS CABOS":"VIVRE LOS CABOS","RESERVA TU EXPERIENCIA":"RÉSERVER VOTRE EXPÉRIENCE",
+  "Atención cercana, en tu idioma":"Un accueil personnalisé, dans votre langue","Traslados cómodos, puntuales y privados":"Des transferts privés, confortables et ponctuels","Experiencias con auténtico sabor local":"Des expériences au cœur de la culture locale",
   "Traslados al Aeropuerto":"Transferts aéroport","Transporte Privado":"Transport privé","Tours Locales":"Excursions locales","Experiencias en Los Cabos":"Expériences à Los Cabos",
   "México en colores · Baja California Sur y más allá":"Le Mexique en couleurs · Basse-Californie du Sud et ailleurs",
   "Un viaje con sabor a México":"Un voyage aux couleurs du Mexique",
@@ -4510,10 +4552,10 @@ async function submitBookingRequest(event) {
 
  Object.assign(dictionaries.en,{
   "Qué Onda":"What's Up","Travel":"Travel",
-  "En Los Cabos, no solo te llevamos a tu destino: te damos la bienvenida y cuidamos cada detalle de tu viaje.":"In Los Cabos, we do more than take you to your destination: we welcome you and take care of every detail of your journey.",
-  "Creemos que la excelencia se nota en el trato. Por eso ofrecemos transporte privado y experiencias locales con puntualidad, atención personalizada y la calidez de quienes conocen y aman esta tierra. Queremos que disfrutes cada momento, desde que llegas hasta que te despides.":"We believe excellence is reflected in the way we treat you. That is why we offer private transportation and local experiences with punctual service, personal attention and the warmth of people who know and love this land. We want you to enjoy every moment, from arrival to farewell.",
-  "DESCUBRE EXPERIENCIAS":"DISCOVER EXPERIENCES","RESERVA TU VIAJE":"BOOK YOUR RIDE",
-  "Atención bilingüe y personalizada":"Bilingual, personalised service","Traslados privados para viajar con tranquilidad":"Private transfers for a worry-free journey","Conocimiento local para descubrir Los Cabos":"Local knowledge to discover Los Cabos",
+  "Los Cabos merece vivirse sin prisas. Nosotros nos encargamos del camino para que tú disfrutes cada instante.":"In Los Cabos, we do more than take you to your destination: we welcome you and take care of every detail of your journey.",
+  "Tu viaje comienza desde el primer saludo. Muévete por Los Cabos con comodidad, estilo y atención cercana. Descubre rincones increíbles, disfruta el paisaje y déjanos los detalles a nosotros. Aquí cada trayecto se convierte en parte de la experiencia.":"Your journey begins with a warm welcome. Explore Los Cabos in comfort and style, with thoughtful personal service. Discover remarkable places, enjoy the scenery, and leave the details to us. Here, every ride becomes part of the experience.",
+  "VIVE LOS CABOS":"EXPERIENCE LOS CABOS","RESERVA TU EXPERIENCIA":"BOOK YOUR EXPERIENCE",
+  "Atención cercana, en tu idioma":"Personal service, in your language","Traslados cómodos, puntuales y privados":"Comfortable, punctual private transfers","Experiencias con auténtico sabor local":"Authentic local experiences",
   "Traslados al Aeropuerto":"Airport Transfers","Transporte Privado":"Private Transportation","Tours Locales":"Local Tours","Experiencias en Los Cabos":"Los Cabos Experiences",
   "México en colores · Baja California Sur y más allá":"Mexico in colour · Baja California Sur and beyond",
   "Un viaje con sabor a México":"A journey with the spirit of Mexico",
@@ -4524,10 +4566,10 @@ async function submitBookingRequest(event) {
  });
  Object.assign(dictionaries.fr,{
   "Qué Onda":"Qué Onda","Travel":"Travel",
-  "En Los Cabos, no solo te llevamos a tu destino: te damos la bienvenida y cuidamos cada detalle de tu viaje.":"À Los Cabos, nous ne faisons pas que vous conduire à destination : nous vous souhaitons la bienvenue et prenons soin de chaque détail de votre voyage.",
-  "Creemos que la excelencia se nota en el trato. Por eso ofrecemos transporte privado y experiencias locales con puntualidad, atención personalizada y la calidez de quienes conocen y aman esta tierra. Queremos que disfrutes cada momento, desde que llegas hasta que te despides.":"Nous croyons que l’excellence se ressent dans l’accueil. C’est pourquoi nous proposons des transports privés et des expériences locales, avec ponctualité, attention personnalisée et la chaleur de ceux qui connaissent et aiment cette région. Nous souhaitons que vous profitiez de chaque instant, de votre arrivée à votre départ.",
-  "DESCUBRE EXPERIENCIAS":"DÉCOUVRIR LES EXPÉRIENCES","RESERVA TU VIAJE":"RÉSERVER VOTRE TRAJET",
-  "Atención bilingüe y personalizada":"Service bilingue et personnalisé","Traslados privados para viajar con tranquilidad":"Transferts privés en toute tranquillité","Conocimiento local para descubrir Los Cabos":"Une connaissance locale pour découvrir Los Cabos",
+  "Los Cabos merece vivirse sin prisas. Nosotros nos encargamos del camino para que tú disfrutes cada instante.":"À Los Cabos, nous ne faisons pas que vous conduire à destination : nous vous souhaitons la bienvenue et prenons soin de chaque détail de votre voyage.",
+  "Tu viaje comienza desde el primer saludo. Muévete por Los Cabos con comodidad, estilo y atención cercana. Descubre rincones increíbles, disfruta el paisaje y déjanos los detalles a nosotros. Aquí cada trayecto se convierte en parte de la experiencia.":"Los Cabos se découvre à votre rythme. Nous prenons soin du trajet pour que vous profitiez de chaque instant, avec confort, élégance et une attention personnalisée. Découvrez des lieux magnifiques et laissez-nous nous occuper des détails. Ici, chaque trajet fait partie de l’expérience.",
+  "VIVE LOS CABOS":"VIVRE LOS CABOS","RESERVA TU EXPERIENCIA":"RÉSERVER VOTRE EXPÉRIENCE",
+  "Atención cercana, en tu idioma":"Un accueil personnalisé, dans votre langue","Traslados cómodos, puntuales y privados":"Des transferts privés, confortables et ponctuels","Experiencias con auténtico sabor local":"Des expériences au cœur de la culture locale",
   "Traslados al Aeropuerto":"Transferts aéroport","Transporte Privado":"Transport privé","Tours Locales":"Excursions locales","Experiencias en Los Cabos":"Expériences à Los Cabos",
   "México en colores · Baja California Sur y más allá":"Le Mexique en couleurs · Basse-Californie du Sud et ailleurs",
   "Un viaje con sabor a México":"Un voyage aux couleurs du Mexique",
