@@ -3181,22 +3181,49 @@ function updateBookingNotice() {
 serviceSelect.addEventListener('change', updateBookingNotice);
 updateBookingNotice();
 
+let usdMxnRate = null;
+let usdRateDate = null;
+async function loadBanxicoFixRate() {
+  try {
+    const response = await fetch("https://hubfiscal.mx/api/v1/public/fx/today", { cache: "no-store" });
+    if (!response.ok) throw new Error("No se pudo consultar el FIX de Banxico.");
+    const data = await response.json();
+    const fix = Number(data.rate);
+    if (!Number.isFinite(fix) || fix <= 1) throw new Error("El FIX recibido no es válido.");
+    usdMxnRate = fix - 1;
+    usdRateDate = data.date || "";
+    getQuote();
+    document.querySelectorAll(".vehicle-rate").forEach((el, index) => {
+      const rates = [26, 70, 75];
+      el.textContent = "Desde $" + rates[index] + " MXN / $" + (rates[index] / usdMxnRate).toFixed(2) + " USD por km";
+    });
+  } catch (error) {
+    console.warn("Tipo de cambio FIX:", error);
+    quotePreview.dataset.fxStatus = "unavailable";
+  }
+}
 function getQuote() {
   const distance = Number(distanceInput.value);
   const selectedVehicle = vehicleSelect.options[vehicleSelect.selectedIndex];
   const rate = Number(selectedVehicle.dataset.rate);
   const multiplier = tripTypeSelect.value.startsWith('Redondo') ? 2 : 1;
   if (!Number.isFinite(distance) || distance <= 0) {
-    quotePreview.textContent = 'Ingresa los kilómetros de ida para ver una tarifa estimada.';
+    quotePreview.textContent = 'Completa la distancia para consultar una tarifa estimada en MXN y USD.';
     return null;
   }
   const totalKm = distance * multiplier;
   const total = Math.round(totalKm * rate);
-  const usdRate = 18.60; // Tipo de cambio de referencia; el cobro final se confirma en MXN.
-  const totalUsd = (total / usdRate).toFixed(2);
-  const rateUsd = (rate / usdRate).toFixed(2);
-  quotePreview.innerHTML = 'Tarifa estimada: 
+  const usd = usdMxnRate ? (total / usdMxnRate).toFixed(2) : null;
+  const perKmUsd = usdMxnRate ? (rate / usdMxnRate).toFixed(2) : null;
+  quotePreview.innerHTML = 'Tarifa estimada: $' + total.toLocaleString('es-MX') + ' MXN' +
+    (usd ? ' <span class="quote-usd">≈ $' + usd + ' USD</span>' : '') +
+    '<small>' + selectedVehicle.value + ' · ' + totalKm.toLocaleString('es-MX') +
+    ' km totales · $' + rate + ' MXN' + (perKmUsd ? ' / $' + perKmUsd + ' USD' : '') + ' por km</small>' +
+    '<small class="quote-exchange">' + (usdMxnRate ? 'Tipo de cambio aplicado: $' + usdMxnRate.toFixed(4) + ' MXN/USD (FIX Banxico menos $1.00)' + (usdRateDate ? ' · FIX del ' + usdRateDate : '') : 'Consultando tipo de cambio FIX de Banxico…') +
+    '. El precio final se confirma en pesos mexicanos.</small>';
+  return { distance, totalKm, rate, total, totalUsd: usd, vehicle: selectedVehicle.value };
 }
+loadBanxicoFixRate();
 
 [vehicleSelect, distanceInput, tripTypeSelect].forEach(el => el.addEventListener('input', getQuote));
 [vehicleSelect, distanceInput, tripTypeSelect].forEach(el => el.addEventListener('change', getQuote));
