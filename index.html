@@ -2815,7 +2815,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
   </nav>
   <label class="qot-language" aria-label="Choose language">
     <span class="qot-language-label">IDIOMA</span>
-    <select id="qotLanguage" aria-label="Change language">
+    <select id="qotLanguage" aria-label="Change language" onchange="window.qotSetLanguage && window.qotSetLanguage(this.value)">
       <option value="es">Español</option>
       <option value="en">English</option>
       <option value="fr">Français</option>
@@ -3626,102 +3626,40 @@ async function submitBookingRequest(event) {
  en: {
  "Mexican Experiences":"Mexican Experiences","with Private Transportation":"with Private Transportation",
  "Inicio":"Home","Experiencias":"Exper<script>
-(() => {
- const dictionaries = {
- en: {
- "MENÚ":"MENU","IDIOMA":"LANGUAGE","Inicio":"Home","Experiencias":"Experiences","Reservar":"Book now","Opiniones":"Reviews","Contacto":"Contact",
- "Mexican Experiences":"Mexican Experiences","with Private Transportation":"with Private Transportation",
- "En Los Cabos, no solo te llevamos a tu destino: te damos la bienvenida y cuidamos cada detalle de tu viaje.":"In Los Cabos, we do more than take you to your destination: we welcome you and take care of every detail of your journey.",
- "Creemos que la excelencia se nota en el trato. Por eso ofrecemos transporte privado y experiencias locales con puntualidad, atención personalizada y la calidez de quienes conocen y aman esta tierra. Queremos que disfrutes cada momento, desde que llegas hasta que te despides.":"We believe excellence is felt in every interaction. We offer private transportation and local experiences with punctuality, personal attention and the warmth of people who know and love this land. Enjoy every moment, from arrival to departure.",
- "DESCUBRE EXPERIENCIAS":"EXPLORE EXPERIENCES","RESERVA TU VIAJE":"BOOK YOUR RIDE","Atención bilingüe y personalizada":"Personalised, bilingual service","Traslados privados para viajar con tranquilidad":"Private transfers for peace of mind","Conocimiento local para descubrir Los Cabos":"Local knowledge to discover Los Cabos",
- "Traslados al Aeropuerto":"Airport Transfers","Transporte Privado":"Private Transportation","Tours Locales":"Local Tours","Experiencias en Los Cabos":"Los Cabos Experiences",
- "México en colores · Baja California Sur y más allá":"Mexico in colour · Baja California Sur and beyond","Un viaje con sabor a México":"A journey with the spirit of Mexico","Del desierto de Baja al corazón artesanal de México: lugares, sabores y tradiciones que se quedan contigo.":"From Baja's desert to the artisan heart of Mexico: places, flavours and traditions that stay with you.",
- "Donde el desierto se encuentra con el mar":"Where the desert meets the sea","Yates, aguas azules y una vista panorámica del puerto":"Yachts, blue waters and panoramic harbour views","Aguas turquesa y paisajes inolvidables de La Paz":"Turquoise waters and unforgettable La Paz landscapes","Un ícono colorido en el corazón del Pueblo Mágico":"A colourful icon in the heart of this magical town","Galerías, arte mexicano y calles llenas de vida":"Galleries, Mexican art and lively streets","Tacos, sabores tradicionales y buenos momentos":"Tacos, traditional flavours and good times",
- "Viaja con comodidad":"Travel in comfort","Nuestra Flota":"Our Fleet","Volkswagen · Negro":"Volkswagen · Black","Volkswagen · Blanca":"Volkswagen · White","Volkswagen · Negra":"Volkswagen · Black","Hasta 4 pasajeros":"Up to 4 passengers","Hasta 5 pasajeros":"Up to 5 passengers","Hasta 6 pasajeros":"Up to 6 passengers","Desde":"From","por km":"per km","Ver detalles":"View details",
- "TU AVENTURA EN LOS CABOS COMIENZA AQUÍ · RESERVA HOY":"YOUR LOS CABOS ADVENTURE STARTS HERE · BOOK TODAY","Reserva tu Traslado":"Book Your Transfer","Completa lo esencial y te contactaremos para confirmar.":"Fill in the details and we'll contact you to confirm.",
- "Reserva tu traslado":"Book your transfer","Nombre":"Name","Tu nombre":"Your name","Correo electrónico":"Email address","WhatsApp":"WhatsApp","Servicio":"Service","Traslado Aeropuerto (SJD)":"Airport Transfer (SJD)","Transporte privado":"Private transportation","Tour local":"Local tour","Viaje":"Trip","Sencillo / One-way":"One-way","Redondo / Round-trip":"Round trip","Vehículo":"Vehicle","¿Dónde te recogemos?":"Pickup location","¿A dónde vas?":"Where are you going?","Ej. Aeropuerto SJD, hotel o colonia":"E.g. SJD Airport, hotel or neighbourhood","Ej. Costco, Marina o nombre del hotel":"E.g. Costco, marina or hotel name","Calcular distancia y tarifa":"Calculate distance and fare","Escribe desde 2 letras para buscar. Si no aparece, puedes marcar el punto directamente en el mapa.":"Type at least 2 letters to search. If it doesn't appear, you can mark the location directly on the map.","Ver mapa y ajustar ubicaciones":"View map and adjust locations","Opcional":"Optional","Ubicación y recorrido":"Locations and route","Elige una zona rápida o toca el mapa para marcar el punto exacto.":"Choose a quick area or tap the map to mark the exact location.","ACCESOS RÁPIDOS":"QUICK LOCATIONS","Costco · El Tezal":"Costco · El Tezal","Marina de Cabo":"Cabo Marina","Playa El Médano":"El Médano Beach","Corredor hotelero":"Hotel corridor","Centro San José":"San José downtown","Primero selecciona el campo de recogida o destino. El acceso rápido acerca el mapa a esa zona; después toca el punto exacto.":"First select pickup or destination. Quick access moves the map to that area; then tap the exact location.",
- "📍 Usar aeropuerto SJD como origen":"📍 Use SJD Airport as pickup","Ver ambos puntos":"View both points","Recogida":"Pickup","Destino":"Destination","Aeropuerto SJD (punto fijo)":"SJD Airport (fixed point)","Fecha":"Date","Hora":"Time","Pasajeros":"Passengers",
- "DETALLES DE TU SERVICIO":"YOUR SERVICE DETAILS","Una experiencia cómoda, clara y sin contratiempos.":"A comfortable, clear and seamless experience.","Para su comodidad, el pago del traslado se realiza en":"For your convenience, payment for the transfer is made in","efectivo":"cash","directamente con nuestro conductor, al momento de finalizar el servicio.":", directly to your driver at the end of the ride.",
- "TRASLADOS AL AEROPUERTO SJD":"SJD AIRPORT TRANSFERS","Encuentro y descenso en el estacionamiento frente al aeropuerto.":"Pick-up and drop-off take place in the car park opposite the airport terminal.","Para facilitar su llegada o salida, tanto la recogida como la dejada se realizan en el estacionamiento ubicado frente a la terminal.":"For a smooth arrival or departure, both pick-up and drop-off take place in the car park opposite the terminal.",
- "Completa la distancia de tu recorrido para consultar una tarifa estimada.":"Enter your trip distance to see an estimated fare.","Enviar solicitud":"Send booking request","Tu aventura comienza aquí":"Your adventure starts here","Experiencias mexicanas · Transporte privado":"Mexican experiences · Private transportation","Los Cabos · Baja California Sur · México":"Los Cabos · Baja California Sur · Mexico","Hablemos por WhatsApp":"Chat with us on WhatsApp","Experiencias mexicanas con transporte privado":"Mexican experiences with private transportation",
- "Atención personalizada · Servicio bilingüe · Una forma muy mexicana de descubrir Los Cabos":"Personalised service · Bilingual support · A uniquely Mexican way to discover Los Cabos",
- "Enviando tu solicitud…":"Sending your request…","¡Listo! Recibimos tu solicitud. Qué Onda Travel se pondrá en contacto contigo para confirmar tu reservación.":"Done! We have received your request. Qué Onda Travel will contact you to confirm your booking.","No pudimos enviar tu solicitud. Inténtalo de nuevo o contáctanos por WhatsApp.":"We couldn't send your request. Please try again or contact us on WhatsApp.","Solicitud recibida. La tarifa es estimada y confirmaremos disponibilidad y precio.":"Request received. The fare is an estimate; we will confirm availability and price.",
- "Obteniendo ubicación exacta…":"Getting exact location…","No pudimos ubicar ese lugar. Prueba otra sugerencia.":"We couldn't locate that place. Try another suggestion.","No encontramos las coordenadas de ese lugar.":"We couldn't find the coordinates for that place.","Origen seleccionado. Ahora elige tu destino.":"Pickup selected. Now choose your destination.","Destino seleccionado. Calcula la ruta para conocer los kilómetros y la tarifa.":"Destination selected. Calculate the route to see the distance and fare.","Selecciona una sugerencia válida para el origen y el destino.":"Select a valid suggestion for both pickup and destination.","Calculando ruta…":"Calculating route…","Consultando la ruta por carretera…":"Checking the road route…","No encontramos coincidencias. Prueba con otra referencia.":"No matches found. Try another reference.","No se pudieron mostrar las opciones. Continúa escribiendo o marca el punto en el mapa.":"We couldn't show suggestions. Keep typing or mark the location on the map."
- },
- fr: {
- "MENÚ":"MENU","IDIOMA":"LANGUE","Inicio":"Accueil","Experiencias":"Expériences","Reservar":"Réserver","Opiniones":"Avis","Contacto":"Contact",
- "Mexican Experiences":"Expériences mexicaines","with Private Transportation":"avec transport privé",
- "En Los Cabos, no solo te llevamos a tu destino: te damos la bienvenida y cuidamos cada detalle de tu viaje.":"À Los Cabos, nous ne faisons pas que vous conduire : nous vous accueillons et prenons soin de chaque détail de votre voyage.",
- "Creemos que la excelencia se nota en el trato. Por eso ofrecemos transporte privado y experiencias locales con puntualidad, atención personalizada y la calidez de quienes conocen y aman esta tierra. Queremos que disfrutes cada momento, desde que llegas hasta que te despides.":"Pour nous, l’excellence se ressent dans chaque attention. Nous proposons un transport privé et des expériences locales avec ponctualité, service personnalisé et la chaleur de ceux qui connaissent et aiment cette région. Profitez de chaque instant, de votre arrivée à votre départ.",
- "DESCUBRE EXPERIENCIAS":"DÉCOUVRIR LES EXPÉRIENCES","RESERVA TU VIAJE":"RÉSERVER VOTRE TRAJET","Atención bilingüe y personalizada":"Service bilingue et personnalisé","Traslados privados para viajar con tranquilidad":"Transferts privés en toute sérénité","Conocimiento local para descubrir Los Cabos":"Notre connaissance locale pour découvrir Los Cabos",
- "Traslados al Aeropuerto":"Transferts aéroport","Transporte Privado":"Transport privé","Tours Locales":"Excursions locales","Experiencias en Los Cabos":"Expériences à Los Cabos",
- "México en colores · Baja California Sur y más allá":"Le Mexique en couleurs · Basse-Californie du Sud et ailleurs","Un viaje con sabor a México":"Un voyage aux couleurs du Mexique","Del desierto de Baja al corazón artesanal de México: lugares, sabores y tradiciones que se quedan contigo.":"Du désert de Basse-Californie au cœur artisanal du Mexique : des lieux, des saveurs et des traditions inoubliables.",
- "Donde el desierto se encuentra con el mar":"Là où le désert rencontre la mer","Yates, aguas azules y una vista panorámica del puerto":"Yachts, eaux bleues et vue panoramique sur le port","Aguas turquesa y paisajes inolvidables de La Paz":"Eaux turquoise et paysages inoubliables de La Paz","Un ícono colorido en el corazón del Pueblo Mágico":"Une icône colorée au cœur du village magique","Galerías, arte mexicano y calles llenas de vida":"Galeries, art mexicain et rues animées","Tacos, sabores tradicionales y buenos momentos":"Tacos, saveurs traditionnelles et bons moments",
- "Viaja con comodidad":"Voyagez confortablement","Nuestra Flota":"Notre flotte","Volkswagen · Negro":"Volkswagen · Noir","Volkswagen · Blanca":"Volkswagen · Blanc","Volkswagen · Negra":"Volkswagen · Noir","Hasta 4 pasajeros":"Jusqu’à 4 passagers","Hasta 5 pasajeros":"Jusqu’à 5 passagers","Hasta 6 pasajeros":"Jusqu’à 6 passagers","Desde":"À partir de","por km":"par km","Ver detalles":"Voir les détails",
- "TU AVENTURA EN LOS CABOS COMIENZA AQUÍ · RESERVA HOY":"VOTRE AVENTURE À LOS CABOS COMMENCE ICI · RÉSERVEZ","Reserva tu Traslado":"Réservez votre transfert","Completa lo esencial y te contactaremos para confirmar.":"Renseignez les informations essentielles et nous vous contacterons pour confirmer.",
- "Reserva tu traslado":"Réservez votre transfert","Nombre":"Nom","Tu nombre":"Votre nom","Correo electrónico":"Adresse e-mail","WhatsApp":"WhatsApp","Servicio":"Service","Traslado Aeropuerto (SJD)":"Transfert aéroport (SJD)","Transporte privado":"Transport privé","Tour local":"Excursion locale","Viaje":"Trajet","Sencillo / One-way":"Aller simple","Redondo / Round-trip":"Aller-retour","Vehículo":"Véhicule","¿Dónde te recogemos?":"Lieu de prise en charge","¿A dónde vas?":"Où allez-vous ?","Ej. Aeropuerto SJD, hotel o colonia":"Ex. Aéroport SJD, hôtel ou quartier","Ej. Costco, Marina o nombre del hotel":"Ex. Costco, marina ou nom de l’hôtel","Calcular distancia y tarifa":"Calculer la distance et le tarif","Escribe desde 2 letras para buscar. Si no aparece, puedes marcar el punto directamente en el mapa.":"Saisissez au moins 2 lettres pour rechercher. Si le lieu n’apparaît pas, marquez-le directement sur la carte.","Ver mapa y ajustar ubicaciones":"Voir la carte et ajuster les lieux","Opcional":"Facultatif","Ubicación y recorrido":"Lieux et itinéraire","Elige una zona rápida o toca el mapa para marcar el punto exacto.":"Choisissez une zone rapide ou touchez la carte pour marquer l’emplacement exact.","ACCESOS RÁPIDOS":"ACCÈS RAPIDES","Costco · El Tezal":"Costco · El Tezal","Marina de Cabo":"Marina de Cabo","Playa El Médano":"Plage El Médano","Corredor hotelero":"Corridor hôtelier","Centro San José":"Centre de San José","Primero selecciona el campo de recogida o destino. El acceso rápido acerca el mapa a esa zona; después toca el punto exacto.":"Sélectionnez d’abord le champ de prise en charge ou de destination. L’accès rapide centre la carte sur la zone ; touchez ensuite l’emplacement exact.",
- "📍 Usar aeropuerto SJD como origen":"📍 Utiliser l’aéroport SJD comme départ","Ver ambos puntos":"Voir les deux points","Recogida":"Prise en charge","Destino":"Destination","Aeropuerto SJD (punto fijo)":"Aéroport SJD (point fixe)","Fecha":"Date","Hora":"Heure","Pasajeros":"Passagers",
- "DETALLES DE TU SERVICIO":"DÉTAILS DE VOTRE SERVICE","Una experiencia cómoda, clara y sin contratiempos.":"Une expérience confortable, claire et sans souci.","Para su comodidad, el pago del traslado se realiza en":"Pour votre confort, le paiement du transfert s’effectue en","efectivo":"espèces","directamente con nuestro conductor, al momento de finalizar el servicio.":", directement auprès de votre chauffeur à la fin du trajet.",
- "TRASLADOS AL AEROPUERTO SJD":"TRANSFERTS AÉROPORT SJD","Encuentro y descenso en el estacionamiento frente al aeropuerto.":"La prise en charge et la dépose se font dans le parking situé en face du terminal.","Para facilitar su llegada o salida, tanto la recogida como la dejada se realizan en el estacionamiento ubicado frente a la terminal.":"Pour faciliter votre arrivée ou votre départ, la prise en charge et la dépose se font dans le parking situé en face du terminal.",
- "Completa la distancia de tu recorrido para consultar una tarifa estimada.":"Saisissez la distance de votre trajet pour obtenir un tarif estimatif.","Enviar solicitud":"Envoyer la demande","Tu aventura comienza aquí":"Votre aventure commence ici","Experiencias mexicanas · Transporte privado":"Expériences mexicaines · Transport privé","Los Cabos · Baja California Sur · México":"Los Cabos · Basse-Californie du Sud · Mexique","Hablemos por WhatsApp":"Contactez-nous sur WhatsApp","Experiencias mexicanas con transporte privado":"Expériences mexicaines avec transport privé",
- "Atención personalizada · Servicio bilingüe · Una forma muy mexicana de descubrir Los Cabos":"Service personnalisé · Assistance bilingue · Une façon très mexicaine de découvrir Los Cabos",
- "Enviando tu solicitud…":"Envoi de votre demande…","¡Listo! Recibimos tu solicitud. Qué Onda Travel se pondrá en contacto contigo para confirmar tu reservación.":"Votre demande a bien été reçue. Qué Onda Travel vous contactera pour confirmer votre réservation.","No pudimos enviar tu solicitud. Inténtalo de nuevo o contáctanos por WhatsApp.":"Nous n’avons pas pu envoyer votre demande. Réessayez ou contactez-nous sur WhatsApp.","Solicitud recibida. La tarifa es estimada y confirmaremos disponibilidad y precio.":"Demande reçue. Le tarif est estimatif ; nous confirmerons la disponibilité et le prix.",
- "Obteniendo ubicación exacta…":"Recherche de l’emplacement exact…","No pudimos ubicar ese lugar. Prueba otra sugerencia.":"Impossible de localiser cet endroit. Essayez une autre suggestion.","No encontramos las coordenadas de ese lugar.":"Nous n’avons pas trouvé les coordonnées de cet endroit.","Origen seleccionado. Ahora elige tu destino.":"Départ sélectionné. Choisissez maintenant votre destination.","Destino seleccionado. Calcula la ruta para conocer los kilómetros y la tarifa.":"Destination sélectionnée. Calculez l’itinéraire pour connaître la distance et le tarif.","Selecciona una sugerencia válida para el origen y el destino.":"Sélectionnez une suggestion valide pour le départ et la destination.","Calculando ruta…":"Calcul de l’itinéraire…","Consultando la ruta por carretera…":"Recherche de l’itinéraire routier…","No encontramos coincidencias. Prueba con otra referencia.":"Aucun résultat. Essayez une autre référence.","No se pudieron mostrar las opciones. Continúa escribiendo o marca el punto en el mapa.":"Impossible d’afficher les suggestions. Continuez à saisir ou marquez le lieu sur la carte."
+(function(){
+ const dictionaries={"en":{"MENÚ":"MENU","IDIOMA":"LANGUAGE","Inicio":"Home","Experiencias":"Experiences","Reservar":"Book now","Opiniones":"Reviews","Contacto":"Contact","Traslados al Aeropuerto":"Airport Transfers","Transporte Privado":"Private Transportation","Tours Locales":"Local Tours","Experiencias en Los Cabos":"Los Cabos Experiences","México en colores · Baja California Sur y más allá":"Mexico in colour · Baja California Sur and beyond","Un viaje con sabor a México":"A journey with the spirit of Mexico","Viaja con comodidad":"Travel in comfort","Nuestra Flota":"Our Fleet","Reserva tu Traslado":"Book Your Transfer","Reserva tu traslado":"Book your transfer","Completa lo esencial y te contactaremos para confirmar.":"Fill in the details and we'll contact you to confirm.","Nombre":"Name","Tu nombre":"Your name","Correo electrónico":"Email address","Servicio":"Service","Traslado Aeropuerto (SJD)":"Airport Transfer (SJD)","Transporte privado":"Private transportation","Tour local":"Local tour","Viaje":"Trip","Sencillo / One-way":"One-way","Redondo / Round-trip":"Round trip","Vehículo":"Vehicle","¿Dónde te recogemos?":"Pickup location","¿A dónde vas?":"Where are you going?","Calcular distancia y tarifa":"Calculate distance and fare","Ver mapa y ajustar ubicaciones":"View map and adjust locations","Opcional":"Optional","Ubicación y recorrido":"Locations and route","ACCESOS RÁPIDOS":"QUICK LOCATIONS","Recogida":"Pickup","Destino":"Destination","Fecha":"Date","Hora":"Time","Pasajeros":"Passengers","DETALLES DE TU SERVICIO":"YOUR SERVICE DETAILS","Una experiencia cómoda, clara y sin contratiempos.":"A comfortable, clear and seamless experience.","efectivo":"cash","Enviar solicitud":"Send booking request","Tu aventura comienza aquí":"Your adventure starts here","Hablemos por WhatsApp":"Chat with us on WhatsApp"},"fr":{"MENÚ":"MENU","IDIOMA":"LANGUE","Inicio":"Accueil","Experiencias":"Expériences","Reservar":"Réserver","Opiniones":"Avis","Contacto":"Contact","Traslados al Aeropuerto":"Transferts aéroport","Transporte Privado":"Transport privé","Tours Locales":"Excursions locales","Experiencias en Los Cabos":"Expériences à Los Cabos","México en colores · Baja California Sur y más allá":"Le Mexique en couleurs · Basse-Californie du Sud et ailleurs","Un viaje con sabor a México":"Un voyage aux couleurs du Mexique","Viaja con comodidad":"Voyagez confortablement","Nuestra Flota":"Notre flotte","Reserva tu Traslado":"Réservez votre transfert","Reserva tu traslado":"Réservez votre transfert","Completa lo esencial y te contactaremos para confirmar.":"Renseignez les informations essentielles et nous vous contacterons pour confirmer.","Nombre":"Nom","Tu nombre":"Votre nom","Correo electrónico":"Adresse e-mail","Servicio":"Service","Traslado Aeropuerto (SJD)":"Transfert aéroport (SJD)","Transporte privado":"Transport privé","Tour local":"Excursion locale","Viaje":"Trajet","Sencillo / One-way":"Aller simple","Redondo / Round-trip":"Aller-retour","Vehículo":"Véhicule","¿Dónde te recogemos?":"Lieu de prise en charge","¿A dónde vas?":"Où allez-vous ?","Calcular distancia y tarifa":"Calculer la distance et le tarif","Ver mapa y ajustar ubicaciones":"Voir la carte et ajuster les lieux","Opcional":"Facultatif","Ubicación y recorrido":"Lieux et itinéraire","ACCESOS RÁPIDOS":"ACCÈS RAPIDES","Recogida":"Prise en charge","Destino":"Destination","Fecha":"Date","Hora":"Heure","Pasajeros":"Passagers","DETALLES DE TU SERVICIO":"DÉTAILS DE VOTRE SERVICE","Una experiencia cómoda, clara y sin contratiempos.":"Une expérience confortable, claire et sans souci.","efectivo":"espèces","Enviar solicitud":"Envoyer la demande","Tu aventura comienza aquí":"Votre aventure commence ici","Hablemos por WhatsApp":"Contactez-nous sur WhatsApp"}};
+ const sourceNodes=[];
+ const sourceAttrs=[];
+ function init(){
+  const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);
+  let n;while(n=walker.nextNode())sourceNodes.push({node:n,text:n.nodeValue});
+  document.querySelectorAll('[placeholder]').forEach(el=>sourceAttrs.push({el,attr:'placeholder',value:el.getAttribute('placeholder')}));
+  document.querySelectorAll('option').forEach(el=>sourceAttrs.push({el,attr:'text',value:el.textContent}));
  }
- };
+ function apply(lang){
+  const d=dictionaries[lang]||{};
+  document.documentElement.lang=lang;
+  sourceNodes.forEach(({node,text})=>{
+   const key=text.trim();
+   if(!key)return;
+   node.nodeValue=text.replace(key,d[key]||key);
+  });
+  sourceAttrs.forEach(({el,attr,value})=>{
+   if(attr==='placeholder')el.setAttribute(attr,d[value]||value);
+   else el.textContent=d[value]||value;
+  });
+  const l=document.querySelector('.qot-language-label');
+  if(l)l.textContent=lang==='fr'?'LANGUE':lang==='en'?'LANGUAGE':'IDIOMA';
+  const m=document.querySelector('.menu-dropdown summary');
+  if(m)m.setAttribute('aria-label',lang==='fr'?'Ouvrir le menu de navigation':lang==='en'?'Open navigation menu':'Abrir menú de navegación');
+  try{localStorage.setItem('qot-language',lang)}catch(e){}
+ }
+ window.qotSetLanguage=apply;
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
+ const saved=(()=>{try{return localStorage.getItem('qot-language')||'es'}catch(e){return'es'}})();
  const selector=document.getElementById('qotLanguage');
- const langNames={es:'Español',en:'English',fr:'Français'};
- const originals=new WeakMap();
- const dicts=dictionaries;
- function remember(root){
-   const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);
-   let n; while(n=walker.nextNode()){if(!originals.has(n)) originals.set(n,n.nodeValue);}
-   root.querySelectorAll('[placeholder]').forEach(el=>{if(!el.dataset.qotSourcePlaceholder)el.dataset.qotSourcePlaceholder=el.placeholder;});
-   root.querySelectorAll('option').forEach(el=>{if(!el.dataset.qotSourceOption)el.dataset.qotSourceOption=el.textContent;});
- }
- function translate(lang){
-   const dict=dicts[lang]||{};
-   document.documentElement.lang=lang;
-   const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);
-   let n;
-   while(n=walker.nextNode()){
-     const source=originals.get(n)||n.nodeValue;
-     const key=source.trim();
-     if(!key)continue;
-     const translated=dict[key];
-     n.nodeValue=translated?source.replace(key,translated):source;
-   }
-   document.querySelectorAll('[placeholder]').forEach(el=>{
-     const source=el.dataset.qotSourcePlaceholder||el.placeholder;
-     el.placeholder=dict[source]||source;
-   });
-   document.querySelectorAll('option').forEach(el=>{
-     const source=el.dataset.qotSourceOption||el.textContent;
-     el.textContent=dict[source]||source;
-   });
-   const menu=document.querySelector('.menu-dropdown summary');
-   if(menu)menu.setAttribute('aria-label',lang==='es'?'Abrir menú de navegación':lang==='fr'?'Ouvrir le menu de navigation':'Open navigation menu');
-   const languageLabel=document.querySelector('.qot-language-label');
-   if(languageLabel)languageLabel.textContent=lang==='es'?'IDIOMA':lang==='fr'?'LANGUE':'LANGUAGE';
- }
- remember(document.body);
- const initial=localStorage.getItem('qot-language')||'es';
- selector.value=initial;
- selector.addEventListener('change',()=>{localStorage.setItem('qot-language',selector.value);translate(selector.value);});
- translate(initial);
- // Traducir mensajes que aparecen después de cargar la página (mapa, tarifa y confirmación).
- const observer=new MutationObserver(records=>{
-   records.forEach(record=>{
-     if(record.target && record.target.closest && record.target.closest('select')) return;
-     record.addedNodes.forEach(node=>{
-       if(node.nodeType===Node.TEXT_NODE){if(!originals.has(node))originals.set(node,node.nodeValue);}
-       else if(node.nodeType===Node.ELEMENT_NODE)remember(node);
-     });
-   });
-   translate(selector.value);
- });
- observer.observe(document.body,{subtree:true,childList:true});
- window.qotTranslate=translate;
+ if(selector){selector.value=saved;selector.addEventListener('change',()=>apply(selector.value));}
+ apply(saved);
 })();
 </script>px!important;
   color:#164b50!important;
