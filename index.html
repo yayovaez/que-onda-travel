@@ -3172,14 +3172,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
       
     </div>
 
-    <div class="field">
-      <label>Servicio</label>
-      <select name="service" id="serviceType" required>
-        <option>Traslado Aeropuerto (SJD)</option>
-        <option>Transporte privado</option>
-        <option>Tour local</option>
-      </select>
-    </div>
+    <input type="hidden" name="service" value="Transporte privado">
 
     <div class="field">
       <label>Viaje</label>
@@ -3300,7 +3293,6 @@ const distanceInput = document.getElementById('distance');
 const tripTypeSelect = document.getElementById('tripType');
 const offerInput = document.getElementById('offer');
 const quotePreview = document.getElementById('quotePreview');
-const serviceSelect = document.getElementById('serviceType');
 const airportNote = document.getElementById('airportNote');
 const passengersSelect = bookingForm.querySelector('select[name="passengers"]');
 const travelDateInput = bookingForm.querySelector('input[name="date"]');
