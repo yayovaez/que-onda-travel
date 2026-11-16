@@ -20,10 +20,32 @@ footer{text-align:center;padding:24px;color:#d9e9df;background:#073f49;font-size
 @media(max-width:600px){.facts{grid-template-columns:1fr}.fact{padding:13px}.actions{flex-direction:column}.btn{text-align:center}}
 @media(prefers-reduced-motion:reduce){.btn{transition:none}}
 </style></head><body>
-<header><div class="brand">Qué Onda Travel</div><a class="back" href="index.html#flota">← Volver a la flota</a></header>
+<header><div class="brand">Qué Onda Travel</div><div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap"><label style="font-size:12px;font-weight:800;color:#ffe6a6">IDIOMA <select id="qotLanguage" aria-label="Change language" style="margin-left:6px;padding:8px;border-radius:9px;border:1px solid #e8bd62;background:#fffdf7;color:#073f49"><option value="es">Español</option><option value="en">English</option><option value="fr">Français</option></select></label><a class="back" href="index.html#flota">← Volver a la flota</a></div></header>
 <main><article class="hero"><img src="images/tiguan-negra-2018.jpg" alt="Volkswagen Tiguan 2018 negra de Qué Onda Travel"><div class="content">
 <div class="eyebrow">Comodidad para tu aventura</div><h1>Volkswagen Tiguan 2018</h1><p class="lead">Viaja acompañado y disfruta cada trayecto.</p><p>Una SUV para quienes necesitan capacidad para un grupo más amplio. Disfruta de un traslado privado con atención personalizada durante tu visita a Los Cabos.</p>
 <div class="facts"><div class="fact"><small>Color</small><strong>Negra</strong></div><div class="fact"><small>Capacidad</small><strong>Hasta 6 pasajeros</strong></div><div class="fact"><small>Tarifa desde</small><strong>$75 MXN por km</strong></div></div>
 <div class="use"><strong>Ideal para:</strong> Grupos · Traslados privados · Recorridos por Los Cabos</div>
 <div class="actions"><a class="btn" href="index.html#reservar">Reservar este vehículo</a><a class="btn secondary" href="index.html#flota">Ver otros vehículos</a></div>
-</div></article></main><footer>Qué Onda Travel · Transporte privado en Los Cabos, Baja California Sur</footer></body></html>
+</div></article></main><footer>Qué Onda Travel · Transporte privado en Los Cabos, Baja California Sur</footer><script>
+(function(){
+const dictionaries={en:{"Viaja con comodidad":"Travel in comfort","← Volver a la flota":"← Back to the fleet","Comodidad para tu aventura":"Comfort for your adventure","Viaja acompañado y disfruta cada trayecto.":"Travel together and enjoy every ride.","Una SUV para quienes necesitan capacidad para un grupo más amplio. Disfruta de un traslado privado con atención personalizada durante tu visita a Los Cabos.":"An SUV for travellers who need room for a larger group. Enjoy private transportation and personal attention during your stay in Los Cabos.","Color":"Colour","Hasta 6 pasajeros":"Up to 6 passengers","$75 MXN por km":"From $75 MXN per km","Ideal para:":"Ideal for:","Grupos · Traslados privados · Recorridos por Los Cabos":"Groups · Private transfers · Tours around Los Cabos","Reservar este vehículo":"Book this vehicle","Ver otros vehículos":"See other vehicles","Qué Onda Travel · Transporte privado en Los Cabos, Baja California Sur":"Private transportation in Los Cabos, Baja California Sur"},fr:{"Viaja con comodidad":"Voyagez confortablement","← Volver a la flota":"← Retour à la flotte","Comodidad para tu aventura":"Le confort pour votre aventure","Viaja acompañado y disfruta cada trayecto.":"Voyagez ensemble et profitez de chaque trajet.","Una SUV para quienes necesitan capacidad para un grupo más amplio. Disfruta de un traslado privado con atención personalizada durante tu visita a Los Cabos.":"Un SUV pour les voyageurs qui ont besoin de place pour un groupe plus nombreux. Profitez d’un transport privé et d’un accueil personnalisé pendant votre séjour à Los Cabos.","Color":"Couleur","Hasta 6 pasajeros":"Jusqu’à 6 passagers","$75 MXN por km":"À partir de 75 MXN par km","Ideal para:":"Idéal pour :","Grupos · Traslados privados · Recorridos por Los Cabos":"Groupes · Transferts privés · Excursions à Los Cabos","Reservar este vehículo":"Réserver ce véhicule","Ver otros vehículos":"Voir les autres véhicules","Qué Onda Travel · Transporte privado en Los Cabos, Baja California Sur":"Transport privé à Los Cabos, Basse-Californie du Sud"}};
+let nodes=[];
+function start(){
+const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);
+let n;while((n=walker.nextNode())){if(n.parentElement&&n.parentElement.closest('script,style,select'))continue;nodes.push({node:n,text:n.nodeValue});}
+const selector=document.getElementById('qotLanguage');
+let saved='es';try{saved=localStorage.getItem('qot-language')||'es'}catch(e){}
+function apply(lang){
+document.documentElement.lang=lang;
+nodes.forEach(({node,text})=>{if(node.isConnected){const key=text.trim();if(key)node.nodeValue=text.replace(key,(dictionaries[lang]||{})[key]||key);}});
+const label=selector&&selector.parentElement.firstChild;
+if(label)label.textContent=lang==='fr'?'LANGUE ':lang==='en'?'LANGUAGE ':'IDIOMA ';
+document.title=lang==='fr'?'Volkswagen Tiguan 2018 | Transport privé à Los Cabos':lang==='en'?'Volkswagen Tiguan 2018 | Private Transportation in Los Cabos':'Volkswagen Tiguan 2018 | Qué Onda Travel';
+try{localStorage.setItem('qot-language',lang)}catch(e){}
+}
+if(selector){selector.value=saved;selector.addEventListener('change',()=>apply(selector.value));}
+apply(saved);
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
+})();
+</script></body></html>
