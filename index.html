@@ -2465,6 +2465,7 @@ a:focus-visible,button:focus-visible{outline-color:#d4c1a2!important}
 .map-dot.pickup{background:#4d9b83}.map-dot.destination{background:#c9a45b}.map-dot.airport{background:#f0d6a0}
 .leaflet-popup-content-wrapper,.leaflet-popup-tip{background:#201c17;color:#f2e4cb;border:1px solid #b69a78}
 .leaflet-popup-content{font-family:inherit;font-size:12px}
+.vehicle-rate{color:#d8bd8d!important;font-weight:600;margin-top:10px}.quote-usd{display:inline-block;color:#d8bd8d;font-weight:600;margin-left:8px}.quote-exchange{opacity:.8;margin-top:5px}
 .leaflet-control-attribution{background:rgba(20,18,15,.78)!important;color:#b9ad9d!important}
 .leaflet-control-attribution a{color:#d8bd8d!important}
 .route-flow{stroke-dasharray:10 13;animation:routeFlow 1.15s linear infinite;filter:drop-shadow(0 0 3px rgba(240,214,160,.55))}
@@ -2642,6 +2643,7 @@ a:focus-visible,button:focus-visible{outline-color:#d4c1a2!important}
       <div class="vehicle-info">
         <h3>Volkswagen Jetta</h3>
         <p>Volkswagen · Negro<br>Hasta 4 pasajeros</p>
+        <p class="vehicle-rate">Desde $26 MXN / $1.40 USD por km</p>
         <a class="vehicle-link" href="#reservar">Ver detalles / View details</a>
       </div>
     </article>
@@ -2654,6 +2656,7 @@ a:focus-visible,button:focus-visible{outline-color:#d4c1a2!important}
       <div class="vehicle-info">
         <h3>Volkswagen Atlas</h3>
         <p>Volkswagen · Blanca<br>Hasta 5 pasajeros</p>
+        <p class="vehicle-rate">Desde $70 MXN / $3.76 USD por km</p>
         <a class="vehicle-link" href="#reservar">Ver detalles / View details ›</a>
       </div>
     </article>
@@ -2665,6 +2668,7 @@ a:focus-visible,button:focus-visible{outline-color:#d4c1a2!important}
       <div class="vehicle-info">
         <h3>Volkswagen Tiguan</h3>
         <p>Volkswagen · Negra<br>Hasta 6 pasajeros</p>
+        <p class="vehicle-rate">Desde $75 MXN / $4.03 USD por km</p>
         <a class="vehicle-link" href="#reservar">Ver detalles / View details ›</a>
       </div>
     </article>
@@ -3188,10 +3192,549 @@ function getQuote() {
   }
   const totalKm = distance * multiplier;
   const total = Math.round(totalKm * rate);
-  quotePreview.innerHTML = 'Tarifa estimada: $' + total.toLocaleString('es-MX') +
-    ' MXN <small>' + selectedVehicle.value + ' · ' + totalKm.toLocaleString('es-MX') +
-    ' km totales · $' + rate + ' MXN por km</small>';
-  return { distance, totalKm, rate, total, vehicle: selectedVehicle.value };
+  const usdRate = 18.60; // Tipo de cambio de referencia; el cobro final se confirma en MXN.
+  const totalUsd = (total / usdRate).toFixed(2);
+  const rateUsd = (rate / usdRate).toFixed(2);
+  quotePreview.innerHTML = 'Tarifa estimada: 
+}
+
+[vehicleSelect, distanceInput, tripTypeSelect].forEach(el => el.addEventListener('input', getQuote));
+[vehicleSelect, distanceInput, tripTypeSelect].forEach(el => el.addEventListener('change', getQuote));
+
+async function submitBookingRequest(event) {
+  event.preventDefault();
+  if (!bookingForm.reportValidity()) return;
+  const quote = getQuote();
+  if (!quote) { distanceInput.focus(); return; }
+
+  const data = new FormData(bookingForm);
+  const status = document.getElementById('bookingStatus');
+  const button = document.getElementById('bookingSubmit');
+  button.disabled = true;
+  status.textContent = 'Enviando tu solicitud…';
+
+  try {
+    const client = window.supabase.createClient(
+      'https://iyelnragqgriycdyqowq.supabase.co',
+      'sb_publishable_d-xqUkbQSgzZys3OfXzbiw_iyHzHItE'
+    );
+    const { error } = await client.from('booking_requests').insert({
+      customer_name: String(data.get('customerName')).trim(),
+      customer_email: String(data.get('customerEmail') || '').trim() || null,
+      customer_phone: String(data.get('customerPhone')).trim(),
+      service: data.get('service'),
+      trip_type: String(data.get('tripType')).startsWith('Redondo') ? 'Redondo' : 'Sencillo',
+      vehicle: data.get('vehicle'),
+      distance_km: quote.totalKm,
+      pickup: String(data.get('pickup')).trim(),
+      destination: String(data.get('destination')).trim(),
+      travel_date: data.get('date'),
+      travel_time: data.get('time'),
+      passengers: Number(data.get('passengers')),
+      estimated_total_mxn: quote.total,
+      status: 'pending'
+    });
+    if (error) throw error;
+    bookingForm.reset();
+    quotePreview.textContent = 'Solicitud recibida. La tarifa es estimada y confirmaremos disponibilidad y precio.';
+    status.textContent = '¡Listo! Recibimos tu solicitud. Qué Onda Travel se pondrá en contacto contigo para confirmar tu reservación.';
+  } catch (error) {
+    console.error(error);
+    status.textContent = 'No pudimos enviar tu solicitud. Inténtalo de nuevo o contáctanos por WhatsApp.';
+  } finally {
+    button.disabled = false;
+  }
+}
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(() => {
+  const SUPABASE_URL = "https://iyelnragqgriycdyqowq.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_d-xqUkbQSgzZys3OfXzbiw_iyHzHItE";
+  const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  const form = document.getElementById("reviewForm");
+  const status = document.getElementById("reviewStatus");
+  const list = document.getElementById("approvedReviews");
+  const endpoint = SUPABASE_URL + "/functions/v1/approved-reviews";
+
+  async function loadApprovedReviews() {
+    try {
+      const response = await fetch(endpoint, { headers: { apikey: SUPABASE_KEY } });
+      if (!response.ok) throw new Error("No se pudieron cargar las opiniones.");
+      const payload = await response.json();
+      if (!payload.reviews || !payload.reviews.length) return;
+      list.innerHTML = "";
+      payload.reviews.forEach(review => {
+        const card = document.createElement("article");
+        card.className = "review-card";
+        const stars = document.createElement("div");
+        stars.className = "review-stars";
+        stars.textContent = review.rating ? "★".repeat(review.rating) : "0 estrellas";
+        const name = document.createElement("strong");
+        name.textContent = review.customer_name;
+        const body = document.createElement("p");
+        body.textContent = review.review_text;
+        card.append(stars, name, body);
+        if (review.media_url) {
+          const media = document.createElement(review.media_type === "video" ? "video" : "img");
+          media.src = review.media_url;
+          if (review.media_type === "video") media.controls = true;
+          else media.alt = "Fotografía compartida por " + review.customer_name;
+          card.append(media);
+        }
+        list.append(card);
+      });
+    } catch (error) { console.warn(error); }
+  }
+
+  form.addEventListener("submit", async event => {
+    event.preventDefault();
+    if (!form.reportValidity()) return;
+    const submit = form.querySelector("button[type=submit]");
+    submit.disabled = true;
+    status.textContent = "Enviando tu recomendación...";
+    try {
+      const data = new FormData(form);
+      const file = document.getElementById("reviewMedia").files[0];
+      let mediaPath = null, mediaType = null;
+      if (file) {
+        if (file.size > 50 * 1024 * 1024) throw new Error("El archivo supera el límite de 50 MB.");
+        const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+        mediaPath = crypto.randomUUID() + "/" + safeName;
+        mediaType = file.type.startsWith("video/") ? "video" : "image";
+        const { error: uploadError } = await client.storage.from("review-media").upload(mediaPath, file, { contentType: file.type, upsert: false });
+        if (uploadError) throw uploadError;
+      }
+      const { error } = await client.from("customer_reviews").insert({
+        customer_name: data.get("customer_name").trim(),
+        rating: Number(data.get("rating")),
+        review_text: data.get("review_text").trim(),
+        media_path: mediaPath,
+        media_type: mediaType
+      });
+      if (error) throw error;
+      form.reset();
+      status.textContent = "¡Gracias! Recibimos tu recomendación. La revisaremos antes de publicarla.";
+    } catch (error) {
+      console.error(error);
+      status.textContent = error.message || "No pudimos enviar tu recomendación. Inténtalo de nuevo.";
+    } finally { submit.disabled = false; }
+  });
+  loadApprovedReviews();
+})();
+</script>
+
+
+
+</body>
+</html> + total.toLocaleString('es-MX') +
+    ' MXN <span class="quote-usd">≈ 
+}
+
+[vehicleSelect, distanceInput, tripTypeSelect].forEach(el => el.addEventListener('input', getQuote));
+[vehicleSelect, distanceInput, tripTypeSelect].forEach(el => el.addEventListener('change', getQuote));
+
+async function submitBookingRequest(event) {
+  event.preventDefault();
+  if (!bookingForm.reportValidity()) return;
+  const quote = getQuote();
+  if (!quote) { distanceInput.focus(); return; }
+
+  const data = new FormData(bookingForm);
+  const status = document.getElementById('bookingStatus');
+  const button = document.getElementById('bookingSubmit');
+  button.disabled = true;
+  status.textContent = 'Enviando tu solicitud…';
+
+  try {
+    const client = window.supabase.createClient(
+      'https://iyelnragqgriycdyqowq.supabase.co',
+      'sb_publishable_d-xqUkbQSgzZys3OfXzbiw_iyHzHItE'
+    );
+    const { error } = await client.from('booking_requests').insert({
+      customer_name: String(data.get('customerName')).trim(),
+      customer_email: String(data.get('customerEmail') || '').trim() || null,
+      customer_phone: String(data.get('customerPhone')).trim(),
+      service: data.get('service'),
+      trip_type: String(data.get('tripType')).startsWith('Redondo') ? 'Redondo' : 'Sencillo',
+      vehicle: data.get('vehicle'),
+      distance_km: quote.totalKm,
+      pickup: String(data.get('pickup')).trim(),
+      destination: String(data.get('destination')).trim(),
+      travel_date: data.get('date'),
+      travel_time: data.get('time'),
+      passengers: Number(data.get('passengers')),
+      estimated_total_mxn: quote.total,
+      status: 'pending'
+    });
+    if (error) throw error;
+    bookingForm.reset();
+    quotePreview.textContent = 'Solicitud recibida. La tarifa es estimada y confirmaremos disponibilidad y precio.';
+    status.textContent = '¡Listo! Recibimos tu solicitud. Qué Onda Travel se pondrá en contacto contigo para confirmar tu reservación.';
+  } catch (error) {
+    console.error(error);
+    status.textContent = 'No pudimos enviar tu solicitud. Inténtalo de nuevo o contáctanos por WhatsApp.';
+  } finally {
+    button.disabled = false;
+  }
+}
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(() => {
+  const SUPABASE_URL = "https://iyelnragqgriycdyqowq.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_d-xqUkbQSgzZys3OfXzbiw_iyHzHItE";
+  const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  const form = document.getElementById("reviewForm");
+  const status = document.getElementById("reviewStatus");
+  const list = document.getElementById("approvedReviews");
+  const endpoint = SUPABASE_URL + "/functions/v1/approved-reviews";
+
+  async function loadApprovedReviews() {
+    try {
+      const response = await fetch(endpoint, { headers: { apikey: SUPABASE_KEY } });
+      if (!response.ok) throw new Error("No se pudieron cargar las opiniones.");
+      const payload = await response.json();
+      if (!payload.reviews || !payload.reviews.length) return;
+      list.innerHTML = "";
+      payload.reviews.forEach(review => {
+        const card = document.createElement("article");
+        card.className = "review-card";
+        const stars = document.createElement("div");
+        stars.className = "review-stars";
+        stars.textContent = review.rating ? "★".repeat(review.rating) : "0 estrellas";
+        const name = document.createElement("strong");
+        name.textContent = review.customer_name;
+        const body = document.createElement("p");
+        body.textContent = review.review_text;
+        card.append(stars, name, body);
+        if (review.media_url) {
+          const media = document.createElement(review.media_type === "video" ? "video" : "img");
+          media.src = review.media_url;
+          if (review.media_type === "video") media.controls = true;
+          else media.alt = "Fotografía compartida por " + review.customer_name;
+          card.append(media);
+        }
+        list.append(card);
+      });
+    } catch (error) { console.warn(error); }
+  }
+
+  form.addEventListener("submit", async event => {
+    event.preventDefault();
+    if (!form.reportValidity()) return;
+    const submit = form.querySelector("button[type=submit]");
+    submit.disabled = true;
+    status.textContent = "Enviando tu recomendación...";
+    try {
+      const data = new FormData(form);
+      const file = document.getElementById("reviewMedia").files[0];
+      let mediaPath = null, mediaType = null;
+      if (file) {
+        if (file.size > 50 * 1024 * 1024) throw new Error("El archivo supera el límite de 50 MB.");
+        const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+        mediaPath = crypto.randomUUID() + "/" + safeName;
+        mediaType = file.type.startsWith("video/") ? "video" : "image";
+        const { error: uploadError } = await client.storage.from("review-media").upload(mediaPath, file, { contentType: file.type, upsert: false });
+        if (uploadError) throw uploadError;
+      }
+      const { error } = await client.from("customer_reviews").insert({
+        customer_name: data.get("customer_name").trim(),
+        rating: Number(data.get("rating")),
+        review_text: data.get("review_text").trim(),
+        media_path: mediaPath,
+        media_type: mediaType
+      });
+      if (error) throw error;
+      form.reset();
+      status.textContent = "¡Gracias! Recibimos tu recomendación. La revisaremos antes de publicarla.";
+    } catch (error) {
+      console.error(error);
+      status.textContent = error.message || "No pudimos enviar tu recomendación. Inténtalo de nuevo.";
+    } finally { submit.disabled = false; }
+  });
+  loadApprovedReviews();
+})();
+</script>
+
+
+
+</body>
+</html> + totalUsd + ' USD</span><small>' + selectedVehicle.value + ' · ' + totalKm.toLocaleString('es-MX') +
+    ' km totales · 
+}
+
+[vehicleSelect, distanceInput, tripTypeSelect].forEach(el => el.addEventListener('input', getQuote));
+[vehicleSelect, distanceInput, tripTypeSelect].forEach(el => el.addEventListener('change', getQuote));
+
+async function submitBookingRequest(event) {
+  event.preventDefault();
+  if (!bookingForm.reportValidity()) return;
+  const quote = getQuote();
+  if (!quote) { distanceInput.focus(); return; }
+
+  const data = new FormData(bookingForm);
+  const status = document.getElementById('bookingStatus');
+  const button = document.getElementById('bookingSubmit');
+  button.disabled = true;
+  status.textContent = 'Enviando tu solicitud…';
+
+  try {
+    const client = window.supabase.createClient(
+      'https://iyelnragqgriycdyqowq.supabase.co',
+      'sb_publishable_d-xqUkbQSgzZys3OfXzbiw_iyHzHItE'
+    );
+    const { error } = await client.from('booking_requests').insert({
+      customer_name: String(data.get('customerName')).trim(),
+      customer_email: String(data.get('customerEmail') || '').trim() || null,
+      customer_phone: String(data.get('customerPhone')).trim(),
+      service: data.get('service'),
+      trip_type: String(data.get('tripType')).startsWith('Redondo') ? 'Redondo' : 'Sencillo',
+      vehicle: data.get('vehicle'),
+      distance_km: quote.totalKm,
+      pickup: String(data.get('pickup')).trim(),
+      destination: String(data.get('destination')).trim(),
+      travel_date: data.get('date'),
+      travel_time: data.get('time'),
+      passengers: Number(data.get('passengers')),
+      estimated_total_mxn: quote.total,
+      status: 'pending'
+    });
+    if (error) throw error;
+    bookingForm.reset();
+    quotePreview.textContent = 'Solicitud recibida. La tarifa es estimada y confirmaremos disponibilidad y precio.';
+    status.textContent = '¡Listo! Recibimos tu solicitud. Qué Onda Travel se pondrá en contacto contigo para confirmar tu reservación.';
+  } catch (error) {
+    console.error(error);
+    status.textContent = 'No pudimos enviar tu solicitud. Inténtalo de nuevo o contáctanos por WhatsApp.';
+  } finally {
+    button.disabled = false;
+  }
+}
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(() => {
+  const SUPABASE_URL = "https://iyelnragqgriycdyqowq.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_d-xqUkbQSgzZys3OfXzbiw_iyHzHItE";
+  const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  const form = document.getElementById("reviewForm");
+  const status = document.getElementById("reviewStatus");
+  const list = document.getElementById("approvedReviews");
+  const endpoint = SUPABASE_URL + "/functions/v1/approved-reviews";
+
+  async function loadApprovedReviews() {
+    try {
+      const response = await fetch(endpoint, { headers: { apikey: SUPABASE_KEY } });
+      if (!response.ok) throw new Error("No se pudieron cargar las opiniones.");
+      const payload = await response.json();
+      if (!payload.reviews || !payload.reviews.length) return;
+      list.innerHTML = "";
+      payload.reviews.forEach(review => {
+        const card = document.createElement("article");
+        card.className = "review-card";
+        const stars = document.createElement("div");
+        stars.className = "review-stars";
+        stars.textContent = review.rating ? "★".repeat(review.rating) : "0 estrellas";
+        const name = document.createElement("strong");
+        name.textContent = review.customer_name;
+        const body = document.createElement("p");
+        body.textContent = review.review_text;
+        card.append(stars, name, body);
+        if (review.media_url) {
+          const media = document.createElement(review.media_type === "video" ? "video" : "img");
+          media.src = review.media_url;
+          if (review.media_type === "video") media.controls = true;
+          else media.alt = "Fotografía compartida por " + review.customer_name;
+          card.append(media);
+        }
+        list.append(card);
+      });
+    } catch (error) { console.warn(error); }
+  }
+
+  form.addEventListener("submit", async event => {
+    event.preventDefault();
+    if (!form.reportValidity()) return;
+    const submit = form.querySelector("button[type=submit]");
+    submit.disabled = true;
+    status.textContent = "Enviando tu recomendación...";
+    try {
+      const data = new FormData(form);
+      const file = document.getElementById("reviewMedia").files[0];
+      let mediaPath = null, mediaType = null;
+      if (file) {
+        if (file.size > 50 * 1024 * 1024) throw new Error("El archivo supera el límite de 50 MB.");
+        const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+        mediaPath = crypto.randomUUID() + "/" + safeName;
+        mediaType = file.type.startsWith("video/") ? "video" : "image";
+        const { error: uploadError } = await client.storage.from("review-media").upload(mediaPath, file, { contentType: file.type, upsert: false });
+        if (uploadError) throw uploadError;
+      }
+      const { error } = await client.from("customer_reviews").insert({
+        customer_name: data.get("customer_name").trim(),
+        rating: Number(data.get("rating")),
+        review_text: data.get("review_text").trim(),
+        media_path: mediaPath,
+        media_type: mediaType
+      });
+      if (error) throw error;
+      form.reset();
+      status.textContent = "¡Gracias! Recibimos tu recomendación. La revisaremos antes de publicarla.";
+    } catch (error) {
+      console.error(error);
+      status.textContent = error.message || "No pudimos enviar tu recomendación. Inténtalo de nuevo.";
+    } finally { submit.disabled = false; }
+  });
+  loadApprovedReviews();
+})();
+</script>
+
+
+
+</body>
+</html> + rate + ' MXN / 
+}
+
+[vehicleSelect, distanceInput, tripTypeSelect].forEach(el => el.addEventListener('input', getQuote));
+[vehicleSelect, distanceInput, tripTypeSelect].forEach(el => el.addEventListener('change', getQuote));
+
+async function submitBookingRequest(event) {
+  event.preventDefault();
+  if (!bookingForm.reportValidity()) return;
+  const quote = getQuote();
+  if (!quote) { distanceInput.focus(); return; }
+
+  const data = new FormData(bookingForm);
+  const status = document.getElementById('bookingStatus');
+  const button = document.getElementById('bookingSubmit');
+  button.disabled = true;
+  status.textContent = 'Enviando tu solicitud…';
+
+  try {
+    const client = window.supabase.createClient(
+      'https://iyelnragqgriycdyqowq.supabase.co',
+      'sb_publishable_d-xqUkbQSgzZys3OfXzbiw_iyHzHItE'
+    );
+    const { error } = await client.from('booking_requests').insert({
+      customer_name: String(data.get('customerName')).trim(),
+      customer_email: String(data.get('customerEmail') || '').trim() || null,
+      customer_phone: String(data.get('customerPhone')).trim(),
+      service: data.get('service'),
+      trip_type: String(data.get('tripType')).startsWith('Redondo') ? 'Redondo' : 'Sencillo',
+      vehicle: data.get('vehicle'),
+      distance_km: quote.totalKm,
+      pickup: String(data.get('pickup')).trim(),
+      destination: String(data.get('destination')).trim(),
+      travel_date: data.get('date'),
+      travel_time: data.get('time'),
+      passengers: Number(data.get('passengers')),
+      estimated_total_mxn: quote.total,
+      status: 'pending'
+    });
+    if (error) throw error;
+    bookingForm.reset();
+    quotePreview.textContent = 'Solicitud recibida. La tarifa es estimada y confirmaremos disponibilidad y precio.';
+    status.textContent = '¡Listo! Recibimos tu solicitud. Qué Onda Travel se pondrá en contacto contigo para confirmar tu reservación.';
+  } catch (error) {
+    console.error(error);
+    status.textContent = 'No pudimos enviar tu solicitud. Inténtalo de nuevo o contáctanos por WhatsApp.';
+  } finally {
+    button.disabled = false;
+  }
+}
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(() => {
+  const SUPABASE_URL = "https://iyelnragqgriycdyqowq.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_d-xqUkbQSgzZys3OfXzbiw_iyHzHItE";
+  const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  const form = document.getElementById("reviewForm");
+  const status = document.getElementById("reviewStatus");
+  const list = document.getElementById("approvedReviews");
+  const endpoint = SUPABASE_URL + "/functions/v1/approved-reviews";
+
+  async function loadApprovedReviews() {
+    try {
+      const response = await fetch(endpoint, { headers: { apikey: SUPABASE_KEY } });
+      if (!response.ok) throw new Error("No se pudieron cargar las opiniones.");
+      const payload = await response.json();
+      if (!payload.reviews || !payload.reviews.length) return;
+      list.innerHTML = "";
+      payload.reviews.forEach(review => {
+        const card = document.createElement("article");
+        card.className = "review-card";
+        const stars = document.createElement("div");
+        stars.className = "review-stars";
+        stars.textContent = review.rating ? "★".repeat(review.rating) : "0 estrellas";
+        const name = document.createElement("strong");
+        name.textContent = review.customer_name;
+        const body = document.createElement("p");
+        body.textContent = review.review_text;
+        card.append(stars, name, body);
+        if (review.media_url) {
+          const media = document.createElement(review.media_type === "video" ? "video" : "img");
+          media.src = review.media_url;
+          if (review.media_type === "video") media.controls = true;
+          else media.alt = "Fotografía compartida por " + review.customer_name;
+          card.append(media);
+        }
+        list.append(card);
+      });
+    } catch (error) { console.warn(error); }
+  }
+
+  form.addEventListener("submit", async event => {
+    event.preventDefault();
+    if (!form.reportValidity()) return;
+    const submit = form.querySelector("button[type=submit]");
+    submit.disabled = true;
+    status.textContent = "Enviando tu recomendación...";
+    try {
+      const data = new FormData(form);
+      const file = document.getElementById("reviewMedia").files[0];
+      let mediaPath = null, mediaType = null;
+      if (file) {
+        if (file.size > 50 * 1024 * 1024) throw new Error("El archivo supera el límite de 50 MB.");
+        const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+        mediaPath = crypto.randomUUID() + "/" + safeName;
+        mediaType = file.type.startsWith("video/") ? "video" : "image";
+        const { error: uploadError } = await client.storage.from("review-media").upload(mediaPath, file, { contentType: file.type, upsert: false });
+        if (uploadError) throw uploadError;
+      }
+      const { error } = await client.from("customer_reviews").insert({
+        customer_name: data.get("customer_name").trim(),
+        rating: Number(data.get("rating")),
+        review_text: data.get("review_text").trim(),
+        media_path: mediaPath,
+        media_type: mediaType
+      });
+      if (error) throw error;
+      form.reset();
+      status.textContent = "¡Gracias! Recibimos tu recomendación. La revisaremos antes de publicarla.";
+    } catch (error) {
+      console.error(error);
+      status.textContent = error.message || "No pudimos enviar tu recomendación. Inténtalo de nuevo.";
+    } finally { submit.disabled = false; }
+  });
+  loadApprovedReviews();
+})();
+</script>
+
+
+
+</body>
+</html> + rateUsd + ' USD por km</small><small class="quote-exchange">USD calculado con tipo de cambio referencial de $18.60 MXN. El precio final se confirma en pesos mexicanos.</small>';
+  return { distance, totalKm, rate, total, totalUsd, vehicle: selectedVehicle.value };
 }
 
 [vehicleSelect, distanceInput, tripTypeSelect].forEach(el => el.addEventListener('input', getQuote));
