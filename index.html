@@ -3271,7 +3271,6 @@ async function submitBookingRequest(event) {
   if (!button || !status) return;
   const SUPABASE_URL = "https://iyelnragqgriycdyqowq.supabase.co";
   const SUPABASE_KEY = "sb_publishable_d-xqUkbQSgzZys3OfXzbiw_iyHzHItE";
-  const VAPID_PUBLIC_KEY = "BBJ5Ykz_ggtxKfkMBIzjpV8sgEtCjk1M2KhDCOQaxq92eIXhVvTx6c_aryX2Mfv0t_myvfNqa2hgH8cODGCmupo";
   const toUint8Array = value => {
     const padding = "=".repeat((4 - value.length % 4) % 4);
     const base64 = (value + padding).replace(/-/g, "+").replace(/_/g, "/");
@@ -3289,11 +3288,17 @@ async function submitBookingRequest(event) {
       if (permission !== "granted") throw new Error("No se concedió permiso para mostrar notificaciones.");
       const registration = await navigator.serviceWorker.register("./service-worker.js", { scope: "./" });
       await navigator.serviceWorker.ready;
+      const keyResponse = await fetch(SUPABASE_URL + "/functions/v1/push-public-key", {
+        headers: { apikey: SUPABASE_KEY }
+      });
+      if (!keyResponse.ok) throw new Error("No pudimos preparar la clave de notificaciones.");
+      const keyPayload = await keyResponse.json();
+      if (!keyPayload.publicKey) throw new Error("El servicio de notificaciones no devolvió una clave válida.");
       let subscription = await registration.pushManager.getSubscription();
       if (!subscription) {
         subscription = await registration.pushManager.subscribe({
           userVisibleOnly: true,
-          applicationServerKey: toUint8Array(VAPID_PUBLIC_KEY)
+          applicationServerKey: toUint8Array(keyPayload.publicKey)
         });
       }
       const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
