@@ -3759,6 +3759,13 @@ async function submitBookingRequest(event) {
   "Balandra":"Balandra"
  });
 
+
+ Object.assign(dictionaries.en,{
+  "Viaja con comodidad":"Travel in comfort","Nuestra Flota":"Our Fleet","Volkswagen · Negro":"Volkswagen · Black","Volkswagen · Blanca":"Volkswagen · White","Volkswagen · Negra":"Volkswagen · Black","Hasta 4 pasajeros":"Up to 4 passengers","Hasta 5 pasajeros":"Up to 5 passengers","Hasta 6 pasajeros":"Up to 6 passengers","Desde $26 MXN / $1.40 USD por km":"From $26 MXN / $1.40 USD per km","Desde $70 MXN / $3.76 USD por km":"From $70 MXN / $3.76 USD per km","Desde $75 MXN / $4.03 USD por km":"From $75 MXN / $4.03 USD per km","Ver detalles / View details":"View details","Ver detalles / View details ›":"View details ›"
+ });
+ Object.assign(dictionaries.fr,{
+  "Viaja con comodidad":"Voyagez confortablement","Nuestra Flota":"Notre flotte","Volkswagen · Negro":"Volkswagen · Noir","Volkswagen · Blanca":"Volkswagen · Blanc","Volkswagen · Negra":"Volkswagen · Noir","Hasta 4 pasajeros":"Jusqu’à 4 passagers","Hasta 5 pasajeros":"Jusqu’à 5 passagers","Hasta 6 pasajeros":"Jusqu’à 6 passagers","Desde $26 MXN / $1.40 USD por km":"À partir de 26 MXN / 1,40 USD par km","Desde $70 MXN / $3.76 USD por km":"À partir de 70 MXN / 3,76 USD par km","Desde $75 MXN / $4.03 USD por km":"À partir de 75 MXN / 4,03 USD par km","Ver detalles / View details":"Voir les détails","Ver detalles / View details ›":"Voir les détails ›"
+ });
  let sourceNodes=[],sourceAttrs=[];
  function init(){
   const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);
