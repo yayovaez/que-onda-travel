@@ -3686,8 +3686,24 @@ async function submitBookingRequest(event) {
      if(!el.dataset.qotLabel) el.dataset.qotLabel=el.textContent;
      el.textContent=dict[el.dataset.qotLabel]||el.dataset.qotLabel;
    });
+   // Traducción explícita del menú para que sus enlaces y el título
+   // siempre cambien juntos, incluso después de alternar varias veces.
+   const menuLabels = {
+     es: { '#inicio':'Inicio', '#experiencias':'Experiencias', '#reservar':'Reservar', 'opiniones.html':'Opiniones', '#contacto':'Contacto', menu:'MENÚ', language:'IDIOMA', aria:'Abrir menú de navegación' },
+     en: { '#inicio':'Home', '#experiencias':'Experiences', '#reservar':'Book now', 'opiniones.html':'Reviews', '#contacto':'Contact', menu:'MENU', language:'LANGUAGE', aria:'Open navigation menu' },
+     fr: { '#inicio':'Accueil', '#experiencias':'Expériences', '#reservar':'Réserver', 'opiniones.html':'Avis', '#contacto':'Contact', menu:'MENU', language:'LANGUE', aria:'Ouvrir le menu de navigation' }
+   };
+   const labels = menuLabels[lang] || menuLabels.es;
+   document.querySelectorAll('.menu-panel a').forEach(link => {
+     const key = link.getAttribute('href');
+     if (labels[key]) link.textContent = labels[key];
+   });
+   const menuLabel = document.querySelector('.menu-label');
+   if (menuLabel) menuLabel.textContent = labels.menu;
+   const languageLabel = document.querySelector('.qot-language-label');
+   if (languageLabel) languageLabel.textContent = labels.language;
    const menu=document.querySelector('.menu-dropdown summary');
-   if(menu) menu.setAttribute('aria-label',lang==='es'?'Abrir menú de navegación':lang==='fr'?'Ouvrir le menu de navigation':'Open navigation menu');
+   if(menu) menu.setAttribute('aria-label',labels.aria);
  }
  const selector=document.getElementById('qotLanguage');
  const saved=localStorage.getItem('qot-language')||'es';
