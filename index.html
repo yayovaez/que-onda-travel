@@ -2813,6 +2813,14 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
       </div>
     </details>
   </nav>
+  <label class="qot-language" aria-label="Choose language">
+    <span class="qot-language-label">IDIOMA</span>
+    <select id="qotLanguage" aria-label="Change language">
+      <option value="es">Español</option>
+      <option value="en">English</option>
+      <option value="fr">Français</option>
+    </select>
+  </label>
 </header>
 
 <main>
@@ -3604,6 +3612,90 @@ async function submitBookingRequest(event) {
 </script>
 
 
+
+
+<style>
+.qot-language{display:flex;align-items:center;gap:8px;color:#f2d79a;font-size:11px;font-weight:800;letter-spacing:1px;white-space:nowrap}
+.qot-language select{background:#103d3a;color:#fff;border:1px solid #d8ad51;border-radius:22px;padding:10px 13px;font-weight:700;cursor:pointer}
+.qot-language select option{background:#103d3a;color:#fff}
+@media(max-width:700px){header{flex-wrap:wrap}.qot-language{margin-left:auto}.brand-description{display:none}}
+</style>
+<script>
+(() => {
+ const translations = {
+ en: {
+ "Mexican Experiences":"Mexican Experiences","with Private Transportation":"with Private Transportation",
+ "Inicio":"Home","Experiencias":"Experiences","Reservar":"Book now","Opiniones":"Reviews","Contacto":"Contact","MENÚ":"MENU",
+ "En Los Cabos, no solo te llevamos a tu destino: te damos la bienvenida y cuidamos cada detalle de tu viaje.":"In Los Cabos, we do more than take you to your destination: we welcome you and take care of every detail of your journey.",
+ "Creemos que la excelencia se nota en el trato. Por eso ofrecemos transporte privado y experiencias locales con puntualidad, atención personalizada y la calidez de quienes conocen y aman esta tierra. Queremos que disfrutes cada momento, desde que llegas hasta que te despides.":"We believe excellence is felt in every interaction. We offer private transportation and local experiences with punctuality, personal attention and the warmth of people who know and love this land. Enjoy every moment, from arrival to departure.",
+ "DESCUBRE EXPERIENCIAS":"EXPLORE EXPERIENCES","RESERVA TU VIAJE":"BOOK YOUR RIDE",
+ "Atención bilingüe y personalizada":"Personalised, bilingual service","Traslados privados para viajar con tranquilidad":"Private transfers for peace of mind","Conocimiento local para descubrir Los Cabos":"Local knowledge to discover Los Cabos",
+ "Traslados al Aeropuerto":"Airport Transfers","Transporte Privado":"Private Transportation","Tours Locales":"Local Tours","Experiencias en Los Cabos":"Los Cabos Experiences",
+ "México en colores · Baja California Sur y más allá":"Mexico in colour · Baja California Sur and beyond","Un viaje con sabor a México":"A journey with the spirit of Mexico","Del desierto de Baja al corazón artesanal de México: lugares, sabores y tradiciones que se quedan contigo.":"From Baja's desert to the artisan heart of Mexico: places, flavours and traditions that stay with you.",
+ "Donde el desierto se encuentra con el mar":"Where the desert meets the sea","Yates, aguas azules y una vista panorámica del puerto":"Yachts, blue waters and panoramic harbour views","Aguas turquesa y paisajes inolvidables de La Paz":"Turquoise waters and unforgettable La Paz landscapes","Un ícono colorido en el corazón del Pueblo Mágico":"A colourful icon in the heart of this magical town","Galerías, arte mexicano y calles llenas de vida":"Galleries, Mexican art and lively streets","Tacos, sabores tradicionales y buenos momentos":"Tacos, traditional flavours and good times",
+ "Viaja con comodidad":"Travel in comfort","Nuestra Flota / Our Fleet":"Our Fleet","Hasta 4 pasajeros":"Up to 4 passengers","Hasta 5 pasajeros":"Up to 5 passengers","Hasta 6 pasajeros":"Up to 6 passengers","Ver detalles / View details":"View details",
+ "TU AVENTURA EN LOS CABOS COMIENZA AQUÍ · RESERVA HOY":"YOUR LOS CABOS ADVENTURE STARTS HERE · BOOK TODAY",
+ "Reserva tu Traslado":"Book Your Transfer","Completa lo esencial y te contactaremos para confirmar.":"Fill in the details and we'll contact you to confirm.",
+ "Nombre":"Name","Tu nombre":"Your name","Correo electrónico":"Email address","WhatsApp":"WhatsApp","Servicio":"Service","Viaje":"Trip","Vehículo":"Vehicle",
+ "¿Dónde te recogemos?":"Pickup location","¿A dónde vas?":"Where are you going?","Ej. Aeropuerto SJD, hotel o colonia":"E.g. SJD Airport, hotel or neighbourhood","Ej. Costco, Marina o nombre del hotel":"E.g. Costco, Marina or hotel name",
+ "Calcular distancia y tarifa":"Calculate distance and fare","Fecha":"Date","Hora":"Time","Pasajeros":"Passengers",
+ "Enviar solicitud / Request booking":"Send booking request","Tu aventura comienza aquí":"Your adventure starts here","Hablemos por WhatsApp · Let's talk":"Chat with us on WhatsApp",
+ "Atención personalizada · Servicio bilingüe · Una forma muy mexicana de descubrir Los Cabos":"Personalised service · Bilingual support · A uniquely Mexican way to discover Los Cabos",
+ "Sencillo / One-way":"One-way","Redondo / Round-trip":"Round trip","Traslado Aeropuerto (SJD)":"Airport Transfer (SJD)","Transporte privado":"Private transportation","Tour local":"Local tour"
+ },
+ fr: {
+ "Mexican Experiences":"Expériences mexicaines","with Private Transportation":"avec transport privé",
+ "Inicio":"Accueil","Experiencias":"Expériences","Reservar":"Réserver","Opiniones":"Avis","Contacto":"Contact","MENÚ":"MENU",
+ "En Los Cabos, no solo te llevamos a tu destino: te damos la bienvenida y cuidamos cada detalle de tu viaje.":"À Los Cabos, nous ne faisons pas que vous conduire : nous vous accueillons et prenons soin de chaque détail de votre voyage.",
+ "Creemos que la excelencia se nota en el trato. Por eso ofrecemos transporte privado y experiencias locales con puntualidad, atención personalizada y la calidez de quienes conocen y aman esta tierra. Queremos que disfrutes cada momento, desde que llegas hasta que te despides.":"Pour nous, l’excellence se ressent dans chaque attention. Nous proposons un transport privé et des expériences locales avec ponctualité, service personnalisé et la chaleur de ceux qui connaissent et aiment cette région. Profitez de chaque instant, de votre arrivée à votre départ.",
+ "DESCUBRE EXPERIENCIAS":"DÉCOUVRIR LES EXPÉRIENCES","RESERVA TU VIAJE":"RÉSERVER VOTRE TRAJET",
+ "Atención bilingüe y personalizada":"Service bilingue et personnalisé","Traslados privados para viajar con tranquilidad":"Transferts privés en toute sérénité","Conocimiento local para descubrir Los Cabos":"Notre connaissance locale pour découvrir Los Cabos",
+ "Traslados al Aeropuerto":"Transferts aéroport","Transporte Privado":"Transport privé","Tours Locales":"Excursions locales","Experiencias en Los Cabos":"Expériences à Los Cabos",
+ "México en colores · Baja California Sur y más allá":"Le Mexique en couleurs · Baja California Sur et ailleurs","Un viaje con sabor a México":"Un voyage aux couleurs du Mexique","Del desierto de Baja al corazón artesanal de México: lugares, sabores y tradiciones que se quedan contigo.":"Du désert de Basse-Californie au cœur artisanal du Mexique : des lieux, des saveurs et des traditions inoubliables.",
+ "Donde el desierto se encuentra con el mar":"Là où le désert rencontre la mer","Yates, aguas azules y una vista panorámica del puerto":"Yachts, eaux bleues et vue panoramique sur le port","Aguas turquesa y paisajes inolvidables de La Paz":"Eaux turquoise et paysages inoubliables de La Paz","Un ícono colorido en el corazón del Pueblo Mágico":"Une icône colorée au cœur du village magique","Galerías, arte mexicano y calles llenas de vida":"Galeries, art mexicain et rues animées","Tacos, sabores tradicionales y buenos momentos":"Tacos, saveurs traditionnelles et bons moments",
+ "Viaja con comodidad":"Voyagez confortablement","Nuestra Flota / Our Fleet":"Notre flotte","Hasta 4 pasajeros":"Jusqu’à 4 passagers","Hasta 5 pasajeros":"Jusqu’à 5 passagers","Hasta 6 pasajeros":"Jusqu’à 6 passagers","Ver detalles / View details":"Voir les détails",
+ "TU AVENTURA EN LOS CABOS COMIENZA AQUÍ · RESERVA HOY":"VOTRE AVENTURE À LOS CABOS COMMENCE ICI · RÉSERVEZ",
+ "Reserva tu Traslado":"Réservez votre transfert","Completa lo esencial y te contactaremos para confirmar.":"Indiquez les informations essentielles et nous vous contacterons pour confirmer.",
+ "Nombre":"Nom","Tu nombre":"Votre nom","Correo electrónico":"Adresse e-mail","WhatsApp":"WhatsApp","Servicio":"Service","Viaje":"Trajet","Vehículo":"Véhicule",
+ "¿Dónde te recogemos?":"Lieu de prise en charge","¿A dónde vas?":"Où allez-vous ?","Ej. Aeropuerto SJD, hotel o colonia":"Ex. Aéroport SJD, hôtel ou quartier","Ej. Costco, Marina o nombre del hotel":"Ex. Costco, marina ou nom de l’hôtel",
+ "Calcular distancia y tarifa":"Calculer la distance et le tarif","Fecha":"Date","Hora":"Heure","Pasajeros":"Passagers",
+ "Enviar solicitud / Request booking":"Envoyer la demande","Tu aventura comienza aquí":"Votre aventure commence ici","Hablemos por WhatsApp · Let's talk":"Contactez-nous sur WhatsApp",
+ "Atención personalizada · Servicio bilingüe · Una forma muy mexicana de descubrir Los Cabos":"Service personnalisé · Assistance bilingue · Une façon très mexicaine de découvrir Los Cabos",
+ "Sencillo / One-way":"Aller simple","Redondo / Round-trip":"Aller-retour","Traslado Aeropuerto (SJD)":"Transfert aéroport (SJD)","Transporte privado":"Transport privé","Tour local":"Excursion locale"
+ }
+ };
+ const original = new WeakMap();
+ function applyLanguage(lang){
+   const dict=translations[lang]||{};
+   document.documentElement.lang=lang;
+   const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);
+   let node;
+   while(node=walker.nextNode()){
+     if(!original.has(node)) original.set(node,node.nodeValue);
+     const source=original.get(node), key=source.trim();
+     if(!key) continue;
+     const translated=dict[key];
+     if(translated) node.nodeValue=source.replace(key,translated);
+     else node.nodeValue=source;
+   }
+   document.querySelectorAll('[placeholder]').forEach(el=>{
+     if(!el.dataset.qotPlaceholder) el.dataset.qotPlaceholder=el.placeholder;
+     el.placeholder=dict[el.dataset.qotPlaceholder]||el.dataset.qotPlaceholder;
+   });
+   document.querySelectorAll('option').forEach(el=>{
+     if(!el.dataset.qotLabel) el.dataset.qotLabel=el.textContent;
+     el.textContent=dict[el.dataset.qotLabel]||el.dataset.qotLabel;
+   });
+   const menu=document.querySelector('.menu-dropdown summary');
+   if(menu) menu.setAttribute('aria-label',lang==='es'?'Abrir menú de navegación':lang==='fr'?'Ouvrir le menu de navigation':'Open navigation menu');
+ }
+ const selector=document.getElementById('qotLanguage');
+ const saved=localStorage.getItem('qot-language')||'es';
+ selector.value=saved;
+ selector.addEventListener('change',()=>{localStorage.setItem('qot-language',selector.value);applyLanguage(selector.value);});
+ applyLanguage(saved);
+})();
+</script>
 
 </body>
 </html> + total.toLocaleString('es-MX') +
