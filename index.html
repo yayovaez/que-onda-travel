@@ -3711,13 +3711,16 @@ async function submitBookingRequest(event) {
  translate(initial);
  // Traducir mensajes que aparecen después de cargar la página (mapa, tarifa y confirmación).
  const observer=new MutationObserver(records=>{
-   records.forEach(record=>record.addedNodes.forEach(node=>{
-     if(node.nodeType===Node.TEXT_NODE){if(!originals.has(node))originals.set(node,node.nodeValue);}
-     else if(node.nodeType===Node.ELEMENT_NODE)remember(node);
-   }));
+   records.forEach(record=>{
+     if(record.target && record.target.closest && record.target.closest('select')) return;
+     record.addedNodes.forEach(node=>{
+       if(node.nodeType===Node.TEXT_NODE){if(!originals.has(node))originals.set(node,node.nodeValue);}
+       else if(node.nodeType===Node.ELEMENT_NODE)remember(node);
+     });
+   });
    translate(selector.value);
  });
- observer.observe(document.body,{subtree:true,childList:true,characterData:true});
+ observer.observe(document.body,{subtree:true,childList:true});
  window.qotTranslate=translate;
 })();
 </script>px!important;
