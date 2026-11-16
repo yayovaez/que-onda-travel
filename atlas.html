@@ -20,10 +20,32 @@ footer{text-align:center;padding:24px;color:#d9e9df;background:#073f49;font-size
 @media(max-width:600px){.facts{grid-template-columns:1fr}.fact{padding:13px}.actions{flex-direction:column}.btn{text-align:center}}
 @media(prefers-reduced-motion:reduce){.btn{transition:none}}
 </style></head><body>
-<header><div class="brand">Qué Onda Travel</div><a class="back" href="index.html#flota">← Volver a la flota</a></header>
+<header><div class="brand">Qué Onda Travel</div><div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap"><label style="font-size:12px;font-weight:800;color:#ffe6a6">IDIOMA <select id="qotLanguage" aria-label="Change language" style="margin-left:6px;padding:8px;border-radius:9px;border:1px solid #e8bd62;background:#fffdf7;color:#073f49"><option value="es">Español</option><option value="en">English</option><option value="fr">Français</option></select></label><a class="back" href="index.html#flota">← Volver a la flota</a></div></header>
 <main><article class="hero"><img src="images/atlas-blanca-2019.jpg" alt="Volkswagen Atlas 2019 blanca de Qué Onda Travel"><div class="content">
 <div class="eyebrow">Espacio para disfrutar el camino</div><h1>Volkswagen Atlas 2019</h1><p class="lead">Más espacio para compartir el viaje.</p><p>Una SUV pensada para quienes prefieren viajar con mayor espacio y comodidad. Una alternativa para familias o grupos que desean recorrer Los Cabos juntos.</p>
 <div class="facts"><div class="fact"><small>Color</small><strong>Blanca</strong></div><div class="fact"><small>Capacidad</small><strong>Hasta 5 pasajeros</strong></div><div class="fact"><small>Tarifa desde</small><strong>$70 MXN por km</strong></div></div>
 <div class="use"><strong>Ideal para:</strong> Traslados familiares · Aeropuerto · Paseos privados</div>
 <div class="actions"><a class="btn" href="index.html#reservar">Reservar este vehículo</a><a class="btn secondary" href="index.html#flota">Ver otros vehículos</a></div>
-</div></article></main><footer>Qué Onda Travel · Transporte privado en Los Cabos, Baja California Sur</footer></body></html>
+</div></article></main><footer>Qué Onda Travel · Transporte privado en Los Cabos, Baja California Sur</footer><script>
+(function(){
+const dictionaries={en:{"Viaja con comodidad":"Travel in comfort","← Volver a la flota":"← Back to the fleet","Espacio para disfrutar el camino":"Room to enjoy the journey","Más espacio para compartir el viaje.":"More space to share the ride.","Una SUV pensada para quienes prefieren viajar con mayor espacio y comodidad. Una alternativa para familias o grupos que desean recorrer Los Cabos juntos.":"An SUV designed for travellers who prefer extra room and comfort. A great option for families or groups who want to explore Los Cabos together.","Color":"Colour","Hasta 5 pasajeros":"Up to 5 passengers","$70 MXN por km":"From $70 MXN per km","Ideal para:":"Ideal for:","Traslados familiares · Aeropuerto · Paseos privados":"Family transfers · Airport · Private outings","Reservar este vehículo":"Book this vehicle","Ver otros vehículos":"See other vehicles","Qué Onda Travel · Transporte privado en Los Cabos, Baja California Sur":"Private transportation in Los Cabos, Baja California Sur"},fr:{"Viaja con comodidad":"Voyagez confortablement","← Volver a la flota":"← Retour à la flotte","Espacio para disfrutar el camino":"De l’espace pour profiter du trajet","Más espacio para compartir el viaje.":"Plus d’espace pour partager le voyage.","Una SUV pensada para quienes prefieren viajar con mayor espacio y comodidad. Una alternativa para familias o grupos que desean recorrer Los Cabos juntos.":"Un SUV conçu pour ceux qui recherchent plus d’espace et de confort. Une excellente option pour les familles ou les groupes qui souhaitent découvrir Los Cabos ensemble.","Color":"Couleur","Hasta 5 pasajeros":"Jusqu’à 5 passagers","$70 MXN por km":"À partir de 70 MXN par km","Ideal para:":"Idéal pour :","Traslados familiares · Aeropuerto · Paseos privados":"Transferts familiaux · Aéroport · Sorties privées","Reservar este vehículo":"Réserver ce véhicule","Ver otros vehículos":"Voir les autres véhicules","Qué Onda Travel · Transporte privado en Los Cabos, Baja California Sur":"Transport privé à Los Cabos, Basse-Californie du Sud"}};
+let nodes=[];
+function start(){
+const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);
+let n;while((n=walker.nextNode())){if(n.parentElement&&n.parentElement.closest('script,style,select'))continue;nodes.push({node:n,text:n.nodeValue});}
+const selector=document.getElementById('qotLanguage');
+let saved='es';try{saved=localStorage.getItem('qot-language')||'es'}catch(e){}
+function apply(lang){
+document.documentElement.lang=lang;
+nodes.forEach(({node,text})=>{if(node.isConnected){const key=text.trim();if(key)node.nodeValue=text.replace(key,(dictionaries[lang]||{})[key]||key);}});
+const label=selector&&selector.parentElement.firstChild;
+if(label)label.textContent=lang==='fr'?'LANGUE ':lang==='en'?'LANGUAGE ':'IDIOMA ';
+document.title=lang==='fr'?'Volkswagen Atlas 2019 | Transport privé à Los Cabos':lang==='en'?'Volkswagen Atlas 2019 | Private Transportation in Los Cabos':'Volkswagen Atlas 2019 | Qué Onda Travel';
+try{localStorage.setItem('qot-language',lang)}catch(e){}
+}
+if(selector){selector.value=saved;selector.addEventListener('change',()=>apply(selector.value));}
+apply(saved);
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
+})();
+</script></body></html>
