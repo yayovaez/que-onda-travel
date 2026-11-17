@@ -3571,10 +3571,8 @@ function searchMapboxPlaces(input, container, kind) {
   }, 220);
 }
 function attachMapboxAutocomplete(input, container, kind) {
-  // Evita que Safari móvil quite el foco antes de procesar el toque en una sugerencia.
-  container.addEventListener('pointerdown', event => {
-    if (event.target.closest('button')) event.preventDefault();
-  });
+  // No cancelar pointerdown: en Safari/iOS puede impedir que se dispare el click de la sugerencia.
+  // El blur ya espera 450 ms antes de ocultar la lista, dando tiempo al toque para seleccionar.
   input.addEventListener('focus',()=>{activeRouteField=kind;});
   input.addEventListener('click',()=>{activeRouteField=kind;});
   input.addEventListener('input', () => {
