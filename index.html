@@ -4018,7 +4018,30 @@ const LOCAL_CABO_PLACES = [
   {text:'Cocina de Autor Los Cabos',place_name:'Grand Velas Los Cabos, Carretera Transpeninsular Km 17, Corredor Turístico, BCS',center:[-109.842,23.015],aliases:['cocina de autor grand velas']},
   {text:'Comal',place_name:'Chileno Bay Resort, Corredor Turístico, Los Cabos, BCS',center:[-109.816,22.912],aliases:['comal chileno bay']},
   {text:'Árbol',place_name:'Las Ventanas al Paraíso, Carretera Transpeninsular Km 19.5, San José del Cabo, BCS',center:[-109.839,23.006],aliases:['arbol árbol las ventanas']},
-  {text:'Carbón Cabrón',place_name:'Corredor Turístico, Los Cabos, BCS',center:[-109.854,22.997],aliases:['carbon cabron carbón cabrón']}
+  {text:'Carbón Cabrón',place_name:'Corredor Turístico, Los Cabos, BCS',center:[-109.854,22.997],aliases:['carbon cabron carbón cabrón']},
+  {text:'Plaza Puerto Paraíso',place_name:'Blvd. Lázaro Cárdenas, Marina, Cabo San Lucas, BCS',center:[-109.9091,22.883],aliases:['puerto paraiso puerto paraíso mall shopping centro comercial']},
+  {text:'Luxury Avenue Los Cabos',place_name:'Paseo de la Marina, Centro, Cabo San Lucas, BCS',center:[-109.909,22.8832],aliases:['luxury avenue shopping boutiques']},
+  {text:'Plaza Amelia Wilkes',place_name:'Calle Niños Héroes, Centro, Cabo San Lucas, BCS',center:[-109.9128,22.8848],aliases:['plaza amelia wilkes plaza downtown']},
+  {text:'Ánima Village',place_name:'Carretera Transpeninsular Km 10.3, Cabo del Sol, Corredor Turístico, Los Cabos, BCS',center:[-109.866,22.906],aliases:['anima village ánima shopping cabo del sol']},
+  {text:'Distrito del Arte de San José del Cabo',place_name:'Calle Álvaro Obregón, Centro Histórico, San José del Cabo, BCS',center:[-109.6952,23.0612],aliases:['art district gallery district distrito del arte art walk galerias']},
+  {text:'Misión de San José del Cabo',place_name:'Miguel Hidalgo S/N, Centro Histórico, San José del Cabo, BCS',center:[-109.6959,23.061],aliases:['mision san jose misión iglesia church']},
+  {text:'Letras Monumentales de San José del Cabo',place_name:'Plaza Mijares, Centro Histórico, San José del Cabo, BCS',center:[-109.6958,23.061],aliases:['letras monumentales letras san jose photo spot']},
+  {text:'Plaza del Pescador',place_name:'Paseo Malecón San José, Zona Hotelera, San José del Cabo, BCS',center:[-109.71,23.0435],aliases:['plaza del pescador shopping restaurants']},
+  {text:'Playa Hotelera de San José del Cabo',place_name:'Zona Hotelera, San José del Cabo, BCS',center:[-109.708,23.039],aliases:['playa hotelera beach san jose']},
+  {text:'Playa Acapulquito (Old Man\'s Beach)',place_name:'Costa Azul, San José del Cabo, BCS',center:[-109.704,23.0195],aliases:['acapulquito old mans beach surf']},
+  {text:'Zippers Surf Point',place_name:'Playa Costa Azul, San José del Cabo, BCS',center:[-109.703,23.017],aliases:['zippers surf point costa azul']},
+  {text:'Puerto Los Cabos Marina',place_name:'La Playita, San José del Cabo, BCS',center:[-109.686,23.058],aliases:['puerto los cabos marina la playita']},
+  {text:'La Playita',place_name:'La Playita, San José del Cabo, BCS',center:[-109.6845,23.058],aliases:['la playita beach fishing village']},
+  {text:'One&Only Palmilla',place_name:'Carretera Transpeninsular Km 7.5, Corredor Turístico, San José del Cabo, BCS',center:[-109.713,23.018],aliases:['one only palmilla one and only palmilla resort']},
+  {text:'Cabo del Sol Golf Club',place_name:'Carretera Transpeninsular Km 10.3, Corredor Turístico, Cabo San Lucas, BCS',center:[-109.8665,22.905],aliases:['cabo del sol golf club golf']},
+  {text:'Playa Las Viudas',place_name:'Corredor Turístico, Cabo San Lucas, BCS',center:[-109.852,22.918],aliases:['playa las viudas widow beach']},
+  {text:'Playa Barco Varado',place_name:'Cabo del Sol, Corredor Turístico, Los Cabos, BCS',center:[-109.864,22.906],aliases:['barco varado beach cabo del sol']},
+  {text:'Playa Monumentos',place_name:'Corredor Turístico, Cabo San Lucas, BCS',center:[-109.897,22.9],aliases:['monumentos beach surf']},
+  {text:'Playa El Tule',place_name:'Corredor Turístico, Los Cabos, BCS',center:[-109.833,22.92],aliases:['el tule beach playa tule']},
+  {text:'Parque de los Perros',place_name:'Zona Hotelera, San José del Cabo, BCS',center:[-109.71,23.047],aliases:['parque de los perros park']},
+  {text:'La Comer San José del Cabo',place_name:'Paseo del Bulevar, Zona Hotelera, San José del Cabo, BCS',center:[-109.709,23.046],aliases:['la comer supermercado grocery store']},
+  {text:'Plaza San Lucas',place_name:'Carretera Transpeninsular, El Tezal, Cabo San Lucas, BCS',center:[-109.891,22.91],aliases:['plaza san lucas shopping mall']},
+  {text:'Walmart Cabo San Lucas',place_name:'Carretera Transpeninsular, El Tezal, Cabo San Lucas, BCS',center:[-109.8915,22.909],aliases:['walmart cabo supermercado groceries']}
 ];
 function searchMapboxPlaces(input, container, kind) {
   const query = input.value.trim();
@@ -4868,7 +4891,30 @@ input:focus,select:focus,textarea:focus{border-color:#0b8985!important;box-shado
    {name:'Cocina de Autor Los Cabos',detail:'Grand Velas Los Cabos, Carretera Transpeninsular Km 17, Corredor Turístico, BCS',coords:[-109.842,23.015],terms:'cocina de autor grand velas'},
    {name:'Comal',detail:'Chileno Bay Resort, Corredor Turístico, Los Cabos, BCS',coords:[-109.816,22.912],terms:'comal chileno bay'},
    {name:'Árbol',detail:'Las Ventanas al Paraíso, Carretera Transpeninsular Km 19.5, San José del Cabo, BCS',coords:[-109.839,23.006],terms:'arbol árbol las ventanas'},
-   {name:'Carbón Cabrón',detail:'Corredor Turístico, Los Cabos, BCS',coords:[-109.854,22.997],terms:'carbon cabron carbón cabrón'}
+   {name:'Carbón Cabrón',detail:'Corredor Turístico, Los Cabos, BCS',coords:[-109.854,22.997],terms:'carbon cabron carbón cabrón'},
+   {name:'Plaza Puerto Paraíso',detail:'Blvd. Lázaro Cárdenas, Marina, Cabo San Lucas, BCS',coords:[-109.9091,22.883],terms:'puerto paraiso puerto paraíso mall shopping centro comercial'},
+   {name:'Luxury Avenue Los Cabos',detail:'Paseo de la Marina, Centro, Cabo San Lucas, BCS',coords:[-109.909,22.8832],terms:'luxury avenue shopping boutiques'},
+   {name:'Plaza Amelia Wilkes',detail:'Calle Niños Héroes, Centro, Cabo San Lucas, BCS',coords:[-109.9128,22.8848],terms:'plaza amelia wilkes plaza downtown'},
+   {name:'Ánima Village',detail:'Carretera Transpeninsular Km 10.3, Cabo del Sol, Corredor Turístico, Los Cabos, BCS',coords:[-109.866,22.906],terms:'anima village ánima shopping cabo del sol'},
+   {name:'Distrito del Arte de San José del Cabo',detail:'Calle Álvaro Obregón, Centro Histórico, San José del Cabo, BCS',coords:[-109.6952,23.0612],terms:'art district gallery district distrito del arte art walk galerias'},
+   {name:'Misión de San José del Cabo',detail:'Miguel Hidalgo S/N, Centro Histórico, San José del Cabo, BCS',coords:[-109.6959,23.061],terms:'mision san jose misión iglesia church'},
+   {name:'Letras Monumentales de San José del Cabo',detail:'Plaza Mijares, Centro Histórico, San José del Cabo, BCS',coords:[-109.6958,23.061],terms:'letras monumentales letras san jose photo spot'},
+   {name:'Plaza del Pescador',detail:'Paseo Malecón San José, Zona Hotelera, San José del Cabo, BCS',coords:[-109.71,23.0435],terms:'plaza del pescador shopping restaurants'},
+   {name:'Playa Hotelera de San José del Cabo',detail:'Zona Hotelera, San José del Cabo, BCS',coords:[-109.708,23.039],terms:'playa hotelera beach san jose'},
+   {name:'Playa Acapulquito (Old Man\'s Beach)',detail:'Costa Azul, San José del Cabo, BCS',coords:[-109.704,23.0195],terms:'acapulquito old mans beach surf'},
+   {name:'Zippers Surf Point',detail:'Playa Costa Azul, San José del Cabo, BCS',coords:[-109.703,23.017],terms:'zippers surf point costa azul'},
+   {name:'Puerto Los Cabos Marina',detail:'La Playita, San José del Cabo, BCS',coords:[-109.686,23.058],terms:'puerto los cabos marina la playita'},
+   {name:'La Playita',detail:'La Playita, San José del Cabo, BCS',coords:[-109.6845,23.058],terms:'la playita beach fishing village'},
+   {name:'One&Only Palmilla',detail:'Carretera Transpeninsular Km 7.5, Corredor Turístico, San José del Cabo, BCS',coords:[-109.713,23.018],terms:'one only palmilla one and only palmilla resort'},
+   {name:'Cabo del Sol Golf Club',detail:'Carretera Transpeninsular Km 10.3, Corredor Turístico, Cabo San Lucas, BCS',coords:[-109.8665,22.905],terms:'cabo del sol golf club golf'},
+   {name:'Playa Las Viudas',detail:'Corredor Turístico, Cabo San Lucas, BCS',coords:[-109.852,22.918],terms:'playa las viudas widow beach'},
+   {name:'Playa Barco Varado',detail:'Cabo del Sol, Corredor Turístico, Los Cabos, BCS',coords:[-109.864,22.906],terms:'barco varado beach cabo del sol'},
+   {name:'Playa Monumentos',detail:'Corredor Turístico, Cabo San Lucas, BCS',coords:[-109.897,22.9],terms:'monumentos beach surf'},
+   {name:'Playa El Tule',detail:'Corredor Turístico, Los Cabos, BCS',coords:[-109.833,22.92],terms:'el tule beach playa tule'},
+   {name:'Parque de los Perros',detail:'Zona Hotelera, San José del Cabo, BCS',coords:[-109.71,23.047],terms:'parque de los perros park'},
+   {name:'La Comer San José del Cabo',detail:'Paseo del Bulevar, Zona Hotelera, San José del Cabo, BCS',coords:[-109.709,23.046],terms:'la comer supermercado grocery store'},
+   {name:'Plaza San Lucas',detail:'Carretera Transpeninsular, El Tezal, Cabo San Lucas, BCS',coords:[-109.891,22.91],terms:'plaza san lucas shopping mall'},
+   {name:'Walmart Cabo San Lucas',detail:'Carretera Transpeninsular, El Tezal, Cabo San Lucas, BCS',coords:[-109.8915,22.909],terms:'walmart cabo supermercado groceries'}
   ];
   const normalize=function(v){return String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();};
   function render(box,input,kind,items){
