@@ -4782,9 +4782,30 @@ input:focus,select:focus,textarea:focus{border-color:#0b8985!important;box-shado
        seen.add(normalize(name));
        return {name:name,detail:f.place_name||f.label||'Los Cabos, Baja California Sur',coords:[Number(center[0]),Number(center[1])]};
       }).filter(Boolean);
-      if(extra.length)render(box,input,kind,local.concat(extra));
+      let combined=local.concat(extra);
+      // Complementar Photon con Mapbox y, cuando Mapbox no tenga POI, Nominatim desde el proxy.
+      // Se consulta el segundo catálogo si Photon devuelve pocos resultados para ampliar la cobertura.
+      if(extra.length<6){
+       try{
+        const fallbackResponse=await fetch(proxy,{method:'POST',headers:{'Content-Type':'application/json','apikey':key},body:JSON.stringify({action:'geocode',query:q})});
+        const fallbackData=await fallbackResponse.json();
+        if(current!==sequence||input.value.trim()!==q)return;
+        if(fallbackResponse.ok){
+         const fallback=(fallbackData.features||[]).slice(0,10).map(function(f){
+          const center=f.center||(f.geometry&&f.geometry.coordinates);
+          if(!center||!Number.isFinite(Number(center[0]))||!Number.isFinite(Number(center[1])))return null;
+          const name=f.text||f.name||f.place_name;
+          if(!name||seen.has(normalize(name)))return null;
+          seen.add(normalize(name));
+          return {name:name,detail:f.place_name||f.label||'Los Cabos, Baja California Sur',coords:[Number(center[0]),Number(center[1])]};
+         }).filter(Boolean);
+         combined=combined.concat(fallback);
+        }
+       }catch(fallbackError){console.warn('[Qué Onda Travel] Catálogo secundario no disponible:',fallbackError);}
+      }
+      if(combined.length)render(box,input,kind,combined.slice(0,16));
       else if(!local.length){
-       const note=document.createElement('div');note.textContent='No encontramos ese lugar. Prueba con el nombre del hotel o una referencia cercana.';note.style.padding='12px';box.replaceChildren(note);box.style.display='block';
+       const note=document.createElement('div');note.textContent='No encontramos ese lugar. Prueba con el nombre del hotel o una referencia cercana, o marca el punto exacto en el mapa.';note.style.padding='12px';box.replaceChildren(note);box.style.display='block';
       }
      }catch(error){console.warn('[Qué Onda Travel] Búsqueda de lugares:',error);}
     },350);
