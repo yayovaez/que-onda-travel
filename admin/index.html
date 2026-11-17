@@ -111,8 +111,27 @@ table{width:100%;border-collapse:collapse;min-width:850px}th,td{text-align:left;
     try{
       const {error}=await db.from("booking_requests").update({status}).eq("id",id);
       if(error)throw error;
+      let confirmationNote="";
+      let confirmationWarning=false;
+      if(status==="confirmed"){
+        const {data:mailResult,error:mailError}=await db.functions.invoke("send-booking-email",{
+          body:{booking_id:String(id),event:"status_changed",status:"confirmed"}
+        });
+        if(mailError){
+          confirmationWarning=true;
+          confirmationNote=" La reservación quedó confirmada, pero no pudimos enviar el correo. Revisa la configuración del servicio de correo.";
+          console.error("Booking confirmation email failed:",mailError);
+        }else if(mailResult?.sent){
+          confirmationNote=" El correo de confirmación fue enviado al cliente.";
+        }else if(mailResult?.alreadyProcessed){
+          confirmationNote=" El correo ya había sido procesado; no enviamos un duplicado.";
+        }else if(mailResult?.ignored){
+          confirmationWarning=true;
+          confirmationNote=" No se envió el correo. Verifica que la reserva tenga un correo de cliente válido.";
+        }
+      }
       await loadBookings();
-      message("appMessage","Estado actualizado: "+labels[status]+".");
+      message("appMessage","Estado actualizado: "+labels[status]+"."+confirmationNote,confirmationWarning);
     }catch(e){message("appMessage","No se pudo actualizar la reservación. "+(e.message||""),true);}
   }
   $("loginForm").addEventListener("submit",async e=>{
