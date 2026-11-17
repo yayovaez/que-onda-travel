@@ -153,6 +153,7 @@ async function render(){
    document.querySelectorAll('.vehicle button').forEach(x=>{if(!x.disabled)x.textContent='Elegir este vehículo';});
    button.textContent='Vehículo seleccionado';
    form.hidden=false;
+   document.querySelectorAll('.progress-step').forEach((step,index)=>step.classList.toggle('active',index<3));
    form.scrollIntoView({behavior:'smooth',block:'start'});
   });
   card.append(img,title,rate,total,detail,button);grid.append(card);
