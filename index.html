@@ -3974,27 +3974,26 @@ function searchMapboxPlaces(input, container, kind) {
         seen.add(key);
         return true;
       });
-      if (extra.length) {
-        renderMapboxSuggestions(container, kind, [...localMatches, ...extra]);
-        mapboxRouteStatus.textContent = 'Selecciona el lugar correcto de la lista.';
-        return;
+      let combined = [...localMatches, ...extra];
+      // Consultar el catálogo secundario incluso cuando Photon devuelve algunos resultados:
+      // así no ocultamos hoteles, comercios y POI que falten en su índice.
+      if (extra.length < 6) {
+        const fallback = await callMapboxProxy({ action: 'geocode', query });
+        if (!requestIsCurrent()) return;
+        const fallbackMatches = (fallback.features || []).filter(f => {
+          const key = normalize(f.text || f.place_name);
+          if (!key || seen.has(key) || !Array.isArray(f.center)) return false;
+          seen.add(key);
+          return true;
+        });
+        combined = combined.concat(fallbackMatches);
       }
-
-      // Keep Mapbox Geocoding as a secondary fallback for addresses not indexed by OSM.
-      const fallback = await callMapboxProxy({ action: 'geocode', query });
-      if (!requestIsCurrent()) return;
-      const fallbackMatches = (fallback.features || []).filter(f => {
-        const key = normalize(f.text || f.place_name);
-        if (!key || seen.has(key) || !Array.isArray(f.center)) return false;
-        seen.add(key);
-        return true;
-      });
-      if (fallbackMatches.length) {
-        renderMapboxSuggestions(container, kind, [...localMatches, ...fallbackMatches]);
+      if (combined.length) {
+        renderMapboxSuggestions(container, kind, combined);
         mapboxRouteStatus.textContent = 'Selecciona el lugar correcto de la lista.';
-      } else if (!localMatches.length) {
+      } else {
         renderMapboxSuggestions(container, kind, []);
-        mapboxRouteStatus.textContent = 'No encontramos ese lugar. Prueba con el nombre del hotel o una referencia cercana.';
+        mapboxRouteStatus.textContent = 'No encontramos ese lugar. Prueba con el nombre del hotel o una referencia cercana, o marca el punto exacto en el mapa.';
       }
     } catch (error) {
       console.warn('No se pudo completar la búsqueda de lugares.', error);
