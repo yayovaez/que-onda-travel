@@ -4285,7 +4285,7 @@ input:focus,select:focus,textarea:focus{border-color:#0b8985!important;box-shado
   {text:'Todos Santos',place_name:'Todos Santos, Baja California Sur',center:[-110.224,23.446],aliases:['todos santos']},
   {text:'La Paz',place_name:'La Paz, Baja California Sur',center:[-110.312,24.142],aliases:['la paz']}
  ];
- const normalize=value=>String(value||'').normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').toLowerCase();
+ const normalize=value=>String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
  function choosePlace(feature,input,box,kind,q){
   const center=feature.center||feature.geometry?.coordinates;
   if(!center||!Number.isFinite(Number(center[0]))||!Number.isFinite(Number(center[1]))){status.textContent='No pudimos obtener la ubicación exacta. Prueba otra sugerencia.';return;}
