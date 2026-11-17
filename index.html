@@ -4271,25 +4271,69 @@ input:focus,select:focus,textarea:focus{border-color:#0b8985!important;box-shado
  const key='sb_publishable_d-xqUkbQSgzZys3OfXzbiw_iyHzHItE';
  const proxy=url+'/functions/v1/mapbox-proxy';
  const today=new Date();$('qotDate').min=[today.getFullYear(),String(today.getMonth()+1).padStart(2,'0'),String(today.getDate()).padStart(2,'0')].join('-');
+ const localPlaces=[
+  {text:'Aeropuerto Internacional de Los Cabos (SJD)',place_name:'Aeropuerto SJD, San José del Cabo, BCS',center:[-109.7210,23.1518],aliases:['aeropuerto','sjd','airport']},
+  {text:'Costco · El Tezal',place_name:'Costco, El Tezal, Cabo San Lucas, BCS',center:[-109.89,22.912],aliases:['costco','el tezal']},
+  {text:'Marina de Cabo San Lucas',place_name:'Marina, Cabo San Lucas, BCS',center:[-109.909,22.881],aliases:['marina','puerto','muelle']},
+  {text:'Playa El Médano',place_name:'Playa El Médano, Cabo San Lucas, BCS',center:[-109.904,22.887],aliases:['medano','médano','playa']},
+  {text:'Centro de Cabo San Lucas',place_name:'Centro, Cabo San Lucas, BCS',center:[-109.915,22.891],aliases:['centro cabo','downtown cabo']},
+  {text:'Centro Histórico de San José del Cabo',place_name:'Centro Histórico, San José del Cabo, BCS',center:[-109.70,23.061],aliases:['san jose','san josé','centro san jose']},
+  {text:'Corredor turístico de Los Cabos',place_name:'Corredor turístico, Los Cabos, BCS',center:[-109.80,22.94],aliases:['corredor','zona hotelera','hotelera']},
+  {text:'Playa Palmilla',place_name:'Playa Palmilla, San José del Cabo, BCS',center:[-109.713,23.014],aliases:['palmilla']},
+  {text:'Playa Chileno',place_name:'Playa Chileno, Los Cabos, BCS',center:[-109.80,22.91],aliases:['chileno']},
+  {text:'Playa Santa María',place_name:'Playa Santa María, Los Cabos, BCS',center:[-109.82,22.90],aliases:['santa maria','santa maría']},
+  {text:'Plaza Puerto Paraíso',place_name:'Plaza Puerto Paraíso, Cabo San Lucas, BCS',center:[-109.910,22.884],aliases:['puerto paraiso','plaza puerto']},
+  {text:'Plaza San Lucas',place_name:'Plaza San Lucas, Cabo San Lucas, BCS',center:[-109.914,22.917],aliases:['plaza san lucas']},
+  {text:'Hospital H+ Los Cabos',place_name:'Hospital H+, San José del Cabo, BCS',center:[-109.713,23.034],aliases:['hospital h+','h+']},
+  {text:'Todos Santos',place_name:'Todos Santos, Baja California Sur',center:[-110.224,23.446],aliases:['todos santos']},
+  {text:'La Paz',place_name:'La Paz, Baja California Sur',center:[-110.312,24.142],aliases:['la paz']}
+ ];
+ const normalize=value=>String(value||'').normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').toLowerCase();
+ function choosePlace(feature,input,box,kind,q){
+  const center=feature.center||feature.geometry?.coordinates;
+  if(!center||!Number.isFinite(Number(center[0]))||!Number.isFinite(Number(center[1]))){status.textContent='No pudimos obtener la ubicación exacta. Prueba otra sugerencia.';return;}
+  places[kind]={longitude:Number(center[0]),latitude:Number(center[1]),label:feature.place_name||feature.text||q};
+  input.value=places[kind].label;box.innerHTML='';
+ }
  async function lookup(input,box,kind){
+  let request=0;
+  box.addEventListener('pointerdown',event=>{if(event.target.closest('button'))event.preventDefault();});
   input.addEventListener('input',async()=>{
-   places[kind]=null;box.innerHTML='';const q=input.value.trim();if(q.length<2)return;
+   const thisRequest=++request;places[kind]=null;box.innerHTML='';
+   const q=input.value.trim();if(q.length<2)return;
+   const nq=normalize(q);
+   const matches=localPlaces.filter(p=>{
+    const words=normalize([p.text,p.place_name,...p.aliases].join(' '));
+    return words.includes(nq)||nq.split(/\\s+/).every(word=>words.includes(word));
+   });
+   matches.slice(0,6).forEach(p=>{
+    const b=document.createElement('button');b.type='button';
+    const title=document.createElement('span');title.textContent=p.text;
+    const small=document.createElement('small');small.textContent=p.place_name;
+    b.append(title,small);b.addEventListener('click',()=>choosePlace(p,input,box,kind,q));box.append(b);
+   });
+   if(matches.length){box.style.display='block';}
    try{
-    const res=await fetch(proxy,{method:'POST',headers:{'Content-Type':'application/json',apikey:key},body:JSON.stringify({action:'geocode',query:q})});
+    const res=await fetch(proxy,{method:'POST',headers:{'Content-Type':'application/json',apikey:key},body:JSON.stringify({action:'geocode',query:q+' Los Cabos Baja California Sur Mexico'})});
     const data=await res.json();if(!res.ok)throw new Error(data.error||'No fue posible buscar el lugar');
+    if(thisRequest!==request||input.value.trim()!==q)return;
+    const seen=new Set(matches.map(p=>normalize(p.text)));
     (data.features||[]).slice(0,6).forEach(f=>{
+     const name=f.text||f.place_name||q;if(seen.has(normalize(name)))return;seen.add(normalize(name));
      const b=document.createElement('button');b.type='button';
-     const title=document.createElement('span');title.textContent=f.text||f.place_name||q;
-     const small=document.createElement('small');small.textContent=f.place_name||'Los Cabos';
-     b.append(title,small);b.addEventListener('click',()=>{
-      const center=f.center||f.geometry?.coordinates;
-      if(!center){status.textContent='No pudimos obtener la ubicación exacta. Prueba otra sugerencia.';return;}
-      places[kind]={longitude:Number(center[0]),latitude:Number(center[1]),label:f.place_name||f.text||q};
-      input.value=places[kind].label;box.innerHTML='';
-     });box.append(b);
+     const title=document.createElement('span');title.textContent=name;
+     const small=document.createElement('small');small.textContent=f.place_name||'Los Cabos, Baja California Sur';
+     b.append(title,small);b.addEventListener('click',()=>choosePlace(f,input,box,kind,q));box.append(b);
     });
-   }catch(e){status.textContent=e.message;}
+    if(!box.children.length){const empty=document.createElement('div');empty.textContent='No encontramos ese lugar. Prueba con otra referencia.';empty.style.padding='12px';box.append(empty);}
+    box.style.display='block';
+   }catch(e){
+    if(thisRequest!==request)return;
+    if(!box.children.length){const error=document.createElement('div');error.textContent='No pudimos consultar más lugares. Prueba con Aeropuerto SJD, Costco, Marina o una zona conocida.';error.style.padding='12px';box.append(error);}
+    box.style.display='block';
+   }
   });
+  input.addEventListener('focus',()=>{if(input.value.trim().length>=2&&!places[kind])input.dispatchEvent(new Event('input'));});
  }
  lookup($('qotPickup'),$('qotPickupOptions'),'pickup');lookup($('qotDestination'),$('qotDestinationOptions'),'destination');
  const rates={};let usdRate=null;
