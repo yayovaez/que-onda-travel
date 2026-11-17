@@ -3948,7 +3948,25 @@ const LOCAL_CABO_PLACES = [
   {text:'Mayan Monkey Los Cabos',place_name:'Blvd. Paseo de la Marina 32, Plaza Gali, Cabo San Lucas, BCS',center:[-109.9092,22.8841],aliases:['mayan monkey','mayan','mayan monkey hotel']},
   {text:'Sandos Finisterra Los Cabos',place_name:'Blvd. Paseo de la Marina S/N, Cabo San Lucas, BCS',center:[-109.91028,22.87618],aliases:['hotel finisterra','finisterra','sandos finisterra']},
   {text:'Pedregal de Cabo San Lucas',place_name:'Colonia Pedregal, Cabo San Lucas, BCS',center:[-109.924,22.884],aliases:['pedregal','colonia pedregal','pedregal cabo']},
-  {text:'Pueblo Bonito Sunset Beach Resort',place_name:'Predio Paraíso Escondido, Cabo San Lucas, BCS',center:[-109.93137,22.87366],aliases:['pueblo bonito','pueblo bonito resort','sunset beach','pueblo bonito sunset']}
+  {text:'Pueblo Bonito Sunset Beach Resort',place_name:'Predio Paraíso Escondido, Cabo San Lucas, BCS',center:[-109.93137,22.87366],aliases:['pueblo bonito','pueblo bonito resort','sunset beach','pueblo bonito sunset']},
+  {text:'Hotel Riu Palace Cabo San Lucas',place_name:'Camino Viejo a San José Km 4.5, El Médano, Cabo San Lucas, BCS',center:[-109.8953,22.8917],aliases:['riu palace cabo','riu palace','hotel riu']},
+  {text:'Breathless Cabo San Lucas Resort & Spa',place_name:'Paseo de la Marina 4750, Cabo San Lucas, BCS',center:[-109.9094,22.8845],aliases:['breathless cabo','breathless resort']},
+  {text:'Playa Grande Resort & Grand Spa',place_name:'Playa Grande 1, Centro, Cabo San Lucas, BCS',center:[-109.9145,22.8782],aliases:['playa grande resort','playa grande']},
+  {text:'Corazón Cabo Resort & Spa',place_name:'Playa El Médano, Cabo San Lucas, BCS',center:[-109.9068,22.8874],aliases:['corazon cabo','corazón cabo','corazon resort']},
+  {text:'Hacienda Beach Club & Residences',place_name:'Paseo de la Marina 4732, Cabo San Lucas, BCS',center:[-109.9083,22.8825],aliases:['hacienda beach club','hacienda cabo']},
+  {text:'The Cape, a Thompson Hotel',place_name:'Carretera Transpeninsular Km 5, Corredor Turístico, Cabo San Lucas, BCS',center:[-109.8994,22.9028],aliases:['the cape hotel','thompson cabo','the cape']},
+  {text:'Grand Fiesta Americana Los Cabos',place_name:'Carretera Transpeninsular Km 10.3, Cabo del Sol, Cabo San Lucas, BCS',center:[-109.8668,22.9057],aliases:['grand fiesta americana','fiesta americana cabo']},
+  {text:'Esperanza, Auberge Resorts Collection',place_name:'Punta Ballena, Carretera Transpeninsular Km 7, Cabo San Lucas, BCS',center:[-109.8878,22.8977],aliases:['esperanza resort','esperanza auberge','punta ballena']},
+  {text:'Nobu Hotel Los Cabos',place_name:'Fraccionamiento Diamante, Cabo San Lucas, BCS',center:[-110.0045,22.8908],aliases:['nobu','nobu hotel']},
+  {text:'Viceroy Los Cabos',place_name:'Paseo Malecón San José Lote 8, Zona Hotelera, San José del Cabo, BCS',center:[-109.7105,23.0452],aliases:['viceroy','viceroy los cabos']},
+  {text:'Hyatt Ziva Los Cabos',place_name:'Paseo Malecón San José, Zona Hotelera, San José del Cabo, BCS',center:[-109.7117,23.0434],aliases:['hyatt ziva','ziva los cabos']},
+  {text:'Hilton Vacation Club Cabo Azul',place_name:'Paseo Malecón San José, Zona Hotelera, San José del Cabo, BCS',center:[-109.7110,23.0422],aliases:['cabo azul','hilton cabo azul']},
+  {text:'Hotel El Ganzo',place_name:'Puerto Los Cabos, La Playita, San José del Cabo, BCS',center:[-109.6867,23.0583],aliases:['el ganzo','hotel el ganzo']},
+  {text:'Hotel Casa Natalia',place_name:'Boulevard Antonio Mijares 4, Centro Histórico, San José del Cabo, BCS',center:[-109.6953,23.0613],aliases:['casa natalia','hotel casa natalia']},
+  {text:'Hyatt Place Los Cabos',place_name:'Paseo Malecón San José 128, Zona Hotelera, San José del Cabo, BCS',center:[-109.7100,23.0495],aliases:['hyatt place','hyatt san jose']},
+  {text:'Plaza Mijares',place_name:'Boulevard Antonio Mijares, Centro Histórico, San José del Cabo, BCS',center:[-109.6959,23.0610],aliases:['plaza mijares','plaza san jose']},
+  {text:'Estero de San José del Cabo',place_name:'Boulevard Antonio Mijares, San José del Cabo, BCS',center:[-109.6973,23.0580],aliases:['estero','estero josefino','estero san jose']},
+  {text:'Playa Costa Azul',place_name:'Zona Costa Azul, San José del Cabo, BCS',center:[-109.7042,23.0185],aliases:['costa azul','playa costa azul']}
 ];
 function searchMapboxPlaces(input, container, kind) {
   const query = input.value.trim();
@@ -4728,7 +4746,25 @@ input:focus,select:focus,textarea:focus{border-color:#0b8985!important;box-shado
    {name:'Mayan Monkey Los Cabos',detail:'Blvd. Paseo de la Marina 32, Plaza Gali, Cabo San Lucas, BCS',coords:[-109.9092,22.8841],terms:'mayan monkey hotel'},
    {name:'Sandos Finisterra Los Cabos',detail:'Blvd. Paseo de la Marina S/N, Cabo San Lucas, BCS',coords:[-109.91028,22.87618],terms:'hotel finisterra sandos finisterra'},
    {name:'Pedregal de Cabo San Lucas',detail:'Colonia Pedregal, Cabo San Lucas, BCS',coords:[-109.924,22.884],terms:'pedregal colonia pedregal'},
-   {name:'Pueblo Bonito Sunset Beach Resort',detail:'Predio Paraíso Escondido, Cabo San Lucas, BCS',coords:[-109.93137,22.87366],terms:'pueblo bonito resort sunset beach'}
+   {name:'Pueblo Bonito Sunset Beach Resort',detail:'Predio Paraíso Escondido, Cabo San Lucas, BCS',coords:[-109.93137,22.87366],terms:'pueblo bonito resort sunset beach'},
+   {name:'Hotel Riu Palace Cabo San Lucas',detail:'Camino Viejo a San José Km 4.5, El Médano, Cabo San Lucas, BCS',coords:[-109.8953,22.8917],terms:'riu palace cabo riu hotel'},
+   {name:'Breathless Cabo San Lucas Resort & Spa',detail:'Paseo de la Marina 4750, Cabo San Lucas, BCS',coords:[-109.9094,22.8845],terms:'breathless cabo resort'},
+   {name:'Playa Grande Resort & Grand Spa',detail:'Playa Grande 1, Centro, Cabo San Lucas, BCS',coords:[-109.9145,22.8782],terms:'playa grande resort'},
+   {name:'Corazón Cabo Resort & Spa',detail:'Playa El Médano, Cabo San Lucas, BCS',coords:[-109.9068,22.8874],terms:'corazon cabo corazon resort'},
+   {name:'Hacienda Beach Club & Residences',detail:'Paseo de la Marina 4732, Cabo San Lucas, BCS',coords:[-109.9083,22.8825],terms:'hacienda beach club hacienda cabo'},
+   {name:'The Cape, a Thompson Hotel',detail:'Carretera Transpeninsular Km 5, Corredor Turístico, Cabo San Lucas, BCS',coords:[-109.8994,22.9028],terms:'the cape hotel thompson cabo'},
+   {name:'Grand Fiesta Americana Los Cabos',detail:'Carretera Transpeninsular Km 10.3, Cabo del Sol, Cabo San Lucas, BCS',coords:[-109.8668,22.9057],terms:'grand fiesta americana'},
+   {name:'Esperanza, Auberge Resorts Collection',detail:'Punta Ballena, Carretera Transpeninsular Km 7, Cabo San Lucas, BCS',coords:[-109.8878,22.8977],terms:'esperanza resort auberge punta ballena'},
+   {name:'Nobu Hotel Los Cabos',detail:'Fraccionamiento Diamante, Cabo San Lucas, BCS',coords:[-110.0045,22.8908],terms:'nobu hotel'},
+   {name:'Viceroy Los Cabos',detail:'Paseo Malecón San José Lote 8, Zona Hotelera, San José del Cabo, BCS',coords:[-109.7105,23.0452],terms:'viceroy los cabos'},
+   {name:'Hyatt Ziva Los Cabos',detail:'Paseo Malecón San José, Zona Hotelera, San José del Cabo, BCS',coords:[-109.7117,23.0434],terms:'hyatt ziva los cabos'},
+   {name:'Hilton Vacation Club Cabo Azul',detail:'Paseo Malecón San José, Zona Hotelera, San José del Cabo, BCS',coords:[-109.7110,23.0422],terms:'cabo azul hilton'},
+   {name:'Hotel El Ganzo',detail:'Puerto Los Cabos, La Playita, San José del Cabo, BCS',coords:[-109.6867,23.0583],terms:'hotel el ganzo puerto los cabos'},
+   {name:'Hotel Casa Natalia',detail:'Boulevard Antonio Mijares 4, Centro Histórico, San José del Cabo, BCS',coords:[-109.6953,23.0613],terms:'casa natalia hotel'},
+   {name:'Hyatt Place Los Cabos',detail:'Paseo Malecón San José 128, Zona Hotelera, San José del Cabo, BCS',coords:[-109.7100,23.0495],terms:'hyatt place san jose'},
+   {name:'Plaza Mijares',detail:'Boulevard Antonio Mijares, Centro Histórico, San José del Cabo, BCS',coords:[-109.6959,23.0610],terms:'plaza mijares plaza san jose'},
+   {name:'Estero de San José del Cabo',detail:'Boulevard Antonio Mijares, San José del Cabo, BCS',coords:[-109.6973,23.0580],terms:'estero estero josefino'},
+   {name:'Playa Costa Azul',detail:'Zona Costa Azul, San José del Cabo, BCS',coords:[-109.7042,23.0185],terms:'costa azul playa'}
   ];
   const normalize=function(v){return String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();};
   function render(box,input,kind,items){
