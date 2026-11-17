@@ -3300,7 +3300,31 @@ const todayLocal = new Date();
 const localDateValue = [todayLocal.getFullYear(), String(todayLocal.getMonth() + 1).padStart(2, '0'), String(todayLocal.getDate()).padStart(2, '0')].join('-');
 travelDateInput.min = localDateValue;
 const vehicleCapacity = { Jetta: 4, Atlas: 5, Tiguan: 6 };
+const advanceNoticeHours = { Jetta: 0, Atlas: 4, Tiguan: 4 };
+const travelTimeInput = bookingForm.querySelector('input[name="time"]');
+const vehicleNotice = document.createElement('small');
+vehicleNotice.id = 'vehicleAdvanceNotice';
+vehicleNotice.style.cssText = 'display:block;margin-top:7px;color:#075b63;font-size:12px;line-height:1.45;';
+vehicleSelect.closest('.field').appendChild(vehicleNotice);
 
+function updateVehicleNotice() {
+  const hours = advanceNoticeHours[vehicleSelect.value] || 0;
+  vehicleNotice.textContent = hours
+    ? 'Este vehículo requiere reservarse con mínimo ' + hours + ' horas de anticipación.'
+    : 'El Jetta mantiene su disponibilidad habitual.';
+}
+function validateVehicleAdvanceNotice() {
+  travelDateInput.setCustomValidity('');
+  const hours = advanceNoticeHours[vehicleSelect.value] || 0;
+  if (!hours || !travelDateInput.value || !travelTimeInput.value) return true;
+  const selectedDateTime = new Date(travelDateInput.value + 'T' + travelTimeInput.value + ':00');
+  const earliestDateTime = new Date(Date.now() + hours * 60 * 60 * 1000);
+  if (!Number.isFinite(selectedDateTime.getTime()) || selectedDateTime < earliestDateTime) {
+    travelDateInput.setCustomValidity('La ' + vehicleSelect.value + ' requiere mínimo ' + hours + ' horas de anticipación. Elige una fecha y hora posterior.');
+    return false;
+  }
+  return true;
+}
 function updatePassengerCapacity() {
   const capacity = vehicleCapacity[vehicleSelect.value] || 6;
   [...passengersSelect.options].forEach(option => {
@@ -3310,8 +3334,12 @@ function updatePassengerCapacity() {
   if (Number(passengersSelect.value) > capacity) {
     passengersSelect.value = String(capacity);
   }
+  updateVehicleNotice();
+  validateVehicleAdvanceNotice();
 }
 vehicleSelect.addEventListener('change', updatePassengerCapacity);
+travelDateInput.addEventListener('change', validateVehicleAdvanceNotice);
+travelTimeInput.addEventListener('change', validateVehicleAdvanceNotice);
 updatePassengerCapacity();
 
 
@@ -3634,6 +3662,10 @@ loadBanxicoFixRate();
 
 async function submitBookingRequest(event) {
   event.preventDefault();
+  if (!validateVehicleAdvanceNotice()) {
+    travelDateInput.reportValidity();
+    return;
+  }
   if (!bookingForm.reportValidity()) return;
   const quote = getQuote();
   if (!quote) { distanceInput.focus(); return; }
