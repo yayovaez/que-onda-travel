@@ -252,26 +252,35 @@ form.addEventListener('submit',async function(event){
   };
   const {data,error}=await client.from('booking_requests').insert(payload);
   if(error)throw error;
-  const safe=value=>String(value==null?'':value).replace(/[&<>"']/g,function(ch){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch];});
+  const safe=function(value){
+   return String(value==null?'':value).replace(/[&<>"']/g,function(ch){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch];
+   });
+  };
   const dateLabel=new Date(trip.date+'T12:00:00').toLocaleDateString('es-MX',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
+  const successParts=[
+   '<div class="qot-celebration">',
+   '<div class="qot-confetti" aria-hidden="true"><span>✦</span><span>✧</span><span>✦</span><span>✧</span></div>',
+   '<div class="qot-success-kicker">¡QUÉ EMOCIÓN, TU VIAJE COMIENZA AQUÍ!</div>',
+   '<h2 class="qot-success-title">¡Ya estamos preparando tu aventura!</h2>',
+   '<p class="qot-success-copy">Tu solicitud llegó correctamente a Qué Onda Travel. Nuestro equipo revisará los detalles y se pondrá en contacto contigo para confirmar disponibilidad y precio final.</p>',
+   '<div class="qot-success-pill"><i></i> Solicitud recibida · En revisión</div>',
+   '<div class="qot-success-steps">',
+   '<div class="qot-success-step"><b>✓</b><strong>Solicitud recibida</strong><small>¡Listo! Ya tenemos los datos de tu viaje.</small></div>',
+   '<div class="qot-success-step pending"><b>2</b><strong>Revisión del equipo</strong><small>Comprobaremos vehículo, horario y disponibilidad.</small></div>',
+   '<div class="qot-success-step pending"><b>3</b><strong>Confirmación contigo</strong><small>Te contactaremos para cerrar los detalles.</small></div>',
+   '</div>',
+   '<div class="qot-success-summary"><h3>Tu próxima aventura</h3>',
+   '<div class="qot-success-route"><div><small>Desde</small><strong>'+safe(trip.pickup)+'</strong></div><span class="qot-success-arrow">➜</span><div><small>Hasta</small><strong>'+safe(trip.destination)+'</strong></div></div>',
+   '<div class="qot-success-meta"><span>📅 '+safe(dateLabel)+' · '+safe(trip.time)+'</span><span>👥 '+safe(trip.passengers)+' pasajeros</span><span>🚘 '+safe(selected.label)+'</span></div>',
+   '<div class="qot-success-price">Tarifa estimada <strong>$'+price(selected).toLocaleString('es-MX')+' MXN</strong></div></div>',
+   '<div class="qot-success-actions"><a class="qot-success-home" href="index.html">Volver al inicio&nbsp; →</a></div>',
+   '<p class="qot-success-foot">Qué Onda Travel · Los Cabos<br><strong>Your journey, our pleasure.</strong></p>',
+   '</div>'
+  ];
   form.classList.add('qot-success');
-  form.innerHTML=
-   '<div class="qot-celebration">'+
-    '<div class="qot-confetti" aria-hidden="true"><span>✦</span><span>✧</span><span>✦</span><span>✧</span></div>'+
-    '<div class="qot-success-kicker">¡QUÉ EMOCIÓN, TU VIAJE COMIENZA AQUÍ!</div>'+
-    '<h2 class="qot-success-title">¡Ya estamos preparando tu aventura!</h2>'+
-    '<p class="qot-success-copy">Tu solicitud llegó correctamente a Qué Onda Travel. Nuestro equipo revisará los detalles y se pondrá en contacto contigo para confirmar disponibilidad y precio final.</p>'+
-    '<div class="qot-success-pill"><i></i> Solicitud recibida · En revisión</div>'+
-    '<div class="qot-success-steps">'+
-     '<div class="qot-success-step"><b>✓</b><strong>Solicitud recibida</strong><small>¡Listo! Ya tenemos los datos de tu viaje.</small></div>'+
-     '<div class="qot-success-step pending"><b>2</b><strong>Revisión del equipo</strong><small>Comprobaremos vehículo, horario y disponibilidad.</small></div>'+
-     '<div class="qot-success-step pending"><b>3</b><strong>Confirmación contigo</strong><small>Te contactaremos para cerrar los detalles.</small></div>'+
-    '</div>'+
-    '<div class="qot-success-summary">'+
-     '<h3>Tu próxima aventura</h3>'+
-     '<div class="qot-success-route"><div><small>Desde</small><strong>'+safe(trip.pickup)+'</strong></div><span class="qot-success-arrow">➜</span><div><small>Hasta</small><strong>'+safe(trip.destination)+'</strong></div></div>'+
-     '<div class="qot-success-meta"><span>📅 '+safe(dateLabel)+' · '+safe(trip.time)+'</span><span>👥 '+safe(trip.passengers)+' pasajeros</span><span>🚘 '+safe(selected.label)+'</span></div>'+
-     '<div class="qot-success-price">Tarifa estimada <strong>
+  form.innerHTML=successParts.join('');
+  form.scrollIntoView({behavior:'smooth',block:'center'});
  }catch(error){
   console.error('Error al guardar reservación:',error);
   status.textContent='No pudimos registrar tu solicitud. Revisa tu conexión e inténtalo de nuevo.';
