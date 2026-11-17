@@ -111,8 +111,24 @@ $('bookings').addEventListener('click',async e=>{
  b.disabled=true;$('listMsg').textContent='Actualizando reservación…';
  const {error}=await db.from('booking_requests').update({status}).eq('id',booking.id);
  if(error){if(waWindow)waWindow.close();$('listMsg').textContent='No se pudo actualizar: '+error.message;b.disabled=false;return;}
- if(waWindow){const url='https://wa.me/'+whatsappNumber(booking.customer_phone)+'?text='+encodeURIComponent(bookingMessage(booking,status));waWindow.location.href=url;$('listMsg').textContent=status==='confirmed'?'Reservación confirmada. Revisa el mensaje y pulsa Enviar en WhatsApp.':'Servicio marcado como completado. Revisa el resumen y pulsa Enviar en WhatsApp.';}
- else $('listMsg').textContent='Estado actualizado.';
+ let emailNote='';
+ if(status==='confirmed'){
+  const {data:mailResult,error:mailError}=await db.functions.invoke('send-booking-email',{
+   body:{booking_id:String(booking.id),event:'status_changed',status:'confirmed'}
+  });
+  if(mailError){
+   emailNote=' La reservación quedó confirmada, pero el correo no pudo enviarse. Revisa la configuración del servicio de correo.';
+   console.error('Booking confirmation email failed:',mailError);
+  }else if(mailResult?.sent){
+   emailNote=' El correo de confirmación fue enviado al cliente.';
+  }else if(mailResult?.alreadyProcessed){
+   emailNote=' El correo ya había sido procesado; no enviamos un duplicado.';
+  }else if(mailResult?.ignored){
+   emailNote=' No se envió el correo. Verifica que el cliente tenga un correo válido.';
+  }
+ }
+ if(waWindow){const url='https://wa.me/'+whatsappNumber(booking.customer_phone)+'?text='+encodeURIComponent(bookingMessage(booking,status));waWindow.location.href=url;$('listMsg').textContent=(status==='confirmed'?'Reservación confirmada. Revisa el mensaje y pulsa Enviar en WhatsApp.':'Servicio marcado como completado. Revisa el resumen y pulsa Enviar en WhatsApp.')+emailNote;}
+ else $('listMsg').textContent='Estado actualizado.'+emailNote;
  await loadBookings();b.disabled=false;
 });
 $('search').addEventListener('input',render);$('filter').addEventListener('change',render);$('refresh').onclick=loadBookings;
