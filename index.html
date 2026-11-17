@@ -4810,47 +4810,83 @@ input:focus,select:focus,textarea:focus{border-color:#0b8985!important;box-shado
 (function(){
  function init(){
   const form=document.getElementById('qotSearchForm');
-  if(!form||form.dataset.availabilityReady)return;
+  if(!form||form.dataset.availabilityReady==='true')return;
   form.dataset.availabilityReady='true';
+  form.noValidate=true;
   const $=id=>document.getElementById(id);
   const status=$('qotSearchStatus');
+  const button=form.querySelector('.qot-search-button');
   const endpoint='https://iyelnragqgriycdyqowq.supabase.co/functions/v1/mapbox-proxy';
   const key='sb_publishable_d-xqUkbQSgzZys3OfXzbiw_iyHzHItE';
-  form.addEventListener('submit',async function(event){
-   event.preventDefault();
+  let running=false;
+  const originalButton='<span>⌕</span> Buscar disponibilidad';
+
+  async function runSearch(event){
+   if(event)event.preventDefault();
+   if(running)return;
    const pickup=$('qotPickup'),destination=$('qotDestination');
-   const date=$('qotDate').value,time=$('qotTime').value,passengers=Number($('qotPassengers').value);
-   if(!pickup.dataset.longitude||!destination.dataset.longitude){
-    status.textContent='Selecciona una sugerencia de la lista para la recogida y el destino.';(!pickup.dataset.longitude?pickup:destination).focus();return;
+   const date=$('qotDate')&&$('qotDate').value;
+   const time=$('qotTime')&&$('qotTime').value;
+   const passengers=Number($('qotPassengers')&&$('qotPassengers').value||1);
+   if(!pickup||!destination||!status){return;}
+   if(!pickup.value.trim()||!destination.value.trim()){
+    status.textContent='Escribe y selecciona un punto de partida y un destino.';
+    (!pickup.value.trim()?pickup:destination).focus();return;
    }
-   if(!date||!time){status.textContent='Selecciona la fecha y la hora de tu viaje.';return;}
-   if(new Date(date+'T'+time+':00').getTime()<Date.now()){status.textContent='La fecha y hora deben ser futuras.';return;}
-   const button=form.querySelector('button[type="submit"]');
-   button.disabled=true;button.textContent='Calculando tu viaje…';
+   if(!pickup.dataset.longitude||!pickup.dataset.latitude||!destination.dataset.longitude||!destination.dataset.latitude){
+    status.textContent='Elige una opción de la lista para el punto de partida y el destino.';
+    (!pickup.dataset.longitude?pickup:destination).focus();return;
+   }
+   if(!date||!time){
+    status.textContent='Selecciona la fecha y la hora de tu viaje.';
+    (!date?$('qotDate'):$('qotTime')).focus();return;
+   }
+   const selectedDate=new Date(date+'T'+time+':00');
+   if(Number.isNaN(selectedDate.getTime())||selectedDate.getTime()<Date.now()){
+    status.textContent='La fecha y hora deben ser futuras.';
+    $('qotDate').focus();return;
+   }
+   running=true;
+   if(button){button.disabled=true;button.textContent='Buscando disponibilidad…';}
    status.textContent='Estamos calculando tu ruta y preparando las opciones…';
    try{
     const origin={longitude:Number(pickup.dataset.longitude),latitude:Number(pickup.dataset.latitude)};
     const target={longitude:Number(destination.dataset.longitude),latitude:Number(destination.dataset.latitude)};
-    const response=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json','apikey':key},body:JSON.stringify({action:'directions',origin:origin,destination:target})});
-    const route=await response.json();
-    if(!response.ok)throw new Error(route.error||'No pudimos calcular la ruta.');
-    if(!Number.isFinite(Number(route.distance_km))||Number(route.distance_km)<=0)throw new Error('No pudimos obtener una distancia válida para este recorrido.');
+    const response=await fetch(endpoint,{
+     method:'POST',
+     headers:{'Content-Type':'application/json','apikey':key},
+     body:JSON.stringify({action:'directions',origin:origin,destination:target})
+    });
+    let route={};
+    try{route=await response.json();}catch(parseError){throw new Error('El servicio respondió con un formato inesperado. Inténtalo de nuevo.');}
+    if(!response.ok)throw new Error(route.error||'No pudimos calcular la ruta. Inténtalo de nuevo.');
+    const distance=Number(route.distance_km);
+    if(!Number.isFinite(distance)||distance<=0)throw new Error('No recibimos una distancia válida para este recorrido.');
     const params=new URLSearchParams({
      pickup:pickup.value,destination:destination.value,
      pickupLng:String(origin.longitude),pickupLat:String(origin.latitude),
      destinationLng:String(target.longitude),destinationLat:String(target.latitude),
-     date:date,time:time,passengers:String(passengers),trip:$('qotTrip').value,
-     km:String(route.distance_km),minutes:String(route.duration_minutes||0)
+     date:date,time:time,passengers:String(passengers),
+     trip:$('qotTrip')?$('qotTrip').value:'Sencillo',
+     km:String(distance),minutes:String(route.duration_minutes||0)
     });
-    window.location.href='reservar.html?'+params.toString();
+    status.textContent='¡Ruta calculada! Cargando las opciones de transporte…';
+    window.location.assign('reservar.html?'+params.toString());
    }catch(error){
-    console.error('[Qué Onda Travel] Error al calcular disponibilidad:',error);
-    status.textContent=error.message||'No pudimos consultar la ruta. Inténtalo de nuevo.';
-    button.disabled=false;button.innerHTML='<span>⌕</span> Buscar disponibilidad';
+    console.error('[Qué Onda Travel] Error al buscar disponibilidad:',error);
+    status.textContent=error&&error.message?error.message:'No pudimos consultar la disponibilidad. Inténtalo de nuevo.';
+    running=false;
+    if(button){button.disabled=false;button.innerHTML=originalButton;}
    }
+  }
+  form.addEventListener('submit',runSearch);
+  if(button)button.addEventListener('click',function(event){
+   event.preventDefault();
+   runSearch(event);
   });
  }
- if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});
+ else init();
 })();
 </script>
 
