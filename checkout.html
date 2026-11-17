@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Completa tu reservación | Qué Onda Travel</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f8f3e9;color:#173d40;font-family:Arial,sans-serif}
+header{padding:18px 5%;background:linear-gradient(110deg,#07545a,#08777a);color:#fff;border-bottom:2px solid #e9bd59}
+.brand{font:italic 30px Georgia,serif}.brand small{display:block;font: bold 10px Arial;letter-spacing:6px;color:#f3d38d}
+main{max-width:760px;margin:36px auto;padding:0 16px}.panel{background:#fffaf2;border:1px solid #e6c47c;border-radius:20px;padding:26px;box-shadow:0 14px 35px #173b4318}
+.kicker{color:#c91f70;font-size:10px;font-weight:800;letter-spacing:2px}h1{font: bold 32px Georgia,serif;color:#073f4c;margin:8px 0}p{line-height:1.55;color:#607673}
+.summary{padding:16px;border-radius:14px;background:#eaf4ed;border:1px solid #c4dbca;margin:20px 0}.summary strong{color:#075b63}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}.field{display:flex;flex-direction:column;gap:7px}.field.full{grid-column:1/-1}label{font-size:12px;font-weight:700;color:#486563}input,textarea{width:100%;padding:13px;border:1px solid #cbdad1;border-radius:11px;background:#fff;color:#173d40;font:inherit}textarea{min-height:90px;resize:vertical}
+button{width:100%;margin-top:18px;padding:15px;border:0;border-radius:28px;background:linear-gradient(110deg,#e62e83,#c91f70);color:#fff;font-weight:800;font-size:15px;cursor:pointer}button:disabled{opacity:.6;cursor:wait}#status{min-height:24px;text-align:center;color:#075b63;font-size:13px}.back{display:inline-block;margin-top:15px;color:#08777a;font-weight:700}
+@media(max-width:560px){.panel{padding:19px}.grid{grid-template-columns:1fr}h1{font-size:27px}}
+</style>
+</head>
+<body>
+<header><div class="brand">Qué Onda<small>TRAVEL</small></div></header>
+<main><section class="panel">
+<span class="kicker">ÚLTIMO PASO</span><h1>Completa tus datos</h1>
+<p>Ya casi está listo. Déjanos tus datos para enviar tu solicitud de reservación.</p>
+<div id="tripSummary" class="summary">Cargando los detalles de tu viaje…</div>
+<form id="checkoutForm">
+<div class="grid">
+<div class="field"><label for="customerName">Nombre completo</label><input id="customerName" name="customerName" autocomplete="name" minlength="2" maxlength="100" required></div>
+<div class="field"><label for="customerEmail">Correo electrónico</label><input id="customerEmail" name="customerEmail" type="email" autocomplete="email" maxlength="254" required></div>
+<div class="field"><label for="customerPhone">Teléfono / WhatsApp</label><input id="customerPhone" name="customerPhone" type="tel" autocomplete="tel" inputmode="tel" pattern="[+0-9() .-]{8,25}" maxlength="25" placeholder="+52 624 123 4567" required></div>
+<div class="field"><label for="flight">Número de vuelo (opcional)</label><input id="flight" name="flight" maxlength="40" placeholder="Ej. AM 123"></div>
+<div class="field full"><label for="notes">Detalles adicionales (opcional)</label><textarea id="notes" name="notes" maxlength="1000" placeholder="Hotel, equipaje u otra indicación"></textarea></div>
+</div>
+<button id="sendBooking" type="submit">Enviar solicitud de reservación</button><p id="status" role="status" aria-live="polite"></p>
+</form>
+<a class="back" href="index.html">← Volver a los resultados</a>
+</section></main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL='https://iyelnragqgriycdyqowq.supabase.co';
+const SUPABASE_KEY='sb_publishable_d-xqUkbQSgzZys3OfXzbiw_iyHzHItE';
+const pending=(()=>{try{return JSON.parse(sessionStorage.getItem('qot-pending-booking')||'null')}catch(e){return null}})();
+const summary=document.getElementById('tripSummary'),form=document.getElementById('checkoutForm'),status=document.getElementById('status'),button=document.getElementById('sendBooking');
+if(!pending){summary.textContent='No encontramos los detalles del viaje. Regresa al buscador y selecciona tu traslado.';form.hidden=true;}
+else{
+ const money=new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN',maximumFractionDigits:0});
+ summary.innerHTML='<strong>'+pending.vehicleLabel+'</strong><br>'+pending.pickupText+' → '+pending.destinationText+'<br>'+pending.date+' · '+pending.time+' · '+pending.passengers+' pasajero(s)<br>'+Number(pending.distanceKm).toLocaleString('es-MX',{maximumFractionDigits:1})+' km de ida · '+pending.tripType+'<br><strong>'+money.format(pending.totalMxn)+'</strong>'+(pending.totalUsd?' · ≈ $'+pending.totalUsd+' USD':'');
+}
+form.addEventListener('submit',async e=>{
+ e.preventDefault();if(!pending||!form.reportValidity())return;
+ const target=new Date(pending.date+'T'+pending.time+':00');
+ const minHours=pending.vehicle==='Jetta'?0:4;
+ if(target.getTime()<Date.now()+minHours*3600000){status.textContent='Este vehículo requiere '+minHours+' horas de anticipación. Vuelve al buscador y elige otro horario.';return;}
+ button.disabled=true;status.textContent='Enviando tu solicitud…';
+ try{
+  const client=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+  const data=new FormData(form);
+  const {error}=await client.from('booking_requests').insert({
+   customer_name:String(data.get('customerName')).trim(),
+   customer_email:String(data.get('customerEmail')).trim(),
+   customer_phone:String(data.get('customerPhone')).trim(),
+   service:'Transporte privado',
+   trip_type:pending.tripType,
+   vehicle:pending.vehicle,
+   distance_km:pending.totalKm,
+   pickup:pending.pickupText,
+   destination:pending.destinationText,
+   travel_date:pending.date,
+   travel_time:pending.time,
+   passengers:Number(pending.passengers),
+   estimated_total_mxn:Number(pending.totalMxn),
+   status:'pending',
+   flight_number:String(data.get('flight')||'').trim()||null,
+   notes:String(data.get('notes')||'').trim()||null
+  });
+  if(error)throw error;
+  sessionStorage.removeItem('qot-pending-booking');
+  form.hidden=true;summary.innerHTML='<strong>¡Solicitud recibida!</strong><br>Gracias por elegir Qué Onda Travel. Nos pondremos en contacto contigo para confirmar tu servicio.';
+  status.textContent='Tu solicitud fue enviada correctamente.';
+ }catch(error){console.error(error);status.textContent='No pudimos enviar la solicitud. Revisa tus datos e inténtalo nuevamente.';button.disabled=false;}
+});
+</script>
+</body></html>
