@@ -67,9 +67,7 @@ form.addEventListener('submit',async e=>{
    travel_time:pending.time,
    passengers:Number(pending.passengers),
    estimated_total_mxn:Number(pending.totalMxn),
-   status:'pending',
-   flight_number:String(data.get('flight')||'').trim()||null,
-   notes:String(data.get('notes')||'').trim()||null
+   status:'pending'
   });
   if(error)throw error;
   sessionStorage.removeItem('qot-pending-booking');
