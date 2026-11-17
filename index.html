@@ -4041,7 +4041,30 @@ const LOCAL_CABO_PLACES = [
   {text:'Parque de los Perros',place_name:'Zona Hotelera, San José del Cabo, BCS',center:[-109.71,23.047],aliases:['parque de los perros park']},
   {text:'La Comer San José del Cabo',place_name:'Paseo del Bulevar, Zona Hotelera, San José del Cabo, BCS',center:[-109.709,23.046],aliases:['la comer supermercado grocery store']},
   {text:'Plaza San Lucas',place_name:'Carretera Transpeninsular, El Tezal, Cabo San Lucas, BCS',center:[-109.891,22.91],aliases:['plaza san lucas shopping mall']},
-  {text:'Walmart Cabo San Lucas',place_name:'Carretera Transpeninsular, El Tezal, Cabo San Lucas, BCS',center:[-109.8915,22.909],aliases:['walmart cabo supermercado groceries']}
+  {text:'Walmart Cabo San Lucas',place_name:'Carretera Transpeninsular, El Tezal, Cabo San Lucas, BCS',center:[-109.8915,22.909],aliases:['walmart cabo supermercado groceries']},
+  {text:'Mandala Los Cabos',place_name:'Blvd. Lázaro Cárdenas, Centro, Cabo San Lucas, BCS',center:[-109.9115,22.8867],aliases:['mandala club nightclub']},
+  {text:'Happy Ending Cantina',place_name:'Boulevard de la Marina 22, Centro, Cabo San Lucas, BCS',center:[-109.9093,22.8828],aliases:['happy ending cantina bar']},
+  {text:'The Nowhere Bar',place_name:'Paseo de la Marina, Centro, Cabo San Lucas, BCS',center:[-109.909,22.882],aliases:['nowhere bar nowhere cabo']},
+  {text:'Tanga Tanga',place_name:'Paseo de la Marina, Centro, Cabo San Lucas, BCS',center:[-109.9088,22.8824],aliases:['tanga tanga bar']},
+  {text:'Vas Que Vuelas',place_name:'Niños Héroes, Centro, Cabo San Lucas, BCS',center:[-109.913,22.8855],aliases:['vas que vuelas mezcal bar']},
+  {text:'Mula Cocktail Bar',place_name:'Blvd. Paseo de la Marina Lote 16, Centro, Cabo San Lucas, BCS',center:[-109.9096,22.8835],aliases:['mula cocktail bar']},
+  {text:'Saloon Los Cabos',place_name:'Lázaro Cárdenas esquina Ignacio Zaragoza, Centro, Cabo San Lucas, BCS',center:[-109.912,22.887],aliases:['saloon los cabos bar']},
+  {text:'The Rooftop 360',place_name:'Hotel Corazón, Playa El Médano, Cabo San Lucas, BCS',center:[-109.9068,22.8875],aliases:['rooftop 360 rooftop corazon']},
+  {text:'SUR Beach House',place_name:'Playa El Médano, Cabo San Lucas, BCS',center:[-109.904,22.8868],aliases:['sur beach house sur cabo']},
+  {text:'Taboo Beach Club',place_name:'ME Cabo, Playa El Médano, Cabo San Lucas, BCS',center:[-109.906,22.8878],aliases:['taboo beach club']},
+  {text:'Bagatelle Los Cabos',place_name:'Paseo de la Marina 4750, Playa El Médano, Cabo San Lucas, BCS',center:[-109.9064,22.8879],aliases:['bagatelle cabo']},
+  {text:'Baja Brewing Company Cabo San Lucas',place_name:'Corazón Cabo Resort, Playa El Médano, Cabo San Lucas, BCS',center:[-109.9068,22.8874],aliases:['baja brewing cabo san lucas cerveza artesanal']},
+  {text:'Jazz on the Rocks',place_name:'Sunset Monalisa, Carretera Transpeninsular Km 5.5, Cabo San Lucas, BCS',center:[-109.8991,22.8998],aliases:['jazz on the rocks']},
+  {text:'Funky Geisha',place_name:'Paseo de la Marina, Centro, Cabo San Lucas, BCS',center:[-109.9093,22.8837],aliases:['funky geisha']},
+  {text:'La Vaquita Los Cabos',place_name:'Blvd. Paseo de la Marina, Centro, Cabo San Lucas, BCS',center:[-109.9095,22.884],aliases:['la vaquita bar club']},
+  {text:'Baja Brewing Company San José',place_name:'José María Morelos 1277, Centro, San José del Cabo, BCS',center:[-109.695,23.0608],aliases:['baja brewing san jose brewery']},
+  {text:'Ceniza Bar',place_name:'Calle Manuel Doblado 10, Centro, San José del Cabo, BCS',center:[-109.6947,23.0612],aliases:['ceniza bar cocktails']},
+  {text:'Drift Kitchen + Mezcal Bar',place_name:'Miguel Hidalgo 613, Centro, San José del Cabo, BCS',center:[-109.6954,23.061],aliases:['drift kitchen mezcal bar']},
+  {text:'Totoy by Lumbre',place_name:'José María Morelos 162, Centro, San José del Cabo, BCS',center:[-109.695,23.0607],aliases:['totoy piano bar lumbre']},
+  {text:'Bar Ligaya',place_name:'Álvaro Obregón 2106, Centro, San José del Cabo, BCS',center:[-109.6952,23.0616],aliases:['ligaya gay bar cocktails drag']},
+  {text:'Crania Air Disco – Desert Bar',place_name:'Marina Puerto, La Playita, San José del Cabo, BCS',center:[-109.685,23.057],aliases:['crania air disco desert bar']},
+  {text:'San Lucero Wine Bar',place_name:'Calle Cabo San Lucas, Centro, Cabo San Lucas, BCS',center:[-109.9134,22.8847],aliases:['san lucero wine bar']},
+  {text:'Petit Cellar',place_name:'Ignacio Zaragoza 26, Centro, San José del Cabo, BCS',center:[-109.6955,23.0614],aliases:['petit cellar wine bar tasting']}
 ];
 function searchMapboxPlaces(input, container, kind) {
   const query = input.value.trim();
@@ -4914,7 +4937,30 @@ input:focus,select:focus,textarea:focus{border-color:#0b8985!important;box-shado
    {name:'Parque de los Perros',detail:'Zona Hotelera, San José del Cabo, BCS',coords:[-109.71,23.047],terms:'parque de los perros park'},
    {name:'La Comer San José del Cabo',detail:'Paseo del Bulevar, Zona Hotelera, San José del Cabo, BCS',coords:[-109.709,23.046],terms:'la comer supermercado grocery store'},
    {name:'Plaza San Lucas',detail:'Carretera Transpeninsular, El Tezal, Cabo San Lucas, BCS',coords:[-109.891,22.91],terms:'plaza san lucas shopping mall'},
-   {name:'Walmart Cabo San Lucas',detail:'Carretera Transpeninsular, El Tezal, Cabo San Lucas, BCS',coords:[-109.8915,22.909],terms:'walmart cabo supermercado groceries'}
+   {name:'Walmart Cabo San Lucas',detail:'Carretera Transpeninsular, El Tezal, Cabo San Lucas, BCS',coords:[-109.8915,22.909],terms:'walmart cabo supermercado groceries'},
+   {name:'Mandala Los Cabos',detail:'Blvd. Lázaro Cárdenas, Centro, Cabo San Lucas, BCS',coords:[-109.9115,22.8867],terms:'mandala club nightclub'},
+   {name:'Happy Ending Cantina',detail:'Boulevard de la Marina 22, Centro, Cabo San Lucas, BCS',coords:[-109.9093,22.8828],terms:'happy ending cantina bar'},
+   {name:'The Nowhere Bar',detail:'Paseo de la Marina, Centro, Cabo San Lucas, BCS',coords:[-109.909,22.882],terms:'nowhere bar nowhere cabo'},
+   {name:'Tanga Tanga',detail:'Paseo de la Marina, Centro, Cabo San Lucas, BCS',coords:[-109.9088,22.8824],terms:'tanga tanga bar'},
+   {name:'Vas Que Vuelas',detail:'Niños Héroes, Centro, Cabo San Lucas, BCS',coords:[-109.913,22.8855],terms:'vas que vuelas mezcal bar'},
+   {name:'Mula Cocktail Bar',detail:'Blvd. Paseo de la Marina Lote 16, Centro, Cabo San Lucas, BCS',coords:[-109.9096,22.8835],terms:'mula cocktail bar'},
+   {name:'Saloon Los Cabos',detail:'Lázaro Cárdenas esquina Ignacio Zaragoza, Centro, Cabo San Lucas, BCS',coords:[-109.912,22.887],terms:'saloon los cabos bar'},
+   {name:'The Rooftop 360',detail:'Hotel Corazón, Playa El Médano, Cabo San Lucas, BCS',coords:[-109.9068,22.8875],terms:'rooftop 360 rooftop corazon'},
+   {name:'SUR Beach House',detail:'Playa El Médano, Cabo San Lucas, BCS',coords:[-109.904,22.8868],terms:'sur beach house sur cabo'},
+   {name:'Taboo Beach Club',detail:'ME Cabo, Playa El Médano, Cabo San Lucas, BCS',coords:[-109.906,22.8878],terms:'taboo beach club'},
+   {name:'Bagatelle Los Cabos',detail:'Paseo de la Marina 4750, Playa El Médano, Cabo San Lucas, BCS',coords:[-109.9064,22.8879],terms:'bagatelle cabo'},
+   {name:'Baja Brewing Company Cabo San Lucas',detail:'Corazón Cabo Resort, Playa El Médano, Cabo San Lucas, BCS',coords:[-109.9068,22.8874],terms:'baja brewing cabo san lucas cerveza artesanal'},
+   {name:'Jazz on the Rocks',detail:'Sunset Monalisa, Carretera Transpeninsular Km 5.5, Cabo San Lucas, BCS',coords:[-109.8991,22.8998],terms:'jazz on the rocks'},
+   {name:'Funky Geisha',detail:'Paseo de la Marina, Centro, Cabo San Lucas, BCS',coords:[-109.9093,22.8837],terms:'funky geisha'},
+   {name:'La Vaquita Los Cabos',detail:'Blvd. Paseo de la Marina, Centro, Cabo San Lucas, BCS',coords:[-109.9095,22.884],terms:'la vaquita bar club'},
+   {name:'Baja Brewing Company San José',detail:'José María Morelos 1277, Centro, San José del Cabo, BCS',coords:[-109.695,23.0608],terms:'baja brewing san jose brewery'},
+   {name:'Ceniza Bar',detail:'Calle Manuel Doblado 10, Centro, San José del Cabo, BCS',coords:[-109.6947,23.0612],terms:'ceniza bar cocktails'},
+   {name:'Drift Kitchen + Mezcal Bar',detail:'Miguel Hidalgo 613, Centro, San José del Cabo, BCS',coords:[-109.6954,23.061],terms:'drift kitchen mezcal bar'},
+   {name:'Totoy by Lumbre',detail:'José María Morelos 162, Centro, San José del Cabo, BCS',coords:[-109.695,23.0607],terms:'totoy piano bar lumbre'},
+   {name:'Bar Ligaya',detail:'Álvaro Obregón 2106, Centro, San José del Cabo, BCS',coords:[-109.6952,23.0616],terms:'ligaya gay bar cocktails drag'},
+   {name:'Crania Air Disco – Desert Bar',detail:'Marina Puerto, La Playita, San José del Cabo, BCS',coords:[-109.685,23.057],terms:'crania air disco desert bar'},
+   {name:'San Lucero Wine Bar',detail:'Calle Cabo San Lucas, Centro, Cabo San Lucas, BCS',coords:[-109.9134,22.8847],terms:'san lucero wine bar'},
+   {name:'Petit Cellar',detail:'Ignacio Zaragoza 26, Centro, San José del Cabo, BCS',coords:[-109.6955,23.0614],terms:'petit cellar wine bar tasting'}
   ];
   const normalize=function(v){return String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();};
   function render(box,input,kind,items){
