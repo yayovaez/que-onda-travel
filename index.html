@@ -3514,61 +3514,63 @@ function searchMapboxPlaces(input, container, kind) {
   const requestId = ++routeSearchSequence[kind];
   if (query.length < 2) { clearMapboxSuggestions(container); return; }
 
-  // Mostrar coincidencias locales inmediatamente, sin esperar a ningún servidor.
-  const normalize = value => String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+  const normalize = value => String(value || '').normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').toLowerCase();
   const normalized = normalize(query);
   const localMatches = LOCAL_CABO_PLACES.filter(place => {
     const haystack = normalize([place.text, place.place_name, ...(place.aliases || [])].join(' '));
-    return haystack.includes(normalized) || normalized.split(/\s+/).every(word => haystack.includes(word));
+    return haystack.includes(normalized) || normalized.split(/\\s+/).every(word => haystack.includes(word));
   }).map((place,index) => ({...place,id:'local-cabo-'+index,relevance:1}));
 
   renderMapboxSuggestions(container, kind, localMatches);
-  if (localMatches.length) {
-    mapboxRouteStatus.textContent = 'Selecciona una ubicación de la lista o continúa escribiendo.';
-  } else {
-    mapboxRouteStatus.textContent = 'No hay coincidencia en la lista rápida. Puedes marcar el punto en el mapa.';
-  }
+  mapboxRouteStatus.textContent = localMatches.length
+    ? 'Selecciona una ubicación de la lista o continúa escribiendo.'
+    : 'Buscando hoteles, comercios y lugares cercanos…';
 
-  // Google Places ofrece mejores coincidencias de hoteles, comercios y puntos de interés.
-  // La lista local aparece al instante; después se completa con resultados actuales del proveedor.
   const requestIsCurrent = () => requestId === routeSearchSequence[kind] && input.value.trim() === query;
-  routeSearchTimers[kind] = setTimeout(() => {
-    callMapboxProxy({ action: 'googleAutocomplete', input: query }).then(async result => {
+  if (query.length < 3) return;
+
+  // Photon (OpenStreetMap) supports global POI search and autocomplete; unlike Search Box,
+  // it can be used for Los Cabos, Mexico. Debounce to keep public-service usage reasonable.
+  routeSearchTimers[kind] = setTimeout(async () => {
+    try {
+      const result = await callMapboxProxy({ action: 'photonSearch', query });
       if (!requestIsCurrent()) return;
-      const googleMatches = (result.suggestions || []).map(item => ({
-        place_id: item.place_id,
-        text: item.text,
-        place_name: item.place_name,
-        secondary_text: item.secondary_text
-      })).filter(item => item.place_id && item.text);
-      if (googleMatches.length) {
-        const seen = new Set(localMatches.map(f => normalize(f.text || f.place_name)));
-        const unique = googleMatches.filter(f => {
-          const key = normalize(f.text || f.place_name);
-          if (!key || seen.has(key)) return false;
-          seen.add(key); return true;
-        });
-        if (requestIsCurrent()) renderMapboxSuggestions(container, kind, [...localMatches, ...unique]);
+      const seen = new Set(localMatches.map(f => normalize(f.text || f.place_name)));
+      const extra = (result.features || []).filter(f => {
+        const key = normalize(f.text || f.place_name);
+        if (!key || seen.has(key) || !Array.isArray(f.center)) return false;
+        seen.add(key);
+        return true;
+      });
+      if (extra.length) {
+        renderMapboxSuggestions(container, kind, [...localMatches, ...extra]);
+        mapboxRouteStatus.textContent = 'Selecciona el lugar correcto de la lista.';
         return;
       }
-      throw new Error('Google Places no devolvió coincidencias.');
-    }).catch(async error => {
-      console.warn('Google Places no disponible; usando búsqueda alternativa.', error);
-      try {
-        const result = await callMapboxProxy({ action: 'geocode', query });
-        if (!requestIsCurrent()) return;
-        const seen = new Set(localMatches.map(f => normalize(f.text || f.place_name)));
-        const extra = (result.features || []).filter(f => {
-          const key = normalize(f.text || f.place_name);
-          if (!key || seen.has(key)) return false;
-          seen.add(key); return true;
-        });
-        if (extra.length) renderMapboxSuggestions(container, kind, [...localMatches, ...extra]);
-      } catch (fallbackError) {
-        console.warn('Búsqueda alternativa no disponible; se conservan las sugerencias rápidas.', fallbackError);
+
+      // Keep Mapbox Geocoding as a secondary fallback for addresses not indexed by OSM.
+      const fallback = await callMapboxProxy({ action: 'geocode', query });
+      if (!requestIsCurrent()) return;
+      const fallbackMatches = (fallback.features || []).filter(f => {
+        const key = normalize(f.text || f.place_name);
+        if (!key || seen.has(key) || !Array.isArray(f.center)) return false;
+        seen.add(key);
+        return true;
+      });
+      if (fallbackMatches.length) {
+        renderMapboxSuggestions(container, kind, [...localMatches, ...fallbackMatches]);
+        mapboxRouteStatus.textContent = 'Selecciona el lugar correcto de la lista.';
+      } else if (!localMatches.length) {
+        renderMapboxSuggestions(container, kind, []);
+        mapboxRouteStatus.textContent = 'No encontramos ese lugar. Prueba con el nombre del hotel o una referencia cercana.';
       }
-    });
-  }, 220);
+    } catch (error) {
+      console.warn('No se pudo completar la búsqueda de lugares.', error);
+      if (requestIsCurrent() && !localMatches.length) {
+        mapboxRouteStatus.textContent = 'No pudimos consultar lugares en este momento. Puedes marcar el punto en el mapa.';
+      }
+    }
+  }, 400);
 }
 function attachMapboxAutocomplete(input, container, kind) {
   // No cancelar pointerdown: en Safari/iOS puede impedir que se dispare el click de la sugerencia.
