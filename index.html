@@ -3292,6 +3292,49 @@ html,body{
 }
 </style>
 
+
+<style id="qot-booking-vivid-colors">
+/* PALETA MÁS VIVA · TROPICAL ELEGANTE */
+#qotSearch .qot-search-field:nth-child(1){--icon-color:#d81b72;--icon-bg:#ffe0ef}
+#qotSearch .qot-search-field:nth-child(2){--icon-color:#008f98;--icon-bg:#d2f6f3}
+#qotSearch .qot-search-field:has(#qotDate){--icon-color:#bd8614;--icon-bg:#fff0bd}
+#qotSearch .qot-search-field:has(#qotTime){--icon-color:#1768c5;--icon-bg:#dceaff}
+#qotSearch .qot-search-field:has(#qotPassengers){--icon-color:#078653;--icon-bg:#d7f5e5}
+#qotSearch .qot-search-field:has(#qotTrip){--icon-color:#df5638;--icon-bg:#ffe1d6}
+
+#qotSearch .qot-search-field label:before,
+#reservar .field label:has(+ input):before,
+#reservar .field label:has(+ select):before{
+  background:var(--icon-bg)!important;
+  color:var(--icon-color)!important;
+  border:1px solid color-mix(in srgb,var(--icon-color) 38%,white)!important;
+  box-shadow:0 4px 11px color-mix(in srgb,var(--icon-color) 15%,transparent)!important;
+}
+#reservar .field label:has(+ input[name="customerName"]){--icon-color:#d81b72;--icon-bg:#ffe0ef}
+#reservar .field label:has(+ input[name="customerEmail"]){--icon-color:#1768c5;--icon-bg:#dceaff}
+#reservar .field label:has(+ input[name="customerPhone"]){--icon-color:#078653;--icon-bg:#d7f5e5}
+#reservar .field label:has(+ select[name="tripType"]){--icon-color:#008f98;--icon-bg:#d2f6f3}
+#reservar .field label:has(+ select[name="vehicle"]){--icon-color:#bd8614;--icon-bg:#fff0bd}
+#reservar .field label:has(+ input[name="pickup"]){--icon-color:#d81b72;--icon-bg:#ffe0ef}
+#reservar .field label:has(+ input[name="destination"]){--icon-color:#008f98;--icon-bg:#d2f6f3}
+#reservar .field label:has(+ input[name="date"]){--icon-color:#bd8614;--icon-bg:#fff0bd}
+#reservar .field label:has(+ input[name="time"]){--icon-color:#1768c5;--icon-bg:#dceaff}
+#reservar .field label:has(+ select[name="passengers"]){--icon-color:#078653;--icon-bg:#d7f5e5}
+
+#reservar .booking-map-heading strong:before{background:#d2f6f3!important;color:#008f98!important}
+#reservar .quick-location-label:before{color:#d81b72!important}
+#reservar .quick-location-buttons button:nth-child(1):before{color:#d81b72!important}
+#reservar .quick-location-buttons button:nth-child(2):before{color:#008f98!important}
+#reservar .quick-location-buttons button:nth-child(3):before{color:#bd8614!important}
+#reservar .quick-location-buttons button:nth-child(4):before{color:#1768c5!important}
+#reservar .quick-location-buttons button:nth-child(5):before{color:#078653!important}
+#reservar #openRouteMap{background:#d2f6f3!important;color:#006f76!important;border-color:#75d1ca!important}
+#reservar #useAirportPickup:before{color:#008f98!important}
+#reservar #fitBookingMap:before{color:#bd8614!important}
+#reservar .booking-notice .notice-kicker:before{color:#008f98!important}
+#reservar #bookingSubmit{box-shadow:0 7px 18px rgba(0,111,118,.28)!important}
+</style>
+
 </head>
 
 <body>
