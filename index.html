@@ -3104,6 +3104,107 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 }
 @media(prefers-reduced-motion:reduce){#qotSearch .qot-search-field:focus-within:before{transform:none}}
 </style>
+
+<style id="qot-refinement-nov-2026">
+/* AJUSTE VISUAL: identidad limpia, sin cactus, diamantes ni pitayas */
+html,body{
+  background-color:#fff8ef!important;
+  background-image:none!important;
+  color:#24484a!important;
+}
+.decoration,.decoration-one,.decoration-two,.decoration-three,
+.booking-pinata,.booking-confetti,
+.experiences:before,.experiences:after{
+  display:none!important;
+  content:none!important;
+}
+#qotSearch:before,#qotSearch:after,
+#qotSearch .qot-search-field:before,
+#qotSearch .qot-search-heading:after{
+  display:none!important;
+  content:none!important;
+}
+#qotSearch{
+  background:linear-gradient(135deg,#fffaf3 0%,#f0f8f4 100%)!important;
+  border:1px solid #d6e5dc!important;
+  box-shadow:0 16px 38px rgba(25,72,72,.09)!important;
+}
+#qotSearch .qot-search-field{
+  background:#fffefa!important;
+  border:1px solid #d9e6de!important;
+  border-radius:16px!important;
+  box-shadow:0 7px 18px rgba(25,72,72,.06)!important;
+  animation:qotSoftRise .45s ease both;
+}
+#qotSearch .qot-search-field:focus-within{
+  border-color:#63aaa2!important;
+  box-shadow:0 0 0 3px rgba(45,145,137,.12)!important;
+}
+#qotSearch .qot-search-button,
+.hero-cta,.gold-button,.contact-button,.vehicle-link{
+  transition:transform .22s ease,box-shadow .22s ease,background .22s ease!important;
+}
+#qotSearch .qot-search-button:hover,
+.hero-cta:hover,.gold-button:hover,.contact-button:hover,.vehicle-link:hover{
+  transform:translateY(-2px);
+}
+#reservar.booking{
+  background:linear-gradient(145deg,#fffaf2 0%,#f1f8f3 100%)!important;
+  border:1px solid #d7e4d8!important;
+  border-top:4px solid #d9b979!important;
+  border-radius:24px!important;
+  box-shadow:0 18px 42px rgba(29,67,64,.10)!important;
+}
+#reservar .booking h2{color:#174f53!important}
+#reservar .field label{color:#315b5a!important}
+#reservar .field input,#reservar .field select,#reservar textarea{
+  background:#fffefa!important;color:#244b4d!important;
+  border:1px solid #cbded5!important;border-radius:13px!important;
+}
+#reservar .booking-map-details{
+  background:#f6fbf7!important;border:1px solid #cbded5!important;
+}
+#reservar .booking-map-details>summary{
+  background:linear-gradient(100deg,#e8f3ed,#f8f1e5)!important;
+  color:#174f53!important;
+}
+#reservar .booking-map-details>summary:after{color:#b18b48!important}
+#reservar .booking-map-panel{background:#f8fbf7!important}
+#bookingMap{
+  height:390px!important;min-height:320px!important;
+  border:1px solid #cbded5!important;border-radius:16px!important;
+  box-shadow:0 8px 22px rgba(25,72,72,.08)!important;
+}
+#reservar .booking-map-heading,
+#reservar .booking-map-heading strong,
+#reservar .quick-location-label{color:#174f53!important}
+#reservar .quick-location-buttons button,
+#reservar .booking-map-actions button{
+  background:#fffefa!important;color:#17565a!important;
+  border:1px solid #cbded5!important;border-radius:22px!important;
+}
+#reservar .quick-location-buttons button:hover,
+#reservar .booking-map-actions button:hover{
+  background:#e5f2eb!important;border-color:#79b5a6!important;
+}
+.booking .quote-preview{
+  background:linear-gradient(110deg,#e8f4ed,#fff3df)!important;
+  color:#174f53!important;border:1px solid #d7bd82!important;
+}
+@keyframes qotSoftRise{
+  from{opacity:0;transform:translateY(8px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@media(max-width:620px){
+  #bookingMap{height:320px!important;min-height:280px!important}
+  #reservar.booking{border-radius:20px!important}
+}
+@media(prefers-reduced-motion:reduce){
+  #qotSearch .qot-search-field{animation:none!important}
+  #qotSearch .qot-search-button,.hero-cta,.gold-button,.contact-button,.vehicle-link{transition:none!important}
+}
+</style>
+
 </head>
 
 <body>
