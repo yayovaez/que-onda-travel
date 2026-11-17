@@ -3514,11 +3514,11 @@ function searchMapboxPlaces(input, container, kind) {
   const requestId = ++routeSearchSequence[kind];
   if (query.length < 2) { clearMapboxSuggestions(container); return; }
 
-  const normalize = value => String(value || '').normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').toLowerCase();
+  const normalize = value => String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
   const normalized = normalize(query);
   const localMatches = LOCAL_CABO_PLACES.filter(place => {
     const haystack = normalize([place.text, place.place_name, ...(place.aliases || [])].join(' '));
-    return haystack.includes(normalized) || normalized.split(/\\s+/).every(word => haystack.includes(word));
+    return haystack.includes(normalized) || normalized.split(/\s+/).every(word => haystack.includes(word));
   }).map((place,index) => ({...place,id:'local-cabo-'+index,relevance:1}));
 
   renderMapboxSuggestions(container, kind, localMatches);
@@ -3529,8 +3529,8 @@ function searchMapboxPlaces(input, container, kind) {
   const requestIsCurrent = () => requestId === routeSearchSequence[kind] && input.value.trim() === query;
   if (query.length < 3) return;
 
-  // Photon (OpenStreetMap) supports global POI search and autocomplete; unlike Search Box,
-  // it can be used for Los Cabos, Mexico. Debounce to keep public-service usage reasonable.
+  // Photon (OpenStreetMap) supports global POI search and autocomplete for Los Cabos, Mexico.
+  // Debounce requests to respect the public service's fair-use policy.
   routeSearchTimers[kind] = setTimeout(async () => {
     try {
       const result = await callMapboxProxy({ action: 'photonSearch', query });
