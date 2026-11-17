@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#073f46">
+<title>Administración | Qué Onda Travel</title>
+<style>
+:root{--teal:#073f46;--teal2:#0b6870;--pink:#e62e83;--gold:#e9bd59;--cream:#fff7eb;--ink:#173e42;--muted:#6a8180;--line:#e6ddcf}
+*{box-sizing:border-box}body{margin:0;background:#f5f0e7;color:var(--ink);font:15px/1.5 Arial,sans-serif}
+header{background:linear-gradient(110deg,#063b43,#08747a);color:white;padding:22px clamp(18px,4vw,48px);border-bottom:3px solid var(--gold);display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{font:italic 29px Georgia,serif}.brand small{display:block;font:700 10px Arial,sans-serif;letter-spacing:5px;color:#ffd36e;text-align:center}
+header a{color:#ffe3a4;text-decoration:none;font-size:13px}
+main{max-width:1240px;margin:34px auto;padding:0 18px 50px}
+h1{font:36px Georgia,serif;margin:0;color:var(--teal)}.sub{color:var(--muted);margin:5px 0 25px}
+.panel{background:#fffdf8;border:1px solid var(--line);border-radius:18px;padding:24px;box-shadow:0 12px 30px #173e4210}
+.login{max-width:480px;margin:8vh auto}.login h1{font-size:30px}
+label{display:block;font-size:13px;font-weight:700;margin:16px 0 7px}
+input,select{width:100%;padding:13px 14px;border:1px solid #c9d9d2;border-radius:11px;background:white;color:var(--ink);font:inherit}
+button{border:0;border-radius:999px;padding:12px 19px;background:var(--pink);color:white;font-weight:700;cursor:pointer}
+button:disabled{opacity:.55;cursor:wait}.secondary{background:var(--teal)}.logout{background:transparent;border:1px solid #ffffff80;padding:9px 15px}
+.notice{margin-top:15px;padding:12px 14px;border-radius:10px;background:#eaf4ed;color:#24584f;font-size:14px}
+.notice.error{background:#fff0ed;color:#9b382e}.hidden{display:none!important}
+.toolbar{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:20px 0}
+.filters{display:flex;gap:10px;flex-wrap:wrap}.filters input{min-width:220px}.filters select{width:auto;min-width:155px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:18px 0}
+.stat{background:#fffdf8;border:1px solid var(--line);border-radius:14px;padding:16px}.stat span{display:block;color:var(--muted);font-size:12px}.stat strong{font:28px Georgia,serif;color:var(--teal)}
+.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:13px;background:white}
+table{width:100%;border-collapse:collapse;min-width:850px}th,td{text-align:left;padding:13px 14px;border-bottom:1px solid #eee7dc;font-size:13px;vertical-align:top}th{background:#f8f1e5;color:#476260;font-size:11px;text-transform:uppercase;letter-spacing:.6px}tr:last-child td{border-bottom:0}
+.name{font-weight:700;color:var(--teal)}.muted{color:var(--muted)}.status{display:inline-block;border-radius:30px;padding:5px 9px;font-size:11px;font-weight:700;background:#f2eadb;color:#765b25}.status.confirmed{background:#e3f3e9;color:#246647}.status.cancelled{background:#fde9e7;color:#a23d37}.status.completed{background:#e7eef7;color:#365d89}
+.actions{display:flex;gap:6px;flex-wrap:wrap}.actions button{padding:7px 11px;font-size:11px}.actions .approve{background:#16805d}.actions .cancel{background:#a64c45}.actions .complete{background:#386b91}
+.empty{text-align:center;padding:35px;color:var(--muted)}
+@media(max-width:700px){main{margin-top:24px}.stats{grid-template-columns:repeat(2,1fr)}h1{font-size:30px}.panel{padding:18px}.toolbar{align-items:stretch}.filters{width:100%}.filters input,.filters select{width:100%}}
+</style>
+</head>
+<body>
+<header><div class="brand">Qué Onda Travel<small>ADMINISTRACIÓN</small></div><a href="/">← Volver al sitio</a></header>
+<main>
+<section id="loginView" class="panel login">
+<h1>Acceso privado</h1><p class="sub">Panel de reservaciones · Solo personal autorizado</p>
+<form id="loginForm">
+<label for="email">Correo administrativo</label><input id="email" type="email" autocomplete="email" required placeholder="Tu correo autorizado">
+<button id="loginButton" type="submit" style="width:100%;margin-top:18px">Enviar enlace seguro</button>
+</form>
+<div id="loginMessage" class="notice hidden" role="status"></div>
+<p class="muted" style="font-size:12px;margin-top:18px">Te enviaremos un enlace de acceso de un solo uso. No necesitas escribir tu contraseña aquí.</p>
+</section>
+<section id="appView" class="hidden">
+<div style="display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap"><div><h1>Reservaciones</h1><p class="sub">Gestiona solicitudes y actualiza su estado desde un solo lugar.</p></div><button id="logoutButton" class="logout">Cerrar sesión</button></div>
+<div class="stats">
+<div class="stat"><span>Total</span><strong id="totalCount">0</strong></div>
+<div class="stat"><span>Pendientes</span><strong id="pendingCount">0</strong></div>
+<div class="stat"><span>Confirmadas</span><strong id="confirmedCount">0</strong></div>
+<div class="stat"><span>Completadas</span><strong id="completedCount">0</strong></div>
+</div>
+<div class="toolbar"><div class="filters"><input id="searchInput" type="search" placeholder="Buscar cliente, correo o destino"><select id="statusFilter"><option value="all">Todos los estados</option><option value="pending">Pendientes</option><option value="confirmed">Confirmadas</option><option value="cancelled">Canceladas</option><option value="completed">Completadas</option></select></div><button id="refreshButton" class="secondary">↻ Actualizar</button></div>
+<div id="appMessage" class="notice hidden" role="status"></div>
+<div class="table-wrap"><table><thead><tr><th>Cliente</th><th>Servicio</th><th>Recorrido</th><th>Fecha y hora</th><th>Pasajeros</th><th>Total estimado</th><th>Estado / acciones</th></tr></thead><tbody id="bookingRows"></tbody></table><div id="emptyState" class="empty hidden">No hay reservaciones para mostrar.</div></div>
+<p class="muted" style="font-size:12px;margin-top:14px">Los cambios se guardan directamente en Supabase. La visibilidad y los permisos también están protegidos por las políticas RLS de la base de datos.</p>
+</section>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(() => {
+  const SUPABASE_URL = "https://iyelnragqgriycdyqowq.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_d-xqUkbQSgzZys3OfXzbiw_iyHzHItE";
+  const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  const $ = id => document.getElementById(id);
+  let bookings = [];
+  const labels = {pending:"Pendiente",confirmed:"Confirmada",cancelled:"Cancelada",completed:"Completada"};
+  const money = value => value == null ? "—" : new Intl.NumberFormat("es-MX",{style:"currency",currency:"MXN",maximumFractionDigits:0}).format(value);
+  const safe = value => String(value ?? "—").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const dateText = value => { if(!value)return "—"; const d=new Date(value+"T00:00:00"); return isNaN(d) ? safe(value) : d.toLocaleDateString("es-MX",{day:"2-digit",month:"short",year:"numeric"}); };
+  function message(id,text,error=false){const el=$(id);el.textContent=text;el.classList.remove("hidden","error");if(error)el.classList.add("error");}
+  function showLogin(){ $("loginView").classList.remove("hidden");$("appView").classList.add("hidden"); }
+  function showApp(){ $("loginView").classList.add("hidden");$("appView").classList.remove("hidden"); }
+  async function loadBookings(){
+    $("refreshButton").disabled=true;
+    try{
+      const {data,error}=await db.from("booking_requests").select("id,customer_name,customer_email,customer_phone,service,trip_type,vehicle,distance_km,pickup,destination,travel_date,travel_time,passengers,offer_mxn,estimated_total_mxn,status,created_at").order("created_at",{ascending:false});
+      if(error)throw error;
+      bookings=data||[];render();
+      $("appMessage").classList.add("hidden");
+    }catch(e){message("appMessage","No fue posible cargar las reservaciones. Verifica que hayas iniciado sesión con el correo autorizado. "+(e.message||""),true);}
+    finally{$("refreshButton").disabled=false;}
+  }
+  function render(){
+    const q=$("searchInput").value.trim().toLowerCase(),f=$("statusFilter").value;
+    const rows=bookings.filter(b=>(f==="all"||b.status===f)&&[b.customer_name,b.customer_email,b.customer_phone,b.pickup,b.destination,b.vehicle].join(" ").toLowerCase().includes(q));
+    $("totalCount").textContent=bookings.length;
+    $("pendingCount").textContent=bookings.filter(b=>b.status==="pending").length;
+    $("confirmedCount").textContent=bookings.filter(b=>b.status==="confirmed").length;
+    $("completedCount").textContent=bookings.filter(b=>b.status==="completed").length;
+    $("emptyState").classList.toggle("hidden",rows.length>0);
+    $("bookingRows").innerHTML=rows.map(b=>{
+      const route=[b.pickup,b.destination].filter(Boolean).map(safe).join(" → ");
+      const status=b.status||"pending";
+      const actions=status==="pending"
+        ? '<button class="approve" data-id="'+safe(b.id)+'" data-status="confirmed">Confirmar</button><button class="cancel" data-id="'+safe(b.id)+'" data-status="cancelled">Cancelar</button>'
+        : status==="confirmed"
+          ? '<button class="complete" data-id="'+safe(b.id)+'" data-status="completed">Completar</button><button class="cancel" data-id="'+safe(b.id)+'" data-status="cancelled">Cancelar</button>'
+          : status==="cancelled" ? '<button class="approve" data-id="'+safe(b.id)+'" data-status="pending">Reabrir</button>' : '<span class="muted">Sin acciones</span>';
+      return '<tr><td><div class="name">'+safe(b.customer_name)+'</div><div>'+safe(b.customer_email)+'</div><div class="muted">'+safe(b.customer_phone)+'</div></td><td>'+safe(b.service)+'<br><span class="muted">'+safe(b.vehicle)+' · '+safe(b.trip_type)+'</span></td><td>'+route+'<br><span class="muted">'+(b.distance_km==null?"":safe(b.distance_km)+" km")+'</span></td><td>'+dateText(b.travel_date)+'<br>'+safe(b.travel_time)+'</td><td>'+safe(b.passengers)+'</td><td><strong>'+money(b.estimated_total_mxn??b.offer_mxn)+'</strong></td><td><span class="status '+safe(status)+'">'+safe(labels[status]||status)+'</span><div class="actions" style="margin-top:8px">'+actions+'</div></td></tr>';
+    }).join("");
+  }
+  async function changeStatus(id,status){
+    if(!labels[status])return;
+    const b=bookings.find(x=>x.id===id);
+    const action=status==="confirmed"?"confirmar":status==="cancelled"?"cancelar":status==="completed"?"marcar como completada":"reabrir";
+    if(!confirm("¿Quieres "+action+" la reservación de "+(b?.customer_name||"este cliente")+"?"))return;
+    try{
+      const {error}=await db.from("booking_requests").update({status}).eq("id",id);
+      if(error)throw error;
+      await loadBookings();
+      message("appMessage","Estado actualizado: "+labels[status]+".");
+    }catch(e){message("appMessage","No se pudo actualizar la reservación. "+(e.message||""),true);}
+  }
+  $("loginForm").addEventListener("submit",async e=>{
+    e.preventDefault();const email=$("email").value.trim();
+    $("loginButton").disabled=true;$("loginButton").textContent="Enviando…";
+    try{
+      const {error}=await db.auth.signInWithOtp({email,options:{emailRedirectTo:location.origin+"/admin/",shouldCreateUser:false}});
+      if(error)throw error;
+      message("loginMessage","Si el correo corresponde a una cuenta existente, recibirás un enlace seguro para entrar. Revisa también tu carpeta de spam.");
+    }catch(err){message("loginMessage","No se pudo enviar el enlace. "+(err.message||""),true);}
+    finally{$("loginButton").disabled=false;$("loginButton").textContent="Enviar enlace seguro";}
+  });
+  $("logoutButton").addEventListener("click",async()=>{await db.auth.signOut();showLogin();});
+  $("refreshButton").addEventListener("click",loadBookings);
+  $("searchInput").addEventListener("input",render);
+  $("statusFilter").addEventListener("change",render);
+  $("bookingRows").addEventListener("click",e=>{const btn=e.target.closest("button[data-id]");if(btn)changeStatus(btn.dataset.id,btn.dataset.status);});
+  db.auth.onAuthStateChange((_event,session)=>{if(session){showApp();setTimeout(loadBookings,0);}else showLogin();});
+  db.auth.getSession().then(({data})=>{if(data.session){showApp();loadBookings();}else showLogin();});
+})();
+</script>
+</body>
+</html>
