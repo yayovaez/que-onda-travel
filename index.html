@@ -3076,6 +3076,34 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
  #qotSearch,#qotSearch .qot-search-field{animation:none!important;transition:none!important}
 }
 </style>
+<style id="qot-baja-california-icons">
+/* IDENTIDAD BAJA CALIFORNIA SUR · DESIERTO, PITAYA Y MAR */
+#qotSearch{position:relative;isolation:isolate}
+#qotSearch:before,#qotSearch:after{position:absolute;z-index:-1;pointer-events:none;opacity:.17;filter:saturate(1.15)}
+#qotSearch:before{content:"🌵";font-size:clamp(46px,7vw,78px);left:13px;top:8px;transform:rotate(-9deg)}
+#qotSearch:after{content:"🌊";font-size:clamp(48px,7vw,76px);right:15px;bottom:8px;transform:rotate(-8deg)}
+#qotSearch .qot-search-heading{position:relative}
+#qotSearch .qot-search-heading:after{
+ content:"🌵  DESIERTO  ·  🌺  PITAYA  ·  🐪  BAJA  ·  🌊  MAR";
+ display:block;margin:12px auto 0;width:max-content;max-width:100%;
+ padding:7px 14px;border:1px solid #e8c36d;border-radius:30px;
+ background:linear-gradient(90deg,#fff0e4,#fff8e8,#eaf8f4);
+ color:#527477;font-size:10px;font-weight:800;letter-spacing:1.2px;
+}
+#qotSearch .qot-location-field:before{content:"🌵"!important;font-size:21px!important}
+#qotSearch .qot-search-field:has(#qotDate):before{content:"🌺"!important;font-size:20px!important}
+#qotSearch .qot-search-field:has(#qotTime):before{content:"🌅"!important;font-size:20px!important}
+#qotSearch .qot-search-field:has(#qotPassengers):before{content:"🐪"!important;font-size:20px!important}
+#qotSearch .qot-search-field:has(#qotTrip):before{content:"🌊"!important;font-size:20px!important}
+#qotSearch .qot-search-field:nth-child(2):before{content:"🌊"!important}
+#qotSearch .qot-search-field:focus-within:before{filter:drop-shadow(0 2px 5px currentColor);transform:translateY(-2px) scale(1.12)}
+@media(max-width:620px){
+ #qotSearch .qot-search-heading:after{font-size:9px;letter-spacing:.5px;padding:7px 9px}
+ #qotSearch:before{left:5px;top:3px;font-size:42px}
+ #qotSearch:after{right:5px;bottom:4px;font-size:42px}
+}
+@media(prefers-reduced-motion:reduce){#qotSearch .qot-search-field:focus-within:before{transform:none}}
+</style>
 </head>
 
 <body>
