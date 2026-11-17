@@ -3939,7 +3939,10 @@ const LOCAL_CABO_PLACES = [
   {text:'Corredor turístico de Los Cabos',place_name:'Corredor turístico Cabo San Lucas – San José del Cabo',center:[-109.80,22.94],aliases:['corredor','zona hotelera','hotelera']},
   {text:'Playa Palmilla',place_name:'Playa Palmilla, San José del Cabo, BCS',center:[-109.713,23.014],aliases:['palmilla']},
   {text:'Playa Chileno',place_name:'Playa Chileno, Los Cabos, BCS',center:[-109.80,22.91],aliases:['chileno']},
-  {text:'Playa Santa María',place_name:'Playa Santa María, Los Cabos, BCS',center:[-109.82,22.90],aliases:['santa maria','santa maría']}
+  {text:'Playa Santa María',place_name:'Playa Santa María, Los Cabos, BCS',center:[-109.82,22.90],aliases:['santa maria','santa maría']},
+  {text:'El Squid Roe',place_name:'Blvd. Lázaro Cárdenas 1112, Centro, Cabo San Lucas, BCS',center:[-109.9116362,22.8868786],aliases:['squid roe','squid','antro']},
+  {text:'Playa La Empacadora (El Corsario)',place_name:'Playa La Empacadora, Cabo San Lucas, BCS',center:[-109.9051667,22.8796528],aliases:['empacadora','playa empacadora','el corsario','corsario','escondida']},
+  {text:'Veterinaria Dogtor · 4 de Marzo',place_name:'Quetzalcóatl Mza. 17 Lote 18, Col. 4 de Marzo, Cabo San Lucas, BCS',center:[-109.93315,22.88915],aliases:['veterinaria dogtor','dogtor','dogtor 4 de marzo','4 de marzo veterinaria']}
 ];
 function searchMapboxPlaces(input, container, kind) {
   const query = input.value.trim();
@@ -4710,7 +4713,10 @@ input:focus,select:focus,textarea:focus{border-color:#0b8985!important;box-shado
    {name:'Corredor turístico de Los Cabos',detail:'Corredor turístico Cabo San Lucas – San José del Cabo',coords:[-109.80,22.94],terms:'corredor zona hotelera'},
    {name:'Playa Palmilla',detail:'Playa Palmilla, San José del Cabo, BCS',coords:[-109.713,23.014],terms:'palmilla'},
    {name:'Playa Chileno',detail:'Playa Chileno, Los Cabos, BCS',coords:[-109.80,22.91],terms:'chileno'},
-   {name:'Playa Santa María',detail:'Playa Santa María, Los Cabos, BCS',coords:[-109.82,22.90],terms:'santa maria'}
+   {name:'Playa Santa María',detail:'Playa Santa María, Los Cabos, BCS',coords:[-109.82,22.90],terms:'santa maria'},
+   {name:'El Squid Roe',detail:'Blvd. Lázaro Cárdenas 1112, Centro, Cabo San Lucas, BCS',coords:[-109.9116362,22.8868786],terms:'squid roe squid antro'},
+   {name:'Playa La Empacadora (El Corsario)',detail:'Playa La Empacadora, Cabo San Lucas, BCS',coords:[-109.9051667,22.8796528],terms:'empacadora playa empacadora el corsario corsario escondida'},
+   {name:'Veterinaria Dogtor · 4 de Marzo',detail:'Quetzalcóatl Mza. 17 Lote 18, Col. 4 de Marzo, Cabo San Lucas, BCS',coords:[-109.93315,22.88915],terms:'veterinaria dogtor dogtor 4 de marzo'}
   ];
   const normalize=function(v){return String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();};
   function render(box,input,kind,items){
