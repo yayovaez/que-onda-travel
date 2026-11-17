@@ -4357,6 +4357,82 @@ input:focus,select:focus,textarea:focus{border-color:#0b8985!important;box-shado
 })();
 </script>
 
+<script id="qot-availability-submit">
+(function(){
+ function init(){
+  const form=document.getElementById('qotSearchForm');
+  if(!form||form.dataset.availabilityReady)return;
+  form.dataset.availabilityReady='true';
+  const $=id=>document.getElementById(id);
+  const status=$('qotSearchStatus'),results=$('qotResults'),cards=$('qotVehicleCards'),summary=$('qotRouteSummary');
+  const endpoint='https://iyelnragqgriycdyqowq.supabase.co/functions/v1/mapbox-proxy';
+  const key='sb_publishable_d-xqUkbQSgzZys3OfXzbiw_iyHzHItE';
+  const vehicles=[
+   {name:'Jetta',label:'Volkswagen Jetta',rate:26,capacity:4,image:'images/jetta-negro-2019.jpg',advance:0},
+   {name:'Atlas',label:'Volkswagen Atlas',rate:70,capacity:5,image:'images/atlas-blanca-2019.jpg',advance:4},
+   {name:'Tiguan',label:'Volkswagen Tiguan',rate:75,capacity:6,image:'images/tiguan-negra-2018.jpg',advance:4}
+  ];
+  function showError(message){status.textContent=message;results.hidden=true;}
+  form.addEventListener('submit',async function(event){
+   event.preventDefault();
+   const pickup=$('qotPickup'),destination=$('qotDestination');
+   const date=$('qotDate').value,time=$('qotTime').value,passengers=Number($('qotPassengers').value);
+   const origin={longitude:Number(pickup.dataset.longitude),latitude:Number(pickup.dataset.latitude)};
+   const target={longitude:Number(destination.dataset.longitude),latitude:Number(destination.dataset.latitude)};
+   if(!pickup.dataset.longitude||!destination.dataset.longitude){
+    showError('Selecciona una sugerencia de la lista para la recogida y el destino.');(!pickup.dataset.longitude?pickup:destination).focus();return;
+   }
+   if(!date||!time){showError('Selecciona la fecha y la hora de tu viaje.');return;}
+   if(new Date(date+'T'+time+':00').getTime()<Date.now()){showError('La fecha y hora deben ser futuras.');return;}
+   const button=form.querySelector('button[type="submit"]');
+   button.disabled=true;button.textContent='Calculando tu viaje…';
+   status.textContent='Estamos calculando la ruta y preparando las opciones de transporte…';
+   results.hidden=true;
+   try{
+    const response=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json','apikey':key},body:JSON.stringify({action:'directions',origin:origin,destination:target})});
+    const route=await response.json();
+    if(!response.ok)throw new Error(route.error||'No pudimos calcular la ruta.');
+    const km=Number(route.distance_km),minutes=Number(route.duration_minutes);
+    if(!Number.isFinite(km)||km<=0)throw new Error('No pudimos obtener una distancia válida para este recorrido.');
+    let unavailable=new Set();
+    try{
+     const url='https://iyelnragqgriycdyqowq.supabase.co/rest/v1/vehicle_availability?select=vehicle&unavailable_date=eq.'+encodeURIComponent(date)+'&is_available=eq.false';
+     const availability=await fetch(url,{headers:{apikey:key,Authorization:'Bearer '+key}});
+     if(availability.ok){const data=await availability.json();unavailable=new Set((data||[]).map(x=>x.vehicle));}
+    }catch(e){console.warn('No se pudo consultar el calendario de vehículos:',e);}
+    summary.textContent=km.toLocaleString('es-MX',{maximumFractionDigits:1})+' km de ida · '+minutes+' min aprox. · '+pickup.value+' → '+destination.value;
+    cards.innerHTML='';
+    vehicles.forEach(function(vehicle){
+     const total=Math.round(km*( $('qotTrip').value==='Redondo'?2:1)*vehicle.rate);
+     const departure=new Date(date+'T'+time+':00').getTime();
+     const enoughNotice=departure>=Date.now()+vehicle.advance*3600000;
+     const available=!unavailable.has(vehicle.name)&&passengers<=vehicle.capacity&&enoughNotice;
+     const article=document.createElement('article');article.className='qot-vehicle-card';
+     const img=document.createElement('img');img.src=vehicle.image;img.alt=vehicle.label;
+     const body=document.createElement('div');body.className='qot-v-body';
+     const title=document.createElement('h4');title.textContent=vehicle.label;
+     const desc=document.createElement('div');desc.style.cssText='font-size:12px;color:#71817c';desc.textContent='Hasta '+vehicle.capacity+' pasajeros · $'+vehicle.rate+' MXN por km';
+     const price=document.createElement('div');price.className='qot-v-price';price.textContent='$'+total.toLocaleString('es-MX')+' MXN';
+     const state=document.createElement('p');state.className='qot-v-state '+(available?'available':'unavailable');
+     state.textContent=passengers>vehicle.capacity?'No tiene capacidad para ese número de pasajeros':!enoughNotice?'Requiere mayor anticipación':unavailable.has(vehicle.name)?'No disponible para esa fecha':'Disponible para solicitar confirmación';
+     const book=document.createElement('button');book.type='button';book.className='qot-v-book';book.textContent='Solicitar este vehículo';
+     book.disabled=!available;
+     book.addEventListener('click',function(){
+      const message='Hola, Qué Onda Travel. Quiero solicitar una reservación.\nRecogida: '+pickup.value+'\nDestino: '+destination.value+'\nFecha: '+date+'\nHora: '+time+'\nPasajeros: '+passengers+'\nViaje: '+$('qotTrip').value+'\nVehículo: '+vehicle.label+'\nDistancia aproximada: '+km+' km\nTarifa estimada: $'+total+' MXN. ¿Me confirman disponibilidad?';
+      window.open('https://wa.me/16395255179?text='+encodeURIComponent(message),'_blank','noopener');
+     });
+     body.append(title,desc,price,state,book);article.append(img,body);cards.append(article);
+    });
+    results.hidden=false;status.textContent='¡Listo! Estas son las opciones para tu viaje. La tarifa es estimada y la disponibilidad se confirma al solicitar.';
+    results.scrollIntoView({behavior:'smooth',block:'start'});
+   }catch(error){console.error('[Qué Onda Travel] Error al buscar disponibilidad:',error);showError(error.message||'No pudimos consultar la ruta. Inténtalo de nuevo.');}
+   finally{button.disabled=false;button.innerHTML='<span>⌕</span> Buscar disponibilidad';}
+  });
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
+})();
+</script>
+
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
