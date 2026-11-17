@@ -3038,6 +3038,22 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 
 <main>
 
+<div class="qot-flight-search" id="qotSearch">
+    <div class="qot-search-heading"><span>QUÉ ONDA TRAVEL</span><h2>Encuentra tu transporte ideal</h2><p>Tu viaje por Los Cabos comienza aquí</p></div>
+    <form id="qotSearchForm" class="qot-search-grid">
+      <div class="qot-search-field qot-location-field"><label for="qotPickup">Desde</label><input id="qotPickup" autocomplete="off" placeholder="Lugar de recogida" required><div class="qot-suggestions" id="qotPickupOptions"></div></div>
+      <div class="qot-search-field qot-location-field"><label for="qotDestination">Hasta</label><input id="qotDestination" autocomplete="off" placeholder="Destino" required><div class="qot-suggestions" id="qotDestinationOptions"></div></div>
+      <div class="qot-search-field"><label for="qotDate">Llegada / fecha</label><input id="qotDate" type="date" required></div>
+      <div class="qot-search-field"><label for="qotTime">Hora del vuelo / recogida</label><input id="qotTime" type="time" required></div>
+      <div class="qot-search-field"><label for="qotPassengers">Pasajeros</label><select id="qotPassengers"><option value="1">1 pasajero</option><option value="2" selected>2 pasajeros</option><option value="3">3 pasajeros</option><option value="4">4 pasajeros</option><option value="5">5 pasajeros</option><option value="6">6 pasajeros</option></select></div>
+      <div class="qot-search-field"><label for="qotTrip">Tipo de viaje</label><select id="qotTrip"><option value="Sencillo">Sencillo</option><option value="Redondo">Redondo</option></select></div>
+      <button class="qot-search-button" type="submit"><span>⌕</span> Buscar disponibilidad</button>
+    </form>
+    <p id="qotSearchStatus" class="qot-search-status" role="status" aria-live="polite"></p>
+    <section id="qotResults" class="qot-results" hidden><div class="qot-results-heading"><span>RESULTADOS DE TU VIAJE</span><h3>Elige tu vehículo</h3><p id="qotRouteSummary"></p></div><div id="qotVehicleCards" class="qot-vehicle-cards"></div></section>
+  </div>
+
+
 <section class="hero" id="inicio">
   <div class="hero-copy">
     <h1>Qué Onda<br><span>Travel</span></h1>
@@ -3054,20 +3070,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
     </div>
   </div>
 
-  <div class="qot-flight-search" id="qotSearch">
-    <div class="qot-search-heading"><span>QUÉ ONDA TRAVEL</span><h2>Encuentra tu transporte ideal</h2><p>Tu viaje por Los Cabos comienza aquí</p></div>
-    <form id="qotSearchForm" class="qot-search-grid">
-      <div class="qot-search-field qot-location-field"><label for="qotPickup">Desde</label><input id="qotPickup" autocomplete="off" placeholder="Lugar de recogida" required><div class="qot-suggestions" id="qotPickupOptions"></div></div>
-      <div class="qot-search-field qot-location-field"><label for="qotDestination">Hasta</label><input id="qotDestination" autocomplete="off" placeholder="Destino" required><div class="qot-suggestions" id="qotDestinationOptions"></div></div>
-      <div class="qot-search-field"><label for="qotDate">Llegada / fecha</label><input id="qotDate" type="date" required></div>
-      <div class="qot-search-field"><label for="qotTime">Hora del vuelo / recogida</label><input id="qotTime" type="time" required></div>
-      <div class="qot-search-field"><label for="qotPassengers">Pasajeros</label><select id="qotPassengers"><option value="1">1 pasajero</option><option value="2" selected>2 pasajeros</option><option value="3">3 pasajeros</option><option value="4">4 pasajeros</option><option value="5">5 pasajeros</option><option value="6">6 pasajeros</option></select></div>
-      <div class="qot-search-field"><label for="qotTrip">Tipo de viaje</label><select id="qotTrip"><option value="Sencillo">Sencillo</option><option value="Redondo">Redondo</option></select></div>
-      <button class="qot-search-button" type="submit"><span>⌕</span> Buscar disponibilidad</button>
-    </form>
-    <p id="qotSearchStatus" class="qot-search-status" role="status" aria-live="polite"></p>
-    <section id="qotResults" class="qot-results" hidden><div class="qot-results-heading"><span>RESULTADOS DE TU VIAJE</span><h3>Elige tu vehículo</h3><p id="qotRouteSummary"></p></div><div id="qotVehicleCards" class="qot-vehicle-cards"></div></section>
-  </div>
+
 </section>
 
 <section class="services">
