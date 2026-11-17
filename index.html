@@ -4250,6 +4250,7 @@ input:focus,select:focus,textarea:focus{border-color:#0b8985!important;box-shado
 .qot-search-button{grid-column:1/-1;justify-self:center;margin-top:5px;padding:14px 28px;border:0;border-radius:28px;background:linear-gradient(110deg,#e62e83,#c91f70);color:#fff;font-weight:800;box-shadow:0 7px 18px #c91f7033;cursor:pointer}
 .qot-search-button span{font-size:20px;vertical-align:-2px;margin-right:7px}
 .qot-search-status{text-align:center;color:#075b63;font-size:13px;min-height:18px;margin:12px 0 0}
+.qot-search-field{position:relative}.qot-search-field:before{pointer-events:none}
 .qot-suggestions{display:none;position:absolute;z-index:30;left:0;right:0;top:100%;max-height:220px;overflow:auto;background:#fff;border:1px solid #d5e1db;border-radius:12px;box-shadow:0 12px 25px #173b432b}
 .qot-suggestions:not(:empty){display:block}.qot-suggestions button{display:block;width:100%;padding:11px;text-align:left;background:#fff;border:0;border-bottom:1px solid #edf0ed;color:#17484a;cursor:pointer}.qot-suggestions button:hover{background:#edf6f0}.qot-suggestions small{display:block;color:#72837e;font-size:10px;margin-top:3px}
 .qot-results{margin-top:24px;padding-top:22px;border-top:1px solid #e8decc}.qot-results-heading{text-align:center;margin-bottom:16px}.qot-results-heading h3{font: bold 27px Georgia,serif;color:#073f4c;margin:7px}.qot-results-heading p{font-size:13px;color:#617b79}
@@ -4295,30 +4296,43 @@ input:focus,select:focus,textarea:focus{border-color:#0b8985!important;box-shado
   places[kind]={longitude:Number(center[0]),latitude:Number(center[1]),label:feature.place_name||feature.text||q};
   input.value=places[kind].label;box.innerHTML='';
  }
+ function renderLocalOptions(input,box,kind,query=''){
+  const nq=normalize(query);
+  const matches=localPlaces.filter(p=>{
+   if(!nq)return true;
+   const words=normalize([p.text,p.place_name,...p.aliases].join(' '));
+   return words.includes(nq)||nq.split(/\\s+/).every(word=>words.includes(word));
+  }).slice(0,8);
+  box.innerHTML='';
+  matches.forEach(p=>{
+   const b=document.createElement('button');b.type='button';
+   const title=document.createElement('span');title.textContent=p.text;
+   const small=document.createElement('small');small.textContent=p.place_name;
+   b.append(title,small);b.addEventListener('click',()=>choosePlace(p,input,box,kind,query));box.append(b);
+  });
+  if(matches.length)box.style.display='block';
+  return matches.length;
+ }
  async function lookup(input,box,kind){
   let request=0;
   box.addEventListener('pointerdown',event=>{if(event.target.closest('button'))event.preventDefault();});
+  input.addEventListener('focus',()=>{
+   if(!places[kind])renderLocalOptions(input,box,kind,input.value.trim());
+  });
+  input.addEventListener('click',()=>{
+   if(!places[kind]&&!box.children.length)renderLocalOptions(input,box,kind,input.value.trim());
+  });
   input.addEventListener('input',async()=>{
-   const thisRequest=++request;places[kind]=null;box.innerHTML='';
-   const q=input.value.trim();if(q.length<2)return;
-   const nq=normalize(q);
-   const matches=localPlaces.filter(p=>{
-    const words=normalize([p.text,p.place_name,...p.aliases].join(' '));
-    return words.includes(nq)||nq.split(/\\s+/).every(word=>words.includes(word));
-   });
-   matches.slice(0,6).forEach(p=>{
-    const b=document.createElement('button');b.type='button';
-    const title=document.createElement('span');title.textContent=p.text;
-    const small=document.createElement('small');small.textContent=p.place_name;
-    b.append(title,small);b.addEventListener('click',()=>choosePlace(p,input,box,kind,q));box.append(b);
-   });
-   if(matches.length){box.style.display='block';}
+   const thisRequest=++request;places[kind]=null;
+   const q=input.value.trim();
+   const localCount=renderLocalOptions(input,box,kind,q);
+   if(q.length<2)return;
    try{
     const res=await fetch(proxy,{method:'POST',headers:{'Content-Type':'application/json',apikey:key},body:JSON.stringify({action:'geocode',query:q+' Los Cabos Baja California Sur Mexico'})});
     const data=await res.json();if(!res.ok)throw new Error(data.error||'No fue posible buscar el lugar');
     if(thisRequest!==request||input.value.trim()!==q)return;
-    const seen=new Set(matches.map(p=>normalize(p.text)));
-    (data.features||[]).slice(0,6).forEach(f=>{
+    const seen=new Set(localPlaces.filter(p=>normalize([p.text,p.place_name,...p.aliases].join(' ')).includes(normalize(q))).map(p=>normalize(p.text)));
+    (data.features||[]).slice(0,8).forEach(f=>{
      const name=f.text||f.place_name||q;if(seen.has(normalize(name)))return;seen.add(normalize(name));
      const b=document.createElement('button');b.type='button';
      const title=document.createElement('span');title.textContent=name;
@@ -4329,11 +4343,11 @@ input:focus,select:focus,textarea:focus{border-color:#0b8985!important;box-shado
     box.style.display='block';
    }catch(e){
     if(thisRequest!==request)return;
-    if(!box.children.length){const error=document.createElement('div');error.textContent='No pudimos consultar más lugares. Prueba con Aeropuerto SJD, Costco, Marina o una zona conocida.';error.style.padding='12px';box.append(error);}
+    if(!localCount&&!box.children.length){const error=document.createElement('div');error.textContent='No pudimos consultar más lugares. Elige una de las ubicaciones sugeridas o prueba otra búsqueda.';error.style.padding='12px';box.append(error);}
     box.style.display='block';
    }
   });
-  input.addEventListener('focus',()=>{if(input.value.trim().length>=2&&!places[kind])input.dispatchEvent(new Event('input'));});
+  input.addEventListener('blur',()=>setTimeout(()=>{if(!box.matches(':hover')&&!box.contains(document.activeElement))box.style.display='none';},350));
  }
  lookup($('qotPickup'),$('qotPickupOptions'),'pickup');lookup($('qotDestination'),$('qotDestinationOptions'),'destination');
  const rates={};let usdRate=null;
