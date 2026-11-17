@@ -2999,6 +2999,83 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 #reservar .qot-quote-exchange{margin-top:12px;font-size:11px;line-height:1.55;color:#58716d}
 @media(max-width:480px){#reservar .qot-quote-details{grid-template-columns:1fr}#reservar .qot-quote-total>strong{font-size:25px}}
 </style>
+<style id="qot-booking-color-motion">
+/* RESERVACIÓN VIVA · COLORES TROPICALES Y MICROANIMACIONES */
+#qotSearch{
+  background:
+    radial-gradient(circle at 8% 12%,rgba(240,45,145,.10),transparent 24%),
+    radial-gradient(circle at 92% 88%,rgba(22,184,193,.14),transparent 27%),
+    linear-gradient(135deg,#fff8ec 0%,#fff0dc 48%,#f1f8ed 100%)!important;
+  border:2px solid #e8c36d!important;
+  box-shadow:0 18px 42px rgba(7,63,76,.13),0 0 0 5px rgba(255,255,255,.55)!important;
+  overflow:visible;
+  animation:qotPanelEnter .8s cubic-bezier(.2,.75,.25,1) both;
+}
+#qotSearch .qot-search-heading>span{color:#e52d87!important;letter-spacing:2.5px}
+#qotSearch .qot-search-heading h2{color:#073f4c!important}
+#qotSearch .qot-search-heading p{color:#547477!important}
+#qotSearch .qot-search-field{
+  min-height:105px;
+  border:1.5px solid #dce7df!important;
+  border-radius:20px!important;
+  background:linear-gradient(145deg,#fff 0%,#fffdf8 100%)!important;
+  box-shadow:0 7px 18px rgba(7,63,76,.07),inset 0 1px 0 #fff!important;
+  transition:transform .24s ease,border-color .24s ease,box-shadow .24s ease,background .24s ease;
+  animation:qotFieldRise .65s both;
+}
+#qotSearch .qot-search-field:nth-child(1){--qot-accent:#e8328b;--qot-tint:#fff0f6;animation-delay:.05s}
+#qotSearch .qot-search-field:nth-child(2){--qot-accent:#13aeb2;--qot-tint:#eafafa;animation-delay:.11s}
+#qotSearch .qot-search-field:nth-child(3){--qot-accent:#e7a51d;--qot-tint:#fff7df;animation-delay:.17s}
+#qotSearch .qot-search-field:nth-child(4){--qot-accent:#397bd0;--qot-tint:#edf4ff;animation-delay:.23s}
+#qotSearch .qot-search-field:nth-child(5){--qot-accent:#15966e;--qot-tint:#eaf8f0;animation-delay:.29s}
+#qotSearch .qot-search-field:nth-child(6){--qot-accent:#f06b4f;--qot-tint:#fff0e9;animation-delay:.35s}
+#qotSearch .qot-search-field label{color:#526f70!important;font-size:12px!important;font-weight:800!important;transition:color .2s ease}
+#qotSearch .qot-search-field:before{
+  color:var(--qot-accent,#08777a)!important;
+  font-size:22px!important;
+  transition:transform .25s ease,color .25s ease;
+}
+#qotSearch .qot-search-field input,#qotSearch .qot-search-field select{
+  color:#174b50!important;font-size:15px!important;font-weight:750!important;
+}
+#qotSearch .qot-search-field input::placeholder{color:#a99eaa!important;opacity:1}
+#qotSearch .qot-search-field:focus-within{
+  transform:translateY(-4px);
+  border-color:var(--qot-accent)!important;
+  background:linear-gradient(145deg,#fff,var(--qot-tint))!important;
+  box-shadow:0 12px 25px color-mix(in srgb,var(--qot-accent) 18%,transparent),0 0 0 3px color-mix(in srgb,var(--qot-accent) 13%,transparent)!important;
+}
+#qotSearch .qot-search-field:focus-within:before{transform:scale(1.15) rotate(-5deg)}
+#qotSearch .qot-search-field:focus-within label{color:var(--qot-accent)!important}
+#qotSearch .qot-search-button{
+  min-width:min(300px,100%);
+  padding:16px 30px!important;
+  border:1px solid #ffb5d4!important;
+  background:linear-gradient(105deg,#ed318b 0%,#d82178 52%,#f06a55 100%)!important;
+  box-shadow:0 9px 22px rgba(216,33,120,.25)!important;
+  transition:transform .22s ease,box-shadow .22s ease,filter .22s ease;
+}
+#qotSearch .qot-search-button:hover{transform:translateY(-3px);box-shadow:0 14px 28px rgba(216,33,120,.32)!important;filter:saturate(1.12)}
+#qotSearch .qot-search-button:active{transform:scale(.98)}
+#qotSearch .qot-search-status{color:#08777a!important}
+#qotSearch .qot-suggestions{border:1px solid #9dd6cf!important;border-radius:14px!important;box-shadow:0 15px 30px rgba(7,63,76,.16)!important}
+#qotSearch .qot-suggestions button:hover{background:#eaf8f4!important;color:#075b63!important}
+#qotSearch .qot-vehicle-card{transition:transform .25s ease,box-shadow .25s ease;border-color:#e6d3b2}
+#qotSearch .qot-vehicle-card:hover{transform:translateY(-5px);box-shadow:0 16px 30px rgba(7,63,76,.15)}
+#qotSearch .qot-v-price{color:#df2d83!important}
+@keyframes qotPanelEnter{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes qotFieldRise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:620px){
+ #qotSearch{padding:18px 13px!important;border-radius:22px!important}
+ #qotSearch .qot-search-grid{gap:10px!important}
+ #qotSearch .qot-search-field{min-height:105px;padding:12px 10px!important;border-radius:17px!important}
+ #qotSearch .qot-search-field input,#qotSearch .qot-search-field select{font-size:14px!important}
+ #qotSearch .qot-search-button{width:100%;min-height:52px}
+}
+@media(prefers-reduced-motion:reduce){
+ #qotSearch,#qotSearch .qot-search-field{animation:none!important;transition:none!important}
+}
+</style>
 </head>
 
 <body>
