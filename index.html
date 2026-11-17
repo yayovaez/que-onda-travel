@@ -4290,14 +4290,16 @@ input:focus,select:focus,textarea:focus{border-color:#0b8985!important;box-shado
   const center=feature.center||feature.geometry?.coordinates;
   if(!center||!Number.isFinite(Number(center[0]))||!Number.isFinite(Number(center[1]))){status.textContent='No pudimos obtener la ubicación exacta. Prueba otra sugerencia.';return;}
   places[kind]={longitude:Number(center[0]),latitude:Number(center[1]),label:feature.place_name||feature.text||q};
-  input.value=places[kind].label;box.innerHTML='';
+  input.value=places[kind].label;
+  box.innerHTML='';box.style.display='none';
+  status.textContent=kind==='pickup'?'Recogida seleccionada. Ahora elige tu destino.':'Destino seleccionado. Ya puedes consultar la disponibilidad.';
  }
  function renderLocalOptions(input,box,kind,query=''){
   const nq=normalize(query);
   const matches=localPlaces.filter(p=>{
    if(!nq)return true;
    const words=normalize([p.text,p.place_name,...p.aliases].join(' '));
-   return words.includes(nq)||nq.split(/\\s+/).every(word=>words.includes(word));
+   return words.includes(nq)||nq.split(/\s+/).every(word=>words.includes(word));
   }).slice(0,8);
   box.innerHTML='';
   matches.forEach(p=>{
@@ -4306,46 +4308,61 @@ input:focus,select:focus,textarea:focus{border-color:#0b8985!important;box-shado
    const small=document.createElement('small');small.textContent=p.place_name;
    b.append(title,small);b.addEventListener('click',()=>choosePlace(p,input,box,kind,query));box.append(b);
   });
-  if(matches.length)box.style.display='block';
+  box.style.display=matches.length?'block':'none';
   return matches.length;
  }
  async function lookup(input,box,kind){
+  if(!input||!box)return;
   let request=0;
-  box.addEventListener('pointerdown',event=>{if(event.target.closest('button'))event.preventDefault();});
   input.addEventListener('focus',()=>{
    if(!places[kind])renderLocalOptions(input,box,kind,input.value.trim());
   });
   input.addEventListener('click',()=>{
    if(!places[kind]&&!box.children.length)renderLocalOptions(input,box,kind,input.value.trim());
   });
-  input.addEventListener('input',async()=>{
+  input.addEventListener('input',()=>{
    const thisRequest=++request;places[kind]=null;
    const q=input.value.trim();
    const localCount=renderLocalOptions(input,box,kind,q);
    if(q.length<2)return;
-   try{
-    const res=await fetch(proxy,{method:'POST',headers:{'Content-Type':'application/json',apikey:key},body:JSON.stringify({action:'geocode',query:q+' Los Cabos Baja California Sur Mexico'})});
-    const data=await res.json();if(!res.ok)throw new Error(data.error||'No fue posible buscar el lugar');
-    if(thisRequest!==request||input.value.trim()!==q)return;
-    const seen=new Set(localPlaces.filter(p=>normalize([p.text,p.place_name,...p.aliases].join(' ')).includes(normalize(q))).map(p=>normalize(p.text)));
-    (data.features||[]).slice(0,8).forEach(f=>{
-     const name=f.text||f.place_name||q;if(seen.has(normalize(name)))return;seen.add(normalize(name));
-     const b=document.createElement('button');b.type='button';
-     const title=document.createElement('span');title.textContent=name;
-     const small=document.createElement('small');small.textContent=f.place_name||'Los Cabos, Baja California Sur';
-     b.append(title,small);b.addEventListener('click',()=>choosePlace(f,input,box,kind,q));box.append(b);
-    });
-    if(!box.children.length){const empty=document.createElement('div');empty.textContent='No encontramos ese lugar. Prueba con otra referencia.';empty.style.padding='12px';box.append(empty);}
-    box.style.display='block';
-   }catch(e){
-    if(thisRequest!==request)return;
-    if(!localCount&&!box.children.length){const error=document.createElement('div');error.textContent='No pudimos consultar más lugares. Elige una de las ubicaciones sugeridas o prueba otra búsqueda.';error.style.padding='12px';box.append(error);}
-    box.style.display='block';
-   }
+   // La lista local aparece inmediatamente; Photon añade hoteles, comercios y otros puntos de interés.
+   const searchExtra=async()=>{
+    try{
+     let data=null;
+     const response=await fetch(proxy,{method:'POST',headers:{'Content-Type':'application/json',apikey:key},body:JSON.stringify({action:'photonSearch',query:q})});
+     data=await response.json();
+     if(!response.ok)throw new Error(data.error||'No fue posible buscar el lugar');
+     if(thisRequest!==request||input.value.trim()!==q)return;
+     const features=data.features||[];
+     const seen=new Set(Array.from(box.querySelectorAll('button span:first-child')).map(el=>normalize(el.textContent)));
+     features.slice(0,8).forEach(f=>{
+      const name=f.text||f.place_name||q,normalizedName=normalize(name);
+      if(!normalizedName||seen.has(normalizedName))return;
+      seen.add(normalizedName);
+      const b=document.createElement('button');b.type='button';
+      const title=document.createElement('span');title.textContent=name;
+      const small=document.createElement('small');small.textContent=f.place_name||'Los Cabos, Baja California Sur';
+      b.append(title,small);b.addEventListener('click',()=>choosePlace(f,input,box,kind,q));box.append(b);
+     });
+     if(box.children.length)box.style.display='block';
+     else if(!localCount){
+      const empty=document.createElement('div');empty.textContent='No encontramos ese lugar. Prueba con otra referencia.';empty.style.padding='12px';box.append(empty);box.style.display='block';
+     }
+    }catch(error){
+     console.warn('Búsqueda de ubicaciones:',error);
+     if(thisRequest===request&&!localCount&&!box.children.length){
+      const message=document.createElement('div');message.textContent='No pudimos consultar más lugares. Prueba con un nombre cercano o una ubicación conocida.';message.style.padding='12px';box.append(message);box.style.display='block';
+     }
+    }
+   };
+   searchExtra();
   });
-  input.addEventListener('blur',()=>setTimeout(()=>{if(!box.matches(':hover')&&!box.contains(document.activeElement))box.style.display='none';},350));
+  input.addEventListener('blur',()=>setTimeout(()=>{
+   if(!box.contains(document.activeElement)){box.style.display='none';}
+  },500));
  }
- lookup($('qotPickup'),$('qotPickupOptions'),'pickup');lookup($('qotDestination'),$('qotDestinationOptions'),'destination');
+ lookup($('qotPickup'),$('qotPickupOptions'),'pickup');
+ lookup($('qotDestination'),$('qotDestinationOptions'),'destination');
  const rates={};let usdRate=null;
  async function loadRate(){
   try{const response=await fetch('https://www.banxico.org.mx/SieAPIRest/service/v1/series/SF43718/datos/oportuno?token=');if(response.ok){const d=await response.json();usdRate=Number(d.bmx?.series?.[0]?.datos?.[0]?.dato);}}catch(e){}
