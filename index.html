@@ -3385,6 +3385,52 @@ html,body{
 }
 </style>
 
+
+<style id="qot-suggestion-readable-selection-fix">
+#qotSearch .qot-suggestions{
+  z-index:10001!important;
+  max-height:min(300px,42vh)!important;
+  overflow-y:auto!important;
+  -webkit-overflow-scrolling:touch!important;
+}
+#qotSearch .qot-suggestions .qot-location-option{
+  display:block!important;
+  width:100%!important;
+  min-height:58px!important;
+  height:auto!important;
+  padding:12px 14px!important;
+  text-align:left!important;
+  white-space:normal!important;
+  overflow:visible!important;
+  text-overflow:clip!important;
+  line-height:1.35!important;
+  touch-action:manipulation!important;
+  cursor:pointer!important;
+}
+#qotSearch .qot-suggestions .qot-option-title{
+  display:block!important;
+  width:100%!important;
+  white-space:normal!important;
+  overflow:visible!important;
+  overflow-wrap:anywhere!important;
+  word-break:normal!important;
+  text-overflow:clip!important;
+  font-size:14px!important;
+  font-weight:750!important;
+  line-height:1.35!important;
+  color:#174b50!important;
+}
+#qotSearch .qot-suggestions .qot-option-detail{
+  display:block!important;
+  white-space:normal!important;
+  overflow-wrap:anywhere!important;
+  font-size:11px!important;
+  line-height:1.35!important;
+  color:#637b78!important;
+  margin-top:4px!important;
+}
+</style>
+
 </head>
 
 <body>
@@ -4674,17 +4720,34 @@ input:focus,select:focus,textarea:focus{border-color:#0b8985!important;box-shado
     const button=document.createElement('button');
     button.type='button';
     button.className='qot-location-option';
-    const title=document.createElement('span');title.textContent=item.name;
-    const detail=document.createElement('small');detail.textContent=item.detail||'Los Cabos, Baja California Sur';
+    button.setAttribute('role','option');
+    const title=document.createElement('span');
+    title.className='qot-option-title';
+    title.textContent=item.name||item.detail||'Lugar en Los Cabos';
+    const detail=document.createElement('small');
+    detail.className='qot-option-detail';
+    detail.textContent=item.detail||'Los Cabos, Baja California Sur';
     button.append(title,detail);
-    button.addEventListener('pointerdown',function(e){e.preventDefault();});
-    button.addEventListener('click',function(){
+    let chosen=false;
+    function choose(e){
+     if(chosen)return;
+     chosen=true;
+     if(e)e.preventDefault();
      input.value=item.detail||item.name;
-     input.dataset.locationName=item.name;
+     input.dataset.locationName=item.name||item.detail||'';
      input.dataset.longitude=String(item.coords[0]);
      input.dataset.latitude=String(item.coords[1]);
-     box.innerHTML='';box.style.display='none';
+     input.dispatchEvent(new Event('change',{bubbles:true}));
+     box.innerHTML='';
+     box.style.display='none';
      if(status)status.textContent=kind==='pickup'?'Recogida seleccionada. Ahora elige tu destino.':'Destino seleccionado. Ya puedes continuar.';
+    }
+    /* iOS Safari puede no emitir click si se cancela pointerdown.
+       Seleccionamos directamente al tocar y dejamos click como respaldo. */
+    button.addEventListener('pointerdown',choose);
+    button.addEventListener('click',choose);
+    button.addEventListener('keydown',function(e){
+     if(e.key==='Enter'||e.key===' '){choose(e);}
     });
     box.appendChild(button);
    });
