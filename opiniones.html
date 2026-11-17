@@ -187,6 +187,11 @@ footer strong{color:#fff5e7!important}
 .menu-panel a{color:#fff5e7!important}
 .menu-panel a:hover{background:#10534c!important;color:#f3cf78!important}
 
+
+/* Vista previa inmediata de videos en el feed de opiniones */
+.post-video{display:block;width:100%;aspect-ratio:1/1;object-fit:cover;background:#e9e1d3;cursor:pointer}
+.post-video.video-preview-ready{background:#e9e1d3}
+.post-video.video-preview-error{background:#e9e1d3;object-fit:contain}
 </style>
 </head>
 <body>
@@ -287,7 +292,30 @@ footer strong{color:#fff5e7!important}
           const media = document.createElement(review.media_type === "video" ? "video" : "img");
           media.className = review.media_type === "video" ? "post-video" : "post-media";
           media.src = review.media_url;
-          if (review.media_type === "video") { media.controls = true; media.playsInline = true; }
+          if (review.media_type === "video") {
+            media.controls = true;
+            media.playsInline = true;
+            media.setAttribute("playsinline", "");
+            media.muted = true;
+            media.defaultMuted = true;
+            media.autoplay = true;
+            media.loop = true;
+            media.preload = "auto";
+            media.setAttribute("webkit-playsinline", "");
+            media.addEventListener("loadeddata", () => {
+              media.classList.add("video-preview-ready");
+              const posterCanvas = document.createElement("canvas");
+              posterCanvas.width = media.videoWidth;
+              posterCanvas.height = media.videoHeight;
+              const context = posterCanvas.getContext("2d");
+              if (context && media.videoWidth && media.videoHeight) {
+                context.drawImage(media, 0, 0, posterCanvas.width, posterCanvas.height);
+                try { media.setAttribute("poster", posterCanvas.toDataURL("image/jpeg", 0.78)); } catch (e) {}
+              }
+              media.play().catch(() => {});
+            }, { once: true });
+            media.addEventListener("error", () => media.classList.add("video-preview-error"), { once: true });
+          }
           else { media.alt = "Recuerdo compartido por " + review.customer_name; media.loading = "lazy"; }
           card.append(media);
         }
