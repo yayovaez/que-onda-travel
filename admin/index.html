@@ -53,7 +53,7 @@ table{width:100%;border-collapse:collapse;min-width:850px}th,td{text-align:left;
 <div class="stat"><span>Confirmadas</span><strong id="confirmedCount">0</strong></div>
 <div class="stat"><span>Completadas</span><strong id="completedCount">0</strong></div>
 </div>
-<div class="toolbar"><div class="filters"><input id="searchInput" type="search" placeholder="Buscar cliente, correo o destino"><select id="statusFilter"><option value="all">Todos los estados</option><option value="pending">Pendientes</option><option value="confirmed">Confirmadas</option><option value="cancelled">Canceladas</option><option value="completed">Completadas</option></select></div><button id="refreshButton" class="secondary">↻ Actualizar</button></div>
+<div class="toolbar"><div class="filters"><input id="searchInput" type="search" placeholder="Buscar cliente, correo o destino"><select id="statusFilter"><option value="all">Todos los estados</option><option value="pending">Pendientes</option><option value="confirmed">Confirmadas</option><option value="cancelled">Canceladas</option><option value="completed">Completadas</option><option value="rejected">Rechazadas</option></select></div><button id="refreshButton" class="secondary">↻ Actualizar</button></div>
 <div id="appMessage" class="notice hidden" role="status"></div>
 <div class="table-wrap"><table><thead><tr><th>Cliente</th><th>Servicio</th><th>Recorrido</th><th>Fecha y hora</th><th>Pasajeros</th><th>Total estimado</th><th>Estado / acciones</th></tr></thead><tbody id="bookingRows"></tbody></table><div id="emptyState" class="empty hidden">No hay reservaciones para mostrar.</div></div>
 <p class="muted" style="font-size:12px;margin-top:14px">Los cambios se guardan directamente en Supabase. La visibilidad y los permisos también están protegidos por las políticas RLS de la base de datos.</p>
@@ -67,7 +67,7 @@ table{width:100%;border-collapse:collapse;min-width:850px}th,td{text-align:left;
   const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   const $ = id => document.getElementById(id);
   let bookings = [];
-  const labels = {pending:"Pendiente",confirmed:"Confirmada",cancelled:"Cancelada",completed:"Completada"};
+  const labels = {pending:"Pendiente",confirmed:"Confirmada",cancelled:"Cancelada",completed:"Completada",rejected:"Rechazada"};
   const money = value => value == null ? "—" : new Intl.NumberFormat("es-MX",{style:"currency",currency:"MXN",maximumFractionDigits:0}).format(value);
   const safe = value => String(value ?? "—").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
   const dateText = value => { if(!value)return "—"; const d=new Date(value+"T00:00:00"); return isNaN(d) ? safe(value) : d.toLocaleDateString("es-MX",{day:"2-digit",month:"short",year:"numeric"}); };
@@ -96,17 +96,17 @@ table{width:100%;border-collapse:collapse;min-width:850px}th,td{text-align:left;
       const route=[b.pickup,b.destination].filter(Boolean).map(safe).join(" → ");
       const status=b.status||"pending";
       const actions=status==="pending"
-        ? '<button class="approve" data-id="'+safe(b.id)+'" data-status="confirmed">Confirmar</button><button class="cancel" data-id="'+safe(b.id)+'" data-status="cancelled">Cancelar</button>'
+        ? '<button class="approve" data-id="'+safe(b.id)+'" data-status="confirmed">Confirmar</button><button class="cancel" data-id="'+safe(b.id)+'" data-status="cancelled">Cancelar</button><button class="cancel" data-id="'+safe(b.id)+'" data-status="rejected">Rechazar</button>'
         : status==="confirmed"
           ? '<button class="complete" data-id="'+safe(b.id)+'" data-status="completed">Completar</button><button class="cancel" data-id="'+safe(b.id)+'" data-status="cancelled">Cancelar</button>'
-          : status==="cancelled" ? '<button class="approve" data-id="'+safe(b.id)+'" data-status="pending">Reabrir</button>' : '<span class="muted">Sin acciones</span>';
+          : (status==="cancelled"||status==="rejected") ? '<button class="approve" data-id="'+safe(b.id)+'" data-status="pending">Reabrir</button>' : '<span class="muted">Sin acciones</span>';
       return '<tr><td><div class="name">'+safe(b.customer_name)+'</div><div>'+safe(b.customer_email)+'</div><div class="muted">'+safe(b.customer_phone)+'</div></td><td>'+safe(b.service)+'<br><span class="muted">'+safe(b.vehicle)+' · '+safe(b.trip_type)+'</span></td><td>'+route+'<br><span class="muted">'+(b.distance_km==null?"":safe(b.distance_km)+" km")+'</span></td><td>'+dateText(b.travel_date)+'<br>'+safe(b.travel_time)+'</td><td>'+safe(b.passengers)+'</td><td><strong>'+money(b.estimated_total_mxn??b.offer_mxn)+'</strong></td><td><span class="status '+safe(status)+'">'+safe(labels[status]||status)+'</span><div class="actions" style="margin-top:8px">'+actions+'</div></td></tr>';
     }).join("");
   }
   async function changeStatus(id,status){
     if(!labels[status])return;
     const b=bookings.find(x=>x.id===id);
-    const action=status==="confirmed"?"confirmar":status==="cancelled"?"cancelar":status==="completed"?"marcar como completada":"reabrir";
+    const action=status==="confirmed"?"confirmar":status==="cancelled"?"cancelar":status==="rejected"?"rechazar":status==="completed"?"marcar como completada":"reabrir";
     if(!confirm("¿Quieres "+action+" la reservación de "+(b?.customer_name||"este cliente")+"?"))return;
     try{
       const {error}=await db.from("booking_requests").update({status}).eq("id",id);
