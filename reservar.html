@@ -45,6 +45,10 @@ button{border:0;border-radius:999px;padding:14px 18px;background:linear-gradient
 button:active{transform:scale(.98)}
 button:disabled{opacity:.5;cursor:not-allowed;box-shadow:none}
 .vehicle button{margin-top:auto;min-height:46px}
+.qot-no-availability{margin:8px 0 30px;padding:22px 24px;border:1px solid #e8d9bd;border-left:4px solid var(--teal);border-radius:16px;background:linear-gradient(135deg,#fffdf8,#f2faf7);color:var(--deep);text-align:center;box-shadow:0 8px 22px rgba(7,63,76,.06)}
+.qot-no-availability[hidden]{display:none!important}
+.qot-no-availability strong{display:block;margin-bottom:8px;font:700 19px Georgia,serif;color:var(--deep)}
+.qot-no-availability p{max-width:720px;margin:0 auto;color:var(--muted);font-size:13px;line-height:1.7}
 form{margin-top:30px;border-top:1px solid #e6dbc8;padding-top:28px;scroll-margin-top:18px}
 form h2{font-size:clamp(25px,4vw,30px);margin:0 0 9px}
 .field-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
@@ -151,6 +155,10 @@ input:focus{outline:0;border-color:var(--teal);box-shadow:0 0 0 3px #075b6314}
 </div>
 <div class="section-kicker">ELIGE CÓMO VIAJAR</div><h2>Encuentra tu vehículo ideal</h2>
 <div id="vehicleGrid" class="vehicle-grid"><p>Consultando disponibilidad…</p></div>
+ <div id="noVehicleAvailability" class="qot-no-availability" role="status" aria-live="polite" hidden>
+  <strong>En este momento no tenemos vehículos disponibles</strong>
+  <p>Lamentamos no poder confirmar un vehículo para el horario que has seleccionado. En Qué Onda Travel trabajamos con tiempos de reservación anticipada para preparar cada unidad, cuidar su limpieza y garantizar que recibas un servicio seguro, cómodo y de calidad. Te invitamos a seleccionar otro horario o realizar tu reservación con mayor anticipación. Será un placer acompañarte durante tu visita a Los Cabos.</p>
+ </div>
 <form id="reservationForm" hidden>
 <div class="section-kicker">ÚLTIMO PASO</div><h2>Hagámoslo realidad</h2>
 <p class="intro">Déjanos tus datos y nuestro equipo se pondrá en contacto contigo para dar seguimiento a tu viaje.</p>
@@ -209,6 +217,7 @@ function price(v){const base=airportTransfer?airportRates[v.name]:Math.max(80,tr
 function requiredAdvanceHours(v){return airportTransfer?2:(v.name==='Jetta'?0.75:2);}
 async function render(){
  let blocked=new Set();
+ let availableCount=0;
  try{
   const {data,error}=await client.from('vehicle_availability').select('vehicle').eq('unavailable_date',trip.date).eq('is_available',false);
   if(error)throw error;
@@ -220,6 +229,7 @@ async function render(){
   const enough=requestedDateTime>=caboLocalDateTime(new Date(Date.now()+advanceHours*3600000));
   const capacity=trip.passengers<=v.capacity;
   const available=enough&&capacity&&!blocked.has(v.name);
+  if(available)availableCount++;
   const card=document.createElement('article');card.className='vehicle';card.dataset.vehicle=v.name;
   const img=document.createElement('img');img.src=v.image;img.alt=v.label;
   const title=document.createElement('h3');title.textContent=v.label;
@@ -239,6 +249,8 @@ async function render(){
   card.append(img,title,rate,total,detail,button);grid.append(card);
  });
  if(!grid.children.length)grid.textContent='No hay vehículos para mostrar.';
+ const noAvailability=document.getElementById('noVehicleAvailability');
+ if(noAvailability)noAvailability.hidden=availableCount>0;
 }
 form.addEventListener('submit',async function(event){
  event.preventDefault();
