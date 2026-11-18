@@ -3746,7 +3746,7 @@ const todayLocal = new Date();
 const localDateValue = [todayLocal.getFullYear(), String(todayLocal.getMonth() + 1).padStart(2, '0'), String(todayLocal.getDate()).padStart(2, '0')].join('-');
 travelDateInput.min = localDateValue;
 const vehicleCapacity = { Jetta: 4, Atlas: 5, Tiguan: 6 };
-const advanceNoticeHours = { Jetta: 0, Atlas: 4, Tiguan: 4 };
+const advanceNoticeHours = { Jetta: 0.75, Atlas: 2, Tiguan: 2 };
 const travelTimeInput = bookingForm.querySelector('input[name="time"]');
 const vehicleNotice = document.createElement('small');
 vehicleNotice.id = 'vehicleAdvanceNotice';
@@ -3755,9 +3755,9 @@ vehicleSelect.closest('.field').appendChild(vehicleNotice);
 
 function updateVehicleNotice() {
   const hours = advanceNoticeHours[vehicleSelect.value] || 0;
-  vehicleNotice.textContent = hours
-    ? 'Este vehículo requiere reservarse con mínimo ' + hours + ' horas de anticipación.'
-    : 'El Jetta mantiene su disponibilidad habitual.';
+  vehicleNotice.textContent = vehicleSelect.value === 'Jetta'
+    ? 'El Jetta requiere mínimo 45 minutos de anticipación.'
+    : 'Este vehículo requiere reservarse con mínimo 2 horas de anticipación.';
 }
 function validateVehicleAdvanceNotice() {
   travelDateInput.setCustomValidity('');
@@ -5377,7 +5377,7 @@ window.qotCaboLocalDateTime = function (date) {
     return airportPattern.test(pickup) || airportPattern.test(destination);
   }
   function updateAirportNote() { if (airportNote) airportNote.hidden = !isAirportTransfer(); }
-  function requiredAdvanceHours() { return isAirportTransfer() ? 2 : (vehicleSelect.value === 'Jetta' ? 0 : 5); }
+  function requiredAdvanceHours() { return isAirportTransfer() ? 2 : (vehicleSelect.value === 'Jetta' ? 0.75 : 2); }
 
   updateVehicleNotice = function () {
     const hours = requiredAdvanceHours();
