@@ -3479,7 +3479,7 @@ html,body{
       <div class="qot-search-field"><label for="qotTime">Hora del vuelo / recogida</label><input id="qotTime" type="time" required></div>
       <div class="qot-search-field"><label for="qotPassengers">Pasajeros</label><select id="qotPassengers"><option value="1">1 pasajero</option><option value="2" selected>2 pasajeros</option><option value="3">3 pasajeros</option><option value="4">4 pasajeros</option><option value="5">5 pasajeros</option><option value="6">6 pasajeros</option></select></div>
       <div class="qot-search-field"><label for="qotTrip">Tipo de viaje</label><select id="qotTrip"><option value="Sencillo">Sencillo</option><option value="Redondo">Redondo</option></select></div>
-      <button class="qot-search-button" type="submit"><span>⌕</span> Buscar disponibilidad</button>
+      <button class="qot-search-button" type="button" onclick="const f=document.getElementById('qotSearchForm');if(f){f.noValidate=true;f.dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}));}"><span>⌕</span> Buscar disponibilidad</button>
     </form>
     <p id="qotSearchStatus" class="qot-search-status" role="status" aria-live="polite"></p>
     <section id="qotResults" class="qot-results" hidden><div class="qot-results-heading"><span>RESULTADOS DE TU VIAJE</span><h3>Elige tu vehículo</h3><p id="qotRouteSummary"></p></div><div id="qotVehicleCards" class="qot-vehicle-cards"></div></section>
