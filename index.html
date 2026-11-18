@@ -5287,9 +5287,9 @@ input:focus,select:focus,textarea:focus{border-color:#0b8985!important;box-shado
     status.textContent='Selecciona la fecha y la hora de tu viaje.';
     (!date?$('qotDate'):$('qotTime')).focus();return;
    }
-   const selectedDate=new Date(date+'T'+time+':00');
-   if(Number.isNaN(selectedDate.getTime())||selectedDate.getTime()<Date.now()){
-    status.textContent='La fecha y hora deben ser futuras.';
+   const selectedDate=date+'T'+time;
+   if(!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(selectedDate)||selectedDate<window.qotCaboLocalDateTime(new Date())){
+    status.textContent='La fecha y hora deben ser futuras en horario de Los Cabos.';
     $('qotDate').focus();return;
    }
    running=true;
@@ -5338,6 +5338,15 @@ input:focus,select:focus,textarea:focus{border-color:#0b8985!important;box-shado
 <script id="qot-booking-functional-fixes">
 
 var usdMxnRate = null;
+window.qotCaboLocalDateTime = function (date) {
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'America/Mazatlan', year: 'numeric', month: '2-digit',
+    day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23'
+  }).formatToParts(date);
+  const part = key => parts.find(item => item.type === key)?.value || '00';
+  return part('year') + '-' + part('month') + '-' + part('day') + 'T' + part('hour') + ':' + part('minute');
+};
+
 (function () {
   'use strict';
   const airportRates = { Jetta: 850, Atlas: 1499, Tiguan: 1800 };
