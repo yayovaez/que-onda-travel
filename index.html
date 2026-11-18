@@ -5342,6 +5342,18 @@ var usdMxnRate = null;
   'use strict';
   const airportRates = { Jetta: 850, Atlas: 1499, Tiguan: 1800 };
   const airportPattern = /\b(aeropuerto|airport|sjd)\b/i;
+  function caboLocalDateTime(date) {
+    const parts = new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'America/Mazatlan', year: 'numeric', month: '2-digit',
+      day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23'
+    }).formatToParts(date);
+    const part = key => parts.find(item => item.type === key)?.value || '00';
+    return part('year') + '-' + part('month') + '-' + part('day') + 'T' + part('hour') + ':' + part('minute');
+  }
+  const caboToday = caboLocalDateTime(new Date()).slice(0, 10);
+  travelDateInput.min = caboToday;
+  const searchDateInput = document.getElementById('qotDate');
+  if (searchDateInput) searchDateInput.min = caboToday;
   function isAirportTransfer() {
     const pickup = document.getElementById('pickupLocation')?.value || '';
     const destination = document.getElementById('destinationLocation')?.value || '';
@@ -5360,13 +5372,13 @@ var usdMxnRate = null;
   validateVehicleAdvanceNotice = function () {
     travelDateInput.setCustomValidity('');
     if (!travelDateInput.value || !travelTimeInput.value) return true;
-    const selectedDateTime = new Date(travelDateInput.value + 'T' + travelTimeInput.value + ':00');
-    if (!Number.isFinite(selectedDateTime.getTime()) || selectedDateTime.getTime() < Date.now()) {
-      travelDateInput.setCustomValidity('La fecha y hora del viaje deben ser futuras.');
+    const selectedDateTime = travelDateInput.value + 'T' + travelTimeInput.value;
+    if (selectedDateTime < caboLocalDateTime(new Date())) {
+      travelDateInput.setCustomValidity('La fecha y hora del viaje deben ser futuras en horario de Los Cabos.');
       return false;
     }
     const hours = requiredAdvanceHours();
-    if (hours && selectedDateTime.getTime() < Date.now() + hours * 3600000) {
+    if (hours && selectedDateTime < caboLocalDateTime(new Date(Date.now() + hours * 3600000))) {
       travelDateInput.setCustomValidity('Este traslado requiere mínimo ' + hours + ' horas de anticipación. Elige una fecha y hora posterior.');
       return false;
     }
