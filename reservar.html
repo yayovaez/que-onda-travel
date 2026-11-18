@@ -269,7 +269,7 @@ function updatePaymentCta(){
  submitCta.hidden=cardSelected;
 }
 form.querySelectorAll('input[name="paymentMethod"]').forEach(function(input){input.addEventListener('change',updatePaymentCta);});
-payPalCta.addEventListener('click',function(){form.requestSubmit(submitCta);});
+payPalCta.addEventListener('click',function(){form.requestSubmit();});
 updatePaymentCta();
 form.addEventListener('submit',async function(event){
  event.preventDefault();
