@@ -333,7 +333,7 @@ form.addEventListener('submit',async function(event){
   if(configError||!paypalConfig?.client_id)throw configError||new Error('PayPal no está configurado');
   const sdk=document.createElement('script');
   sdk.async=true;
-  sdk.src='https://www.paypal.com/sdk/js?client-id='+encodeURIComponent(paypalConfig.client_id)+'&currency=MXN&intent=capture&components=buttons';
+  sdk.src='https://www.paypal.com/sdk/js?client-id='+encodeURIComponent(paypalConfig.client_id)+'&currency=MXN&intent=capture';
   sdk.onload=async function(){
    try{
     if(!window.paypal)throw new Error('No se pudo inicializar PayPal');
@@ -362,7 +362,7 @@ form.addEventListener('submit',async function(event){
     statusEl.textContent='Elige PayPal para continuar de forma segura.';
    }catch(err){console.error(err);form.classList.remove('qot-success');form.innerHTML='<p id="formStatus">PayPal no pudo inicializarse. No se ha enviado ninguna reservación. Regresa e inténtalo de nuevo.</p>'; }
   };
-  sdk.onerror=function(){console.error('PayPal SDK network error');status.textContent='No pudimos conectar con PayPal. No se envió tu reservación; inténtalo de nuevo.';button.disabled=false;};
+  sdk.onerror=function(){console.error('PayPal SDK load failed', {mode:paypalConfig.mode, sdkHost:'www.paypal.com'});status.textContent='No se pudo cargar el servicio de PayPal (QOT-PP-SDK-LOAD). Tu reservación no fue enviada ni se realizó ningún cobro. Puedes volver a intentarlo en unos minutos.';button.disabled=false;};
   document.head.appendChild(sdk);
  }catch(error){
   console.error('Error al procesar reservación:',error);
