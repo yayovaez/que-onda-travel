@@ -177,8 +177,13 @@ const required=['pickup','destination','pickupLng','pickupLat','destinationLng',
 if(required.some(k=>!get(k))){document.getElementById('vehicleGrid').textContent='No encontramos los datos completos de tu recorrido. Regresa al inicio y vuelve a calcular tu viaje.';return;}
 const trip={pickup:get('pickup'),destination:get('destination'),date:get('date'),time:get('time'),passengers:Number(get('passengers')),trip:get('trip'),km:Number(get('km')),minutes:Number(get('minutes'))||0};
 if(!Number.isFinite(trip.km)||trip.km<=0||!Number.isFinite(trip.passengers)||trip.passengers<1){document.getElementById('vehicleGrid').textContent='Los datos del recorrido no son válidos. Regresa al inicio y vuelve a intentarlo.';return;}
-const requestedDateTime=new Date(trip.date+'T'+trip.time+':00');
-if(!Number.isFinite(requestedDateTime.getTime())||requestedDateTime.getTime()<Date.now()){document.getElementById('vehicleGrid').textContent='La fecha y hora del viaje deben ser futuras. Regresa al inicio y selecciona otro horario.';return;}
+function caboLocalDateTime(date){
+ const parts=new Intl.DateTimeFormat('en-CA',{timeZone:'America/Mazatlan',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(date);
+ const part=key=>parts.find(item=>item.type===key)?.value||'00';
+ return part('year')+'-'+part('month')+'-'+part('day')+'T'+part('hour')+':'+part('minute');
+}
+const requestedDateTime=trip.date+'T'+trip.time;
+if(!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(requestedDateTime)||requestedDateTime<caboLocalDateTime(new Date())){document.getElementById('vehicleGrid').textContent='La fecha y hora del viaje deben ser futuras en horario de Los Cabos. Regresa al inicio y selecciona otro horario.';return;}
 const airportPattern=/\b(aeropuerto|airport|sjd)\b/i;
 const airportTransfer=airportPattern.test(trip.pickup)||airportPattern.test(trip.destination);
 const airportRates={Jetta:850,Atlas:1499,Tiguan:1800};
@@ -212,7 +217,7 @@ async function render(){
  grid.innerHTML='';
  vehicles.forEach(v=>{
   const advanceHours=requiredAdvanceHours(v);
-  const enough=requestedDateTime.getTime()>=Date.now()+advanceHours*3600000;
+  const enough=requestedDateTime>=caboLocalDateTime(new Date(Date.now()+advanceHours*3600000));
   const capacity=trip.passengers<=v.capacity;
   const available=enough&&capacity&&!blocked.has(v.name);
   const card=document.createElement('article');card.className='vehicle';card.dataset.vehicle=v.name;
