@@ -317,9 +317,20 @@ form.addEventListener('submit',async function(event){
    const {data:paypalConfig,error:configError}=await client.functions.invoke('paypal-checkout',{body:{action:'config'}});
    if(configError||!paypalConfig?.client_id)throw configError||new Error('PayPal no está configurado');
    const sdk=document.createElement('script');
+   const payStatus=document.getElementById('qotPayStatus');
+   let paypalSdkLoaded=false;
+   sdk.async=true;
    sdk.src='https://www.paypal.com/sdk/js?client-id='+encodeURIComponent(paypalConfig.client_id)+'&currency=MXN&intent=capture&components=buttons';
+   const paypalLoadTimer=setTimeout(function(){
+    if(!paypalSdkLoaded){
+     console.error('PayPal SDK timeout:',sdk.src);
+     payStatus.textContent='PayPal está tardando demasiado en responder. Revisa tu conexión o inténtalo desde otro navegador.';
+    }
+   },15000);
    sdk.onload=function(){
-    if(!window.paypal){document.getElementById('qotPayStatus').textContent='No pudimos cargar PayPal. Inténtalo de nuevo más tarde.';return;}
+    paypalSdkLoaded=true;
+    clearTimeout(paypalLoadTimer);
+    if(!window.paypal){console.error('PayPal SDK loaded without window.paypal:',sdk.src);payStatus.textContent='PayPal respondió, pero no pudo inicializarse. Revisa que el Client ID pertenezca a Sandbox.';return;}
     window.paypal.Buttons({
      style:{layout:'vertical',color:'gold',shape:'pill',label:'paypal',height:48},
      createOrder:async function(){
@@ -341,7 +352,11 @@ form.addEventListener('submit',async function(event){
     }).render('#qotPayPalButtons');
     document.getElementById('qotPayStatus').textContent='Pago seguro procesado por PayPal.';
    };
-   sdk.onerror=function(){document.getElementById('qotPayStatus').textContent='No pudimos cargar PayPal. Inténtalo de nuevo más tarde.';};
+   sdk.onerror=function(event){
+    clearTimeout(paypalLoadTimer);
+    console.error('PayPal SDK network error:',event,'URL:',sdk.src);
+    payStatus.textContent='El navegador no pudo descargar PayPal. Puede ser un bloqueo de red, contenido o navegador. Inténtalo en Safari sin bloqueadores o desde una computadora.';
+   };
    document.head.appendChild(sdk);
   }catch(paypalError){
    console.error('PayPal setup error:',paypalError);
