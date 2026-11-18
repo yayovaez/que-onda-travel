@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Panel del conductor | Qué Onda Travel</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.1"></script>
+<style>
+:root{--teal:#075b63;--deep:#073b43;--pink:#df287d;--gold:#bd8f4e;--bg:#f6f1e7;--line:#e8dfd0;--muted:#71817c;--green:#23835d}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(145deg,#fff,#f6f1e7);color:#183f43;font:15px/1.55 Arial,sans-serif}
+header{padding:20px clamp(18px,4vw,40px);background:linear-gradient(110deg,var(--deep),var(--teal));color:#fff;border-bottom:3px solid #d8bd88;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.brand{font:italic 700 25px Georgia,serif}.brand span{color:#ffacd0}.sub{font-size:10px;letter-spacing:2px;color:#f5dfbd;text-transform:uppercase}
+main{max-width:900px;margin:28px auto;padding:0 16px}.card{background:#fffdf8;border:1px solid var(--line);border-radius:19px;padding:22px;margin:16px 0;box-shadow:0 12px 30px #073b4310}
+h1{font:700 30px Georgia,serif;color:var(--teal);margin:5px 0}h2{font:700 20px Georgia,serif;color:var(--teal);margin:0 0 10px}
+input{width:100%;padding:13px;border:1px solid #d8e2dc;border-radius:11px;margin:6px 0 14px;font-size:16px}label{font-size:12px;font-weight:700;color:#526f6b}
+button{border:0;border-radius:999px;padding:12px 18px;background:linear-gradient(110deg,#e72e83,#c91f70);color:#fff;font-weight:800;cursor:pointer}button.secondary{background:#fff;color:var(--teal);border:1px solid #cbded8}button:disabled{opacity:.5}
+.hidden{display:none!important}.msg{color:var(--teal);font-size:13px;min-height:22px}
+.job{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;margin:13px 0}.top{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}.pill{font-size:10px;font-weight:800;padding:6px 10px;border-radius:20px;background:#eaf5f3;color:var(--teal);height:max-content}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:15px 0}.item{font-size:13px;overflow-wrap:anywhere}.item b{display:block;color:var(--muted);font-size:10px;letter-spacing:.7px;text-transform:uppercase}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:15px}.actions button{font-size:12px;padding:10px 14px}.cashbox{background:#f4f8f3;border:1px solid #dce9df;padding:13px;border-radius:12px;margin-top:14px}
+@media(max-width:560px){.grid{grid-template-columns:1fr}header{align-items:flex-start}}
+</style></head><body>
+<header><div><div class="brand">Qué Onda <span>Travel</span></div><div class="sub">Panel privado del conductor</div></div><button id="logout" class="secondary hidden">Cerrar sesión</button></header>
+<main>
+<section id="login" class="card" style="max-width:440px;margin:8vh auto"><div class="sub" style="color:var(--gold)">Bienvenido al equipo</div><h1>Acceso de conductor</h1><p style="color:var(--muted)">Ingresa con el correo al que recibiste tu invitación.</p><form id="loginForm"><label>Correo electrónico</label><input id="email" type="email" autocomplete="username" required><label>Contraseña</label><input id="password" type="password" autocomplete="current-password" required><button type="submit">Entrar a mis servicios</button></form><div id="loginMsg" class="msg"></div></section>
+<section id="dashboard" class="hidden"><div class="card"><div class="sub" style="color:var(--gold)">Operación Los Cabos</div><h1 id="welcome">Mis servicios</h1><p style="color:var(--muted)">Aquí aparecen únicamente los viajes que te asignó el administrador.</p><button id="refresh" class="secondary">Actualizar servicios</button><div id="msg" class="msg"></div></div><div id="jobs"></div></section>
+</main>
+<script>
+const URL='https://iyelnragqgriycdyqowq.supabase.co',KEY='sb_publishable_d-xqUkbQSgzZys3OfXzbiw_iyHzHItE';
+const db=window.supabase.createClient(URL,KEY);const $=id=>document.getElementById(id);let me=null,profile=null,jobs=[];
+function esc(v){return String(v??'—').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function money(v){return new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN',maximumFractionDigits:0}).format(Number(v||0));}
+function date(v){return v?new Date(v+'T12:00:00').toLocaleDateString('es-MX',{day:'2-digit',month:'short',year:'numeric'}):'—';}
+async function load(){
+ $('msg').textContent='Cargando tus servicios…';
+ const {data:p,error:pe}=await db.from('driver_profiles').select('display_name,active').eq('user_id',me.id).single();
+ if(pe||!p||!p.active){$('msg').textContent='Tu acceso de conductor está inactivo. Contacta al administrador.';return;}
+ profile=p;$('welcome').textContent='Hola, '+p.display_name;
+ const {data,error}=await db.from('booking_requests').select('id,customer_name,customer_phone,customer_email,service,vehicle,trip_type,pickup,destination,travel_date,travel_time,passengers,estimated_total_mxn,payment_method,payment_status,status,created_at').eq('assigned_driver_id',me.id).order('travel_date',{ascending:true});
+ if(error){$('msg').textContent='No se pudieron cargar los servicios: '+error.message;return;}
+ jobs=data||[];render();
+}
+function render(){
+ if(!jobs.length){$('jobs').innerHTML='<div class="card">Todavía no tienes servicios asignados.</div>';$('msg').textContent='';return;}
+ $('msg').textContent=jobs.length+' servicio(s) asignado(s).';
+ $('jobs').innerHTML=jobs.map(x=>'<article class="job"><div class="top"><div><h2>'+esc(x.customer_name)+'</h2><div style="font-size:12px;color:#71817c">'+esc(x.customer_email)+'</div></div><span class="pill">'+(x.status==='confirmed'?'Confirmado':x.status==='completed'?'Completado':x.status==='cancelled'?'Cancelado':'Pendiente')+'</span></div><div class="grid"><div class="item"><b>Fecha y hora</b>'+date(x.travel_date)+' · '+esc(String(x.travel_time||'').slice(0,5))+'</div><div class="item"><b>Vehículo</b>'+esc(x.vehicle)+'</div><div class="item"><b>Recoger en</b>'+esc(x.pickup)+'</div><div class="item"><b>Destino</b>'+esc(x.destination)+'</div><div class="item"><b>Pasajeros</b>'+esc(x.passengers)+'</div><div class="item"><b>Teléfono del cliente</b>'+esc(x.customer_phone)+'</div><div class="item"><b>Total del servicio</b>'+money(x.estimated_total_mxn)+'</div><div class="item"><b>Forma de pago</b>'+(x.payment_method==='cash'?'Efectivo · cobrar al finalizar':'Tarjeta · '+(x.payment_status==='paid'?'pagada':'revisar estado'))+'</div></div>'+(x.status==='confirmed'?'<div class="actions"><button data-event="accepted" data-id="'+esc(x.id)+'">Aceptar servicio</button><button class="secondary" data-event="in_progress" data-id="'+esc(x.id)+'">Iniciar viaje</button></div>':'')+(x.status==='completed'?'<p style="color:var(--green);font-weight:700">Viaje completado</p>':'')+(x.status!=='completed'&&x.status!=='cancelled'?'<div class="actions"><button class="secondary" data-event="completed" data-id="'+esc(x.id)+'">Marcar viaje completado</button></div>':'')+(x.payment_method==='cash'&&x.status==='completed'&&x.payment_status!=='paid'?'<div class="cashbox"><b>Confirmar efectivo recibido al finalizar</b><p style="font-size:12px;color:#71817c;margin:4px 0 8px">Cuenta el efectivo antes de registrar la recepción. El administrador verificará el reporte y marcará el pago como recibido.</p><label>Cantidad recibida (MXN)</label><input type="number" min="0.01" step="0.01" data-cash="'+esc(x.id)+'" value="'+esc(x.estimated_total_mxn)+'"><button data-event="cash_received" data-id="'+esc(x.id)+'">Reportar efectivo recibido</button></div>':'')+'</article>').join('');
+}
+$('jobs').addEventListener('click',async e=>{
+ const b=e.target.closest('button[data-event]');if(!b)return;
+ const job=jobs.find(x=>String(x.id)===b.dataset.id);if(!job)return;
+ const event=b.dataset.event;let amount=null;
+ if(event==='cash_received'){amount=Number(document.querySelector('[data-cash="'+job.id+'"]')?.value);if(!Number.isFinite(amount)||amount<=0){$('msg').textContent='Ingresa una cantidad válida.';return;}if(!confirm('¿Confirmas que contaste y recibiste '+money(amount)+' en efectivo?'))return;}
+ if(!confirm(event==='completed'?'¿Confirmas que el viaje terminó?':event==='in_progress'?'¿Iniciaste este viaje?':event==='accepted'?'¿Aceptas este servicio?':'¿Confirmas el efectivo recibido?'))return;
+ b.disabled=true;
+ const payload={booking_id:job.id,driver_id:me.id,event_type:event,cash_amount_mxn:amount};
+ const {error}=await db.from('driver_job_updates').insert(payload);
+ if(error){$('msg').textContent='No se pudo registrar: '+error.message;b.disabled=false;return;}
+ $('msg').textContent=event==='cash_received'?'Reporte de efectivo enviado al administrador.': 'Actualización enviada al administrador.';
+ if(event==='completed'){job.status='completed';render();}else if(event==='cash_received'){job.payment_status='pending';b.disabled=true;}
+});
+$('refresh').onclick=load;
+$('loginForm').addEventListener('submit',async e=>{e.preventDefault();$('loginMsg').textContent='Ingresando…';const {data,error}=await db.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});if(error){$('loginMsg').textContent='No se pudo iniciar sesión: '+error.message;return;}me=data.user;$('login').classList.add('hidden');$('dashboard').classList.remove('hidden');$('logout').classList.remove('hidden');await load();});
+$('logout').onclick=async()=>{await db.auth.signOut();me=null;$('dashboard').classList.add('hidden');$('logout').classList.add('hidden');$('login').classList.remove('hidden');};
+(async()=>{const {data:{session}}=await db.auth.getSession();if(session){me=session.user;$('login').classList.add('hidden');$('dashboard').classList.remove('hidden');$('logout').classList.remove('hidden');await load();}})();
+</script></body></html>
