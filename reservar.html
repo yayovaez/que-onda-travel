@@ -174,6 +174,7 @@ input:focus{outline:0;border-color:var(--teal);box-shadow:0 0 0 3px #075b6314}
  
 </div>
 <fieldset class="payment-choice"><legend>¿Cómo te gustaría pagar tu traslado?</legend><div class="payment-options"><label class="payment-option"><input type="radio" name="paymentMethod" value="cash" required><span><strong>💵 Efectivo</strong><small>Paga al conductor al finalizar tu viaje.</small></span></label><label class="payment-option"><input type="radio" name="paymentMethod" value="card" required><span><strong>💳 Tarjeta</strong><small>Paga en línea de forma segura con PayPal.</small></span></label></div><p class="payment-help">Elige tu forma de pago para continuar con la solicitud.</p></fieldset>
+ <button id="continuePayPal" class="submit" type="button" hidden style="background:#ffc439;color:#123047;box-shadow:none">Continuar con <strong>PayPal</strong> →</button>
 <p class="consent">Al enviar, tu solicitud llegará al panel de reservas de Qué Onda Travel. La tarifa es estimada; el equipo confirmará disponibilidad, precio final y detalles del servicio.</p>
 <button id="sendReservation" class="submit" type="submit">Enviar solicitud de reservación</button>
 <div id="formStatus" role="status" aria-live="polite"></div>
@@ -259,6 +260,17 @@ async function render(){
  const noAvailability=document.getElementById('noVehicleAvailability');
  if(noAvailability)noAvailability.hidden=availableCount>0;
 }
+const payPalChoice=form.querySelector('input[name="paymentMethod"][value="card"]');
+const payPalCta=document.getElementById('continuePayPal');
+const submitCta=document.getElementById('sendReservation');
+function updatePaymentCta(){
+ const cardSelected=!!payPalChoice?.checked;
+ payPalCta.hidden=!cardSelected;
+ submitCta.hidden=cardSelected;
+}
+form.querySelectorAll('input[name="paymentMethod"]').forEach(function(input){input.addEventListener('change',updatePaymentCta);});
+payPalCta.addEventListener('click',function(){form.requestSubmit(submitCta);});
+updatePaymentCta();
 form.addEventListener('submit',async function(event){
  event.preventDefault();
  if(!selected){document.getElementById('formStatus').textContent='Primero selecciona un vehículo.';return;}
