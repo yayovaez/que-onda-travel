@@ -76,7 +76,7 @@ window.__qotAdminLogin = async function(event){
   message.textContent='Conectando con el servicio de acceso…';
   try{
     if(email!=='yairnarvaez58@gmail.com') throw new Error('Este correo no está autorizado para administrar las reservas.');
-    await ensureSupabase();
+    await window.ensureSupabase();
     const result=await db.auth.signInWithPassword({email,password});
     if(result.error) throw result.error;
     message.textContent='Acceso correcto. Abriendo el panel…';
@@ -112,7 +112,7 @@ window.__qotAdminLogin = async function(event){
 const SUPABASE_URL='https://iyelnragqgriycdyqowq.supabase.co';
 const SUPABASE_KEY='sb_publishable_d-xqUkbQSgzZys3OfXzbiw_iyHzHItE';
 const ADMIN_EMAIL='yairnarvaez58@gmail.com';
-let db=null;function ensureSupabase(){if(window.supabase?.createClient){db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);return Promise.resolve(db);}return new Promise((resolve,reject)=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.1';s.onload=()=>{if(!window.supabase?.createClient){reject(new Error('No se pudo cargar el sistema de acceso. Revisa tu conexión e inténtalo de nuevo.'));return;}db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);resolve(db);};s.onerror=()=>reject(new Error('No se pudo cargar Supabase. Comprueba tu conexión o desactiva temporalmente el bloqueador de contenido.'));document.head.appendChild(s);});}
+let db=null;window.ensureSupabase=function(){if(window.supabase?.createClient){db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);return Promise.resolve(db);}return new Promise((resolve,reject)=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.1';s.onload=()=>{if(!window.supabase?.createClient){reject(new Error('No se pudo cargar el sistema de acceso. Revisa tu conexión e inténtalo de nuevo.'));return;}db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);resolve(db);};s.onerror=()=>reject(new Error('No se pudo cargar Supabase. Comprueba tu conexión o desactiva temporalmente el bloqueador de contenido.'));document.head.appendChild(s);});}
 let mode='login',rows=[],drivers=[],driverUpdates=[];
 const $=id=>document.getElementById(id);
 function setMode(next){mode=next;$('loginTab').classList.toggle('secondary',mode!=='login');$('signupTab').classList.toggle('secondary',mode!=='signup');$('authSubmit').textContent=mode==='login'?'Iniciar sesión':'Crear acceso';$('password').autocomplete=mode==='login'?'current-password':'new-password';$('authMsg').textContent='';}
