@@ -56,7 +56,7 @@ form h2{font-size:clamp(25px,4vw,30px);margin:0 0 9px}
 label{display:block;font-size:12px;font-weight:700;color:#526f6b;margin-bottom:7px}
 input{width:100%;padding:15px;border:1px solid #d9e1db;border-radius:12px;background:#fff;font:16px Arial;color:var(--ink);transition:border-color .2s,box-shadow .2s}
 input:focus{outline:0;border-color:var(--teal);box-shadow:0 0 0 3px #075b6314}
-.consent{font-size:12px;line-height:1.6;color:var(--muted);margin:18px 0 16px;background:#f6f1e7;border-radius:12px;padding:13px 15px}
+.payment-choice{margin:22px 0 8px;padding:17px;border:1px solid #e8dfd0;border-radius:16px;background:#fffdf8}.payment-choice legend{padding:0 7px;color:var(--deep);font:700 17px Georgia,serif}.payment-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.payment-option{display:flex;align-items:flex-start;gap:10px;padding:14px;border:1px solid #d9e1db;border-radius:13px;background:#fff;cursor:pointer}.payment-option:has(input:checked){border:2px solid var(--teal);padding:13px;box-shadow:0 5px 16px #075b6312}.payment-option input{width:18px;height:18px;margin:2px 0 0;accent-color:var(--teal);flex:0 0 auto}.payment-option strong{display:block;color:var(--deep);font-size:13px;margin-bottom:4px}.payment-option small{display:block;color:var(--muted);font-size:11px;line-height:1.45}.payment-help{font-size:11px;color:var(--muted);margin:10px 2px 0;line-height:1.5}@media(max-width:560px){.payment-options{grid-template-columns:1fr}}\n.consent{font-size:12px;line-height:1.6;color:var(--muted);margin:18px 0 16px;background:#f6f1e7;border-radius:12px;padding:13px 15px}
 .submit{width:100%;font-size:15px;min-height:56px;letter-spacing:.2px}
 #formStatus{min-height:24px;text-align:center;font-size:13px;color:var(--teal);margin-top:12px}
 .trust-row{display:flex;justify-content:center;flex-wrap:wrap;gap:14px 28px;margin:23px auto 0}
@@ -173,6 +173,7 @@ input:focus{outline:0;border-color:var(--teal);box-shadow:0 0 0 3px #075b6314}
  <div><label for="customerPhone">Teléfono / WhatsApp *</label><input id="customerPhone" name="customerPhone" type="tel" autocomplete="tel" minlength="7" maxlength="30" required></div>
  
 </div>
+<fieldset class="payment-choice"><legend>¿Cómo te gustaría pagar tu traslado?</legend><div class="payment-options"><label class="payment-option"><input type="radio" name="paymentMethod" value="cash" required><span><strong>💵 Efectivo</strong><small>Paga al conductor al finalizar tu viaje.</small></span></label><label class="payment-option"><input type="radio" name="paymentMethod" value="card" required><span><strong>💳 Tarjeta</strong><small>Paga en línea de forma segura con PayPal.</small></span></label></div><p class="payment-help">Elige tu forma de pago para continuar con la solicitud.</p></fieldset>
 <p class="consent">Al enviar, tu solicitud llegará al panel de reservas de Qué Onda Travel. La tarifa es estimada; el equipo confirmará disponibilidad, precio final y detalles del servicio.</p>
 <button id="sendReservation" class="submit" type="submit">Enviar solicitud de reservación</button>
 <div id="formStatus" role="status" aria-live="polite"></div>
@@ -262,6 +263,8 @@ form.addEventListener('submit',async function(event){
  event.preventDefault();
  if(!selected){document.getElementById('formStatus').textContent='Primero selecciona un vehículo.';return;}
  if(!form.reportValidity())return;
+ const paymentMethod=form.querySelector('input[name="paymentMethod"]:checked')?.value;
+ if(!paymentMethod){document.getElementById('formStatus').textContent='Selecciona cómo deseas pagar.';return;}
  const button=document.getElementById('sendReservation'),status=document.getElementById('formStatus');
  button.disabled=true;status.textContent='Enviando tu solicitud…';
  try{
@@ -269,6 +272,7 @@ form.addEventListener('submit',async function(event){
    customer_name:document.getElementById('customerName').value.trim(),
    customer_email:document.getElementById('customerEmail').value.trim(),
    customer_phone:document.getElementById('customerPhone').value.trim(),
+   payment_method:paymentMethod,
    service:'Transporte privado',
    trip_type:trip.trip==='Redondo'?'Redondo':'Sencillo',
    vehicle:selected.name,
@@ -295,8 +299,8 @@ form.addEventListener('submit',async function(event){
    '<div class="qot-success-kicker">¡QUÉ EMOCIÓN, TU VIAJE COMIENZA AQUÍ!</div>',
    '<h2 class="qot-success-title">¡Ya estamos preparando tu aventura!</h2>',
    '<p class="qot-success-copy">Tu solicitud llegó correctamente a Qué Onda Travel. Nuestro equipo revisará los detalles y se pondrá en contacto contigo para confirmar disponibilidad y precio final.</p>',
-   '<div class="qot-success-pill" id="qotPaymentBadge"><i></i> Solicitud recibida · Pago pendiente</div>',
-   '<div class="qot-success-summary" id="qotPayPanel"><h3>Completa tu reservación</h3><p style="color:#6f817c;font-size:13px;line-height:1.6;margin:0 0 14px">Puedes pagar tu traslado de forma segura con PayPal. Tu solicitud seguirá pendiente de confirmación por nuestro equipo.</p><div id="qotPayPalButtons"></div><p id="qotPayStatus" role="status" aria-live="polite" style="color:#6f817c;font-size:12px;text-align:center;margin:12px 0 0">Preparando pago seguro…</p></div>',
+   '<div class="qot-success-pill" id="qotPaymentBadge"><i></i> Solicitud recibida · '+(paymentMethod==='cash'?'Pago en efectivo al finalizar':'Pago con tarjeta pendiente')+'</div>',
+   (paymentMethod==='cash'?'<div class="qot-success-summary" id="qotPayPanel"><h3>Tu pago en efectivo</h3><p style="color:#6f817c;font-size:13px;line-height:1.6;margin:0">Pagarás directamente al conductor <strong>al finalizar el viaje</strong>. Por seguridad, verifica el monto acordado y solicita la confirmación de recepción del pago.</p></div>':'<div class="qot-success-summary" id="qotPayPanel"><h3>Completa tu reservación</h3><p style="color:#6f817c;font-size:13px;line-height:1.6;margin:0 0 14px">Puedes pagar tu traslado de forma segura con PayPal. Tu solicitud seguirá pendiente de confirmación por nuestro equipo.</p><div id="qotPayPalButtons"></div><p id="qotPayStatus" role="status" aria-live="polite" style="color:#6f817c;font-size:12px;text-align:center;margin:12px 0 0">Preparando pago seguro…</p></div>'),
    '<div class="qot-success-steps">',
    '<div class="qot-success-step"><b>✓</b><strong>Solicitud recibida</strong><small>¡Listo! Ya tenemos los datos de tu viaje.</small></div>',
    '<div class="qot-success-step pending"><b>2</b><strong>Revisión del equipo</strong><small>Comprobaremos vehículo, horario y disponibilidad.</small></div>',
@@ -313,7 +317,7 @@ form.addEventListener('submit',async function(event){
   form.classList.add('qot-success');
   form.innerHTML=successParts.join('');
   form.scrollIntoView({behavior:'smooth',block:'center'});
-  try{
+  if(paymentMethod==='card')try{
    const {data:paypalConfig,error:configError}=await client.functions.invoke('paypal-checkout',{body:{action:'config'}});
    if(configError||!paypalConfig?.client_id)throw configError||new Error('PayPal no está configurado');
    const sdk=document.createElement('script');
