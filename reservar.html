@@ -198,7 +198,7 @@ const requestedDateTime=trip.date+'T'+trip.time;
 if(!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(requestedDateTime)||requestedDateTime<caboLocalDateTime(new Date())){document.getElementById('vehicleGrid').textContent='La fecha y hora del viaje deben ser futuras en horario de Los Cabos. Regresa al inicio y selecciona otro horario.';return;}
 const airportPattern=/\b(aeropuerto|airport|sjd)\b/i;
 const airportTransfer=airportPattern.test(trip.pickup)||airportPattern.test(trip.destination);
-const airportRates={Jetta:980,Atlas:1499,Tiguan:1800};
+const airportRates={Jetta:980,Hyundai:980,Atlas:1499,Tiguan:1800};
 const multiplier=trip.trip==='Redondo'?2:1;
 const fmtDate=new Date(trip.date+'T12:00:00').toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
 document.getElementById('pickupText').textContent=trip.pickup;
@@ -212,13 +212,14 @@ const anon='sb_publishable_d-xqUkbQSgzZys3OfXzbiw_iyHzHItE';
 const client=window.supabase.createClient(project,anon);
 const vehicles=[
  {name:'Jetta',label:'Volkswagen Jetta',rate:26,capacity:4,image:'images/jetta-negro-2019.jpg'},
+ {name:'Hyundai',label:'Hyundai Elantra',rate:26,capacity:4,image:null},
  {name:'Atlas',label:'Volkswagen Atlas',rate:70,capacity:5,image:'images/atlas-blanca-2019.jpg'},
  {name:'Tiguan',label:'Volkswagen Tiguan',rate:75,capacity:6,image:'images/tiguan-negra-2018.jpg'}
 ];
 const grid=document.getElementById('vehicleGrid'),form=document.getElementById('reservationForm');
 let selected=null;
 function price(v){const base=airportTransfer?airportRates[v.name]:Math.max(80,trip.km*v.rate);return Math.round(base*multiplier);}
-function requiredAdvanceHours(v){return airportTransfer?2:(v.name==='Jetta'?0.75:2);}
+function requiredAdvanceHours(v){return airportTransfer?2:((v.name==='Jetta'||v.name==='Hyundai')?0.75:2);}
 async function render(){
  let blocked=new Set();
  let availableCount=0;
@@ -235,7 +236,7 @@ async function render(){
   const available=enough&&capacity&&!blocked.has(v.name);
   if(available)availableCount++;
   const card=document.createElement('article');card.className='vehicle';card.dataset.vehicle=v.name;
-  const img=document.createElement('img');img.src=v.image;img.alt=v.label;
+  const img=v.image?document.createElement('img'):document.createElement('div');if(v.image){img.src=v.image;img.alt=v.label;}else{img.className='vehicle-placeholder';img.textContent='Hyundai Elantra · 2018';img.setAttribute('role','img');img.setAttribute('aria-label','Hyundai Elantra blanco con techo negro, 2018');}
   const title=document.createElement('h3');title.textContent=v.label;
   const rate=document.createElement('div');rate.className='rate';rate.textContent=airportTransfer?'Tarifa fija de aeropuerto':'$'+v.rate+' MXN por km';
   const total=document.createElement('div');total.className='price';total.textContent='$'+price(v).toLocaleString('es-MX')+' MXN';
