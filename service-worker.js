@@ -1,4 +1,4 @@
-const CACHE_NAME = "que-onda-travel-v3";
+const CACHE_NAME = "que-onda-travel-v4";
 const APP_SHELL = ["./", "./manifest.json", "./icons/icon.svg"];
 
 self.addEventListener("install", event => {
