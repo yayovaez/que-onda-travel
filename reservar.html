@@ -281,7 +281,7 @@ form.addEventListener('submit',async function(event){
    estimated_total_mxn:price(selected),
    status:'pending'
   };
-  const {data,error}=await client.from('booking_requests').insert(payload);
+  const {data:bookingData,error}=await client.from('booking_requests').insert(payload).select('id').single();
   if(error)throw error;
   const safe=function(value){
    return String(value==null?'':value).replace(/[&<>"']/g,function(ch){
@@ -295,7 +295,8 @@ form.addEventListener('submit',async function(event){
    '<div class="qot-success-kicker">¡QUÉ EMOCIÓN, TU VIAJE COMIENZA AQUÍ!</div>',
    '<h2 class="qot-success-title">¡Ya estamos preparando tu aventura!</h2>',
    '<p class="qot-success-copy">Tu solicitud llegó correctamente a Qué Onda Travel. Nuestro equipo revisará los detalles y se pondrá en contacto contigo para confirmar disponibilidad y precio final.</p>',
-   '<div class="qot-success-pill"><i></i> Solicitud recibida · En revisión</div>',
+   '<div class="qot-success-pill" id="qotPaymentBadge"><i></i> Solicitud recibida · Pago pendiente</div>',
+   '<div class="qot-success-summary" id="qotPayPanel"><h3>Completa tu reservación</h3><p style="color:#6f817c;font-size:13px;line-height:1.6;margin:0 0 14px">Puedes pagar tu traslado de forma segura con PayPal. Tu solicitud seguirá pendiente de confirmación por nuestro equipo.</p><div id="qotPayPalButtons"></div><p id="qotPayStatus" role="status" aria-live="polite" style="color:#6f817c;font-size:12px;text-align:center;margin:12px 0 0">Preparando pago seguro…</p></div>',
    '<div class="qot-success-steps">',
    '<div class="qot-success-step"><b>✓</b><strong>Solicitud recibida</strong><small>¡Listo! Ya tenemos los datos de tu viaje.</small></div>',
    '<div class="qot-success-step pending"><b>2</b><strong>Revisión del equipo</strong><small>Comprobaremos vehículo, horario y disponibilidad.</small></div>',
@@ -312,6 +313,40 @@ form.addEventListener('submit',async function(event){
   form.classList.add('qot-success');
   form.innerHTML=successParts.join('');
   form.scrollIntoView({behavior:'smooth',block:'center'});
+  try{
+   const {data:paypalConfig,error:configError}=await client.functions.invoke('paypal-checkout',{body:{action:'config'}});
+   if(configError||!paypalConfig?.client_id)throw configError||new Error('PayPal no está configurado');
+   const sdk=document.createElement('script');
+   sdk.src='https://www.paypal.com/sdk/js?client-id='+encodeURIComponent(paypalConfig.client_id)+'&currency=MXN&intent=capture&components=buttons';
+   sdk.onload=function(){
+    if(!window.paypal){document.getElementById('qotPayStatus').textContent='No pudimos cargar PayPal. Inténtalo de nuevo más tarde.';return;}
+    window.paypal.Buttons({
+     style:{layout:'vertical',color:'gold',shape:'pill',label:'paypal',height:48},
+     createOrder:async function(){
+      const {data,error}=await client.functions.invoke('paypal-checkout',{body:{action:'create',booking_id:bookingData.id,email:payload.customer_email}});
+      if(error||!data?.order_id)throw error||new Error(data?.error||'No se pudo iniciar el pago');
+      return data.order_id;
+     },
+     onApprove:async function(data){
+      const statusEl=document.getElementById('qotPayStatus');
+      statusEl.textContent='Verificando tu pago con PayPal…';
+      const {data:captured,error}=await client.functions.invoke('paypal-checkout',{body:{action:'capture',booking_id:bookingData.id,email:payload.customer_email,order_id:data.orderID}});
+      if(error||!captured?.ok)throw error||new Error(captured?.error||'No se pudo confirmar el pago');
+      document.getElementById('qotPaymentBadge').innerHTML='<i></i> Pago recibido · MXN';
+      statusEl.textContent='¡Pago completado! Tu reservación sigue pendiente de confirmación por nuestro equipo.';
+      document.getElementById('qotPayPalButtons').innerHTML='';
+     },
+     onCancel:function(){document.getElementById('qotPayStatus').textContent='El pago fue cancelado. Puedes intentarlo nuevamente cuando quieras.';},
+     onError:function(err){console.error('PayPal checkout error:',err);document.getElementById('qotPayStatus').textContent='No pudimos completar el pago. Inténtalo nuevamente o contáctanos.';}
+    }).render('#qotPayPalButtons');
+    document.getElementById('qotPayStatus').textContent='Pago seguro procesado por PayPal.';
+   };
+   sdk.onerror=function(){document.getElementById('qotPayStatus').textContent='No pudimos cargar PayPal. Inténtalo de nuevo más tarde.';};
+   document.head.appendChild(sdk);
+  }catch(paypalError){
+   console.error('PayPal setup error:',paypalError);
+   document.getElementById('qotPayStatus').textContent='El pago en línea no está disponible por el momento. Tu solicitud fue recibida y nuestro equipo te contactará.';
+  }
  }catch(error){
   console.error('Error al guardar reservación:',error);
   status.textContent='No pudimos registrar tu solicitud. Revisa tu conexión e inténtalo de nuevo.';
