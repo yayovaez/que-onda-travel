@@ -5193,12 +5193,14 @@ input:focus,select:focus,textarea:focus{border-color:#0b8985!important;box-shado
     const current=++sequence;
     clearTimeout(timer);
     timer=setTimeout(async function(){
+     const seen=new Set(local.map(function(x){return normalize(x.name);}));
+     let combined=local.slice();
+     let photonError=null;
+     // Photon es el primer catálogo, pero un fallo suyo no debe cancelar los demás proveedores.
      try{
       const response=await fetch(proxy,{method:'POST',headers:{'Content-Type':'application/json','apikey':key},body:JSON.stringify({action:'photonSearch',query:q})});
       const data=await response.json();
       if(!response.ok)throw new Error(data.error||'Photon search failed');
-      if(current!==sequence||input.value.trim()!==q)return;
-      const seen=new Set(local.map(function(x){return normalize(x.name);}));
       const extra=(data.features||[]).slice(0,10).map(function(f){
        const center=f.center||(f.geometry&&f.geometry.coordinates);
        if(!center||!Number.isFinite(Number(center[0]))||!Number.isFinite(Number(center[1])))return null;
@@ -5207,32 +5209,38 @@ input:focus,select:focus,textarea:focus{border-color:#0b8985!important;box-shado
        seen.add(normalize(name));
        return {name:name,detail:f.place_name||f.label||'Los Cabos, Baja California Sur',coords:[Number(center[0]),Number(center[1])]};
       }).filter(Boolean);
-      let combined=local.concat(extra);
-      // Complementar Photon con Mapbox y, cuando Mapbox no tenga POI, Nominatim desde el proxy.
-      // Se consulta el segundo catálogo si Photon devuelve pocos resultados para ampliar la cobertura.
-      if(extra.length<6){
-       try{
-        const fallbackResponse=await fetch(proxy,{method:'POST',headers:{'Content-Type':'application/json','apikey':key},body:JSON.stringify({action:'geocode',query:q})});
-        const fallbackData=await fallbackResponse.json();
-        if(current!==sequence||input.value.trim()!==q)return;
-        if(fallbackResponse.ok){
-         const fallback=(fallbackData.features||[]).slice(0,10).map(function(f){
-          const center=f.center||(f.geometry&&f.geometry.coordinates);
-          if(!center||!Number.isFinite(Number(center[0]))||!Number.isFinite(Number(center[1])))return null;
-          const name=f.text||f.name||f.place_name;
-          if(!name||seen.has(normalize(name)))return null;
-          seen.add(normalize(name));
-          return {name:name,detail:f.place_name||f.label||'Los Cabos, Baja California Sur',coords:[Number(center[0]),Number(center[1])]};
-         }).filter(Boolean);
-         combined=combined.concat(fallback);
-        }
-       }catch(fallbackError){console.warn('[Qué Onda Travel] Catálogo secundario no disponible:',fallbackError);}
-      }
-      if(combined.length)render(box,input,kind,combined.slice(0,16));
-      else if(!local.length){
-       const note=document.createElement('div');note.textContent='No encontramos ese lugar. Prueba con el nombre del hotel o una referencia cercana, o marca el punto exacto en el mapa.';note.style.padding='12px';box.replaceChildren(note);box.style.display='block';
-      }
-     }catch(error){console.warn('[Qué Onda Travel] Búsqueda de lugares:',error);}
+      combined=combined.concat(extra);
+     }catch(error){photonError=error;console.warn('[Qué Onda Travel] Photon no disponible; se intentará el catálogo alternativo:',error);}
+     if(current!==sequence||input.value.trim()!==q)return;
+     // Intentar Mapbox/Nominatim siempre que el primer catálogo no aporte suficientes opciones,
+     // incluso si Photon falla por red, CORS o disponibilidad.
+     if(combined.length<6){
+      try{
+       const fallbackResponse=await fetch(proxy,{method:'POST',headers:{'Content-Type':'application/json','apikey':key},body:JSON.stringify({action:'geocode',query:q})});
+       const fallbackData=await fallbackResponse.json();
+       if(!fallbackResponse.ok)throw new Error(fallbackData.error||'Geocoding search failed');
+       const fallback=(fallbackData.features||[]).slice(0,10).map(function(f){
+        const center=f.center||(f.geometry&&f.geometry.coordinates);
+        if(!center||!Number.isFinite(Number(center[0]))||!Number.isFinite(Number(center[1])))return null;
+        const name=f.text||f.name||f.place_name;
+        if(!name||seen.has(normalize(name)))return null;
+        seen.add(normalize(name));
+        return {name:name,detail:f.place_name||f.label||'Los Cabos, Baja California Sur',coords:[Number(center[0]),Number(center[1])]};
+       }).filter(Boolean);
+       combined=combined.concat(fallback);
+      }catch(fallbackError){console.warn('[Qué Onda Travel] Catálogo alternativo no disponible:',fallbackError);}
+     }
+     if(current!==sequence||input.value.trim()!==q)return;
+     if(combined.length)render(box,input,kind,combined.slice(0,16));
+     else{
+      const note=document.createElement('div');
+      note.textContent='No encontramos ese lugar. Prueba con el nombre del hotel, una dirección o una referencia cercana. También puedes marcar el punto en el mapa.';
+      note.style.padding='12px';
+      note.style.color='#174b50';
+      box.replaceChildren(note);
+      box.style.display='block';
+      if(photonError)console.warn('[Qué Onda Travel] No hubo resultados en los catálogos disponibles.');
+     }
     },350);
    }
    input.addEventListener('focus',search);
