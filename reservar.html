@@ -58,9 +58,13 @@ input:focus{outline:0;border-color:var(--teal);box-shadow:0 0 0 3px #075b6314}
 .consent{font-size:12px;line-height:1.6;color:var(--muted);margin:18px 0 16px;background:#f6f1e7;border-radius:12px;padding:13px 15px}
 .submit{width:100%;font-size:15px;min-height:56px;letter-spacing:.2px}
 #formStatus{min-height:24px;text-align:center;font-size:13px;color:var(--teal);margin-top:12px}
-.trust-row{display:flex;justify-content:center;flex-wrap:wrap;gap:10px 22px;margin:23px auto 0;color:#74857e;font-size:11px}
-.trust-row span{display:flex;align-items:center;gap:6px}
-.trust-row b{color:#bd8f4e;font-size:14px}
+.trust-row{display:flex;justify-content:center;flex-wrap:wrap;gap:14px 28px;margin:23px auto 0}
+.trust-row span{display:flex;align-items:center;gap:9px;color:#087f83;font-size:17px;font-weight:750;letter-spacing:.1px}
+.trust-row span:nth-child(2){color:#d72f83}
+.trust-row span:nth-child(3){color:#b87925}
+.trust-row b{font-size:22px;line-height:1;color:#268b59;font-weight:700}
+.note{text-align:center;color:#075b63!important;font-size:16px!important;font-weight:700;letter-spacing:.3px;line-height:1.5;margin-top:25px}
+@media(max-width:560px){.trust-row{gap:13px 18px}.trust-row span{font-size:14px}.trust-row b{font-size:20px}.note{font-size:14px!important}}
 .note{text-align:center;color:#87938c;font-size:11px;line-height:1.5;margin-top:24px}
 [hidden]{display:none!important}
 @media(max-width:560px){main{margin:18px auto 38px}.panel{border-radius:20px;padding:21px 17px}.summary,.field-grid{grid-template-columns:1fr}.vehicle-grid{grid-template-columns:1fr}.vehicle{padding:13px}.vehicle img{height:175px}.progress{gap:5px}.progress-step{gap:5px;font-size:9px}.progress-step .number{width:24px;height:24px}.progress-line{max-width:24px}.header-note{font-size:10px;letter-spacing:1.4px}}
@@ -172,7 +176,7 @@ input:focus{outline:0;border-color:var(--teal);box-shadow:0 0 0 3px #075b6314}
 <button id="sendReservation" class="submit" type="submit">Enviar solicitud de reservación</button>
 <div id="formStatus" role="status" aria-live="polite"></div>
 </form>
-<div class="trust-row"><span><b>✦</b> Atención personalizada</span><span><b>✦</b> Transporte privado</span><span><b>✦</b> Servicio en Los Cabos</span></div>
+<div class="trust-row"><span><b aria-hidden="true">🌵</b> Atención personalizada</span><span><b aria-hidden="true">🌵</b> Transporte privado</span><span><b aria-hidden="true">🌵</b> Servicio en Los Cabos</span></div>
 <p class="note">Qué Onda Travel · Your journey, our pleasure</p>
 </section></main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
