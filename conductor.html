@@ -23,18 +23,20 @@ button{border:0;border-radius:999px;padding:12px 18px;background:linear-gradient
 </main>
 <script>
 const URL='https://iyelnragqgriycdyqowq.supabase.co',KEY='sb_publishable_d-xqUkbQSgzZys3OfXzbiw_iyHzHItE';
-const db=window.supabase.createClient(URL,KEY);const $=id=>document.getElementById(id);let me=null,profile=null,jobs=[],driverUpdates=[];
+const db=window.supabase.createClient(URL,KEY);const $=id=>document.getElementById(id);let me=null,profile=null,jobs=[],driverUpdates=[],loadingJobs=false,hasInitialJobsLoad=false;let knownJobIds=new Set();
 function esc(v){return String(v??'—').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function money(v){return new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN',maximumFractionDigits:0}).format(Number(v||0));}
 function date(v){return v?new Date(v+'T12:00:00').toLocaleDateString('es-MX',{day:'2-digit',month:'short',year:'numeric'}):'—';}
 async function load(){
- $('msg').textContent='Cargando tus servicios…';
+ if(loadingJobs||!me)return;loadingJobs=true;
+ $('msg').textContent='Actualizando tus servicios…';
  const {data:p,error:pe}=await db.from('driver_profiles').select('display_name,active').eq('user_id',me.id).single();
  if(pe||!p||!p.active){$('msg').textContent='Tu acceso de conductor está inactivo. Contacta al administrador.';return;}
  profile=p;$('welcome').textContent='Hola, '+p.display_name;
  const {data,error}=await db.from('booking_requests').select('id,customer_name,customer_phone,customer_email,service,vehicle,trip_type,pickup,destination,travel_date,travel_time,passengers,estimated_total_mxn,payment_method,payment_status,status,created_at').eq('assigned_driver_id',me.id).order('travel_date',{ascending:true});
  if(error){$('msg').textContent='No se pudieron cargar los servicios: '+error.message;return;}
- jobs=data||[];const updates=await db.from('driver_job_updates').select('booking_id,event_type,created_at').eq('driver_id',me.id).order('created_at',{ascending:false});driverUpdates=updates.data||[];jobs.forEach(j=>{j.driverCompleted=driverUpdates.some(u=>u.booking_id===j.id&&u.event_type==='completed');j.driverAccepted=driverUpdates.some(u=>u.booking_id===j.id&&u.event_type==='accepted');j.driverStarted=driverUpdates.some(u=>u.booking_id===j.id&&u.event_type==='in_progress');});render();
+ jobs=data||[];const updates=await db.from('driver_job_updates').select('booking_id,event_type,created_at').eq('driver_id',me.id).order('created_at',{ascending:false});driverUpdates=updates.data||[];jobs.forEach(j=>{j.driverCompleted=driverUpdates.some(u=>u.booking_id===j.id&&u.event_type==='completed');j.driverAccepted=driverUpdates.some(u=>u.booking_id===j.id&&u.event_type==='accepted');j.driverStarted=driverUpdates.some(u=>u.booking_id===j.id&&u.event_type==='in_progress');});const newJobs=jobs.filter(j=>!knownJobIds.has(j.id));if(hasInitialJobsLoad&&newJobs.length){$('msg').textContent='¡Tienes '+newJobs.length+' nuevo(s) servicio(s) asignado(s)!';}else{$('msg').textContent=jobs.length+' servicio(s) asignado(s) · Actualizado '+new Date().toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'});}knownJobIds=new Set(jobs.map(j=>j.id));hasInitialJobsLoad=true;render();
+ }catch(error){$('msg').textContent='No se pudieron actualizar tus servicios: '+(error?.message||'Error inesperado');}finally{loadingJobs=false;}
 }
 function render(){
  if(!jobs.length){$('jobs').innerHTML='<div class="card">Todavía no tienes servicios asignados.</div>';$('msg').textContent='';return;}
@@ -55,7 +57,7 @@ $('jobs').addEventListener('click',async e=>{
  if(event==='completed'){job.driverCompleted=true;render();}else if(event==='cash_received'){job.payment_status='pending';b.disabled=true;}
 });
 $('passwordForm').addEventListener('submit',async e=>{e.preventDefault();$('passwordMsg').textContent='Guardando…';const {error}=await db.auth.updateUser({password:$('newPassword').value});if(error){$('passwordMsg').textContent='No se pudo actualizar: '+error.message;return;}$('passwordMsg').textContent='Contraseña guardada. Ya puedes ingresar con tu correo y esta contraseña.';$('passwordForm').reset();});
-$('refresh').onclick=load;
+$('refresh').onclick=load;setInterval(()=>{if(me&&!document.hidden)load();},25000);document.addEventListener('visibilitychange',()=>{if(!document.hidden&&me)load();});window.addEventListener('focus',()=>{if(me)load();});
 $('loginForm').addEventListener('submit',async e=>{e.preventDefault();$('loginMsg').textContent='Ingresando…';const {data,error}=await db.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});if(error){$('loginMsg').textContent='No se pudo iniciar sesión: '+error.message;return;}me=data.user;$('login').classList.add('hidden');$('dashboard').classList.remove('hidden');$('logout').classList.remove('hidden');await load();});
 $('logout').onclick=async()=>{await db.auth.signOut();me=null;$('dashboard').classList.add('hidden');$('logout').classList.add('hidden');$('login').classList.remove('hidden');};
 (async()=>{const {data:{session}}=await db.auth.getSession();if(session){me=session.user;$('login').classList.add('hidden');$('dashboard').classList.remove('hidden');$('logout').classList.remove('hidden');await load();}})();
