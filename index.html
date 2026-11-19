@@ -3475,8 +3475,8 @@ html,body{
     <form id="qotSearchForm" class="qot-search-grid">
       <div class="qot-search-field qot-location-field"><label for="qotPickup">Desde</label><input id="qotPickup" autocomplete="off" placeholder="Lugar de recogida" required><div class="qot-suggestions" id="qotPickupOptions"></div></div>
       <div class="qot-search-field qot-location-field"><label for="qotDestination">Hasta</label><input id="qotDestination" autocomplete="off" placeholder="Destino" required><div class="qot-suggestions" id="qotDestinationOptions"></div></div>
-      <div class="qot-search-field"><label for="qotDate">Llegada / fecha</label><input id="qotDate" type="date" required></div>
-      <div class="qot-search-field"><label for="qotTime">Hora del vuelo / recogida</label><input id="qotTime" type="time" required></div>
+      <div class="qot-search-field"><label for="qotDate">Fecha</label><input id="qotDate" type="date" required></div>
+      <div class="qot-search-field"><label for="qotTime">Recogida</label><input id="qotTime" type="time" required></div>
       <div class="qot-search-field"><label for="qotPassengers">Pasajeros</label><select id="qotPassengers"><option value="1">1 pasajero</option><option value="2" selected>2 pasajeros</option><option value="3">3 pasajeros</option><option value="4">4 pasajeros</option><option value="5">5 pasajeros</option><option value="6">6 pasajeros</option></select></div>
       <div class="qot-search-field"><label for="qotTrip">Tipo de viaje</label><select id="qotTrip"><option value="Sencillo">Sencillo</option><option value="Redondo">Redondo</option></select></div>
       <button class="qot-search-button" type="button" onclick="const f=document.getElementById('qotSearchForm');if(f){f.noValidate=true;f.dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}));}"><span>⌕</span> Buscar disponibilidad</button>
