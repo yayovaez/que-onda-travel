@@ -333,7 +333,7 @@ form.addEventListener('submit',async function(event){
   if(configError||!paypalConfig?.client_id)throw configError||new Error('PayPal no está configurado');
   const sdk=document.createElement('script');
   sdk.async=true;
-  const paypalSdkHost=paypalConfig.mode==='sandbox'?'https://www.sandbox.paypal.com':'https://www.paypal.com';
+  const paypalSdkHost='https://www.paypal.com';
    sdk.src=paypalSdkHost+'/sdk/js?client-id='+encodeURIComponent(paypalConfig.client_id)+'&currency=MXN&intent=capture';
   sdk.onload=async function(){
    try{
