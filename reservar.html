@@ -305,7 +305,22 @@ async function render(){
   const img=v.image?document.createElement('img'):document.createElement('div');if(v.image){img.src=v.image;img.alt=v.label;}else{img.className='vehicle-placeholder';img.textContent='Hyundai Elantra · 2018';img.setAttribute('role','img');img.setAttribute('aria-label','Hyundai Elantra blanco con techo negro, 2018');}
   const title=document.createElement('h3');title.textContent=v.label;
   const rate=document.createElement('div');rate.className='rate';rate.textContent=airportTransfer?'Tarifa fija de aeropuerto':'$'+v.rate+' MXN por km';
-  const total=document.createElement('div');total.className='price';if(trip.trip==='Redondo'){const before=document.createElement('span');before.className='qot-price-before';before.textContent='
+  const total=document.createElement('div');
+  total.className='price';
+  if(trip.trip==='Redondo'){
+   const before=document.createElement('span');
+   before.className='qot-price-before';
+   before.textContent='$'+originalPrice(v).toLocaleString('es-MX')+' MXN';
+   const now=document.createElement('strong');
+   now.className='qot-price-now';
+   now.textContent='$'+price(v).toLocaleString('es-MX')+' MXN';
+   const label=document.createElement('small');
+   label.className='qot-price-discount';
+   label.textContent='15% de descuento por viaje redondo';
+   total.append(before,now,label);
+  }else{
+   total.textContent='$'+price(v).toLocaleString('es-MX')+' MXN';
+  }
   const detail=document.createElement('p');detail.textContent=!capacity?'No tiene capacidad para este grupo':!enough?'Requiere al menos '+advanceHours+' horas de anticipación':blocked.has(v.name)?'No disponible para esta fecha':v.name==='Jetta'?'Sujeto a disponibilidad · Tarifa estimada':'Tarifa estimada · Sujeta a confirmación';
   const button=document.createElement('button');button.type='button';button.textContent=available?'Elegir este vehículo':'No disponible';button.disabled=!available;
   button.addEventListener('click',()=>{
