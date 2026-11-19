@@ -135,6 +135,8 @@ input:focus{outline:0;border-color:var(--teal);box-shadow:0 0 0 3px #075b6314}
 @media(prefers-reduced-motion:reduce){
  #reservationForm.qot-success,.qot-confetti span{animation:none!important}
 }
+body.qot-payment-return .eyebrow,body.qot-payment-return main>.panel>h1,body.qot-payment-return main>.panel>.intro,body.qot-payment-return .progress,body.qot-payment-return .section-kicker,body.qot-payment-return .summary,body.qot-payment-return #vehicleGrid,body.qot-payment-return #noVehicleAvailability,body.qot-payment-return .trust-row{display:none!important}
+body.qot-payment-return #reservationForm.qot-success{margin-top:0!important}
 </style>
 
 </head>
@@ -343,6 +345,7 @@ form.addEventListener('submit',async function(event){
 const safeReturn=function(value){return String(value==null?'':value).replace(/[&<>"']/g,function(ch){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch];});};
 const mpReturn=params.get('mp_return');
 if(mpReturn){
+ document.body.classList.add('qot-payment-return');
  form.hidden=false;
  form.innerHTML='<div class="qot-celebration"><div class="qot-success-kicker">QUÉ ONDA TRAVEL · MERCADO PAGO</div><h2 class="qot-success-title">Verificando tu pago…</h2><p class="qot-success-copy" id="mpReturnStatus">Estamos comprobando el resultado directamente con Mercado Pago. No cierres esta página.</p></div>';
  const sessionId=params.get('session_id')||'';
