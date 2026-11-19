@@ -4910,57 +4910,98 @@ input:focus,select:focus,textarea:focus{border-color:#0b8985!important;box-shado
 @media(max-width:850px){.qot-search-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.qot-vehicle-cards{grid-template-columns:1fr 1fr}}
 @media(max-width:620px){.hero{padding:34px 4% 28px!important}.hero-copy{margin-bottom:20px!important}.hero h1{font-size:48px!important}.qot-flight-search{padding:17px 12px;border-radius:17px}.qot-search-grid{grid-template-columns:1fr 1fr;gap:8px}.qot-search-field{padding:10px 8px}.qot-search-field label{font-size:10px;padding-left:23px}.qot-search-field input,.qot-search-field select{font-size:12px!important;padding-left:23px!important}.qot-search-field:before{left:9px}.qot-search-button{width:100%;padding:14px 10px}.qot-vehicle-cards{grid-template-columns:1fr}.qot-vehicle-card{display:grid;grid-template-columns:38% 1fr}.qot-vehicle-card img{height:100%;min-height:170px}.qot-vehicle-card .qot-v-body{padding:12px}.qot-vehicle-card h4{font-size:19px}.qot-v-price{font-size:19px}}
 
-/* PROMOCIÓN VIAJE REDONDO */
+/* PROMOCIÓN VIAJE REDONDO — DESTACADA Y ANIMADA */
 .qot-roundtrip-promo{
   position:relative;
+  isolation:isolate;
   display:flex;
   align-items:center;
   justify-content:center;
   gap:22px;
   flex-wrap:wrap;
   margin:22px 3% 0;
-  padding:20px 24px;
+  padding:22px 26px;
   overflow:hidden;
-  border:1px solid #e6c56f;
-  border-radius:18px;
-  background:linear-gradient(110deg,#fff8e9,#f8e4cf);
-  box-shadow:0 9px 24px #173b4318;
+  border:2px solid #ff4b9a;
+  border-radius:20px;
+  background:linear-gradient(112deg,#fff0f7 0%,#fff8df 48%,#e6fbf8 100%);
+  box-shadow:0 10px 28px #d72d7b25, inset 0 0 0 1px #ffffffb0;
   text-align:center;
+  animation:qotPromoGlow 3.2s ease-in-out infinite;
 }
+.qot-roundtrip-promo:before,
+.qot-roundtrip-promo:after{
+  content:"✦";
+  position:absolute;
+  z-index:-1;
+  pointer-events:none;
+  font-size:58px;
+  line-height:1;
+  opacity:.17;
+  animation:qotPromoFloat 4.5s ease-in-out infinite;
+}
+.qot-roundtrip-promo:before{content:"✦";left:3%;top:8px;color:#e92e83}
+.qot-roundtrip-promo:after{content:"✧";right:4%;bottom:2px;color:#009eaa;animation-delay:-2s}
 .qot-roundtrip-promo .qot-promo-discount{
-  color:#087f78;
+  color:#e52283;
   font-family:Georgia,serif;
-  font-size:clamp(34px,5vw,48px);
-  font-weight:800;
+  font-size:clamp(38px,5.2vw,54px);
+  font-weight:900;
   line-height:1;
   white-space:nowrap;
+  text-shadow:2px 3px 0 #ffd1e5;
+  animation:qotPromoPop 2.4s ease-in-out infinite;
 }
 .qot-roundtrip-promo .qot-promo-copy strong{
   display:block;
-  color:#073f4c;
+  color:#075b63;
   font-family:Georgia,serif;
-  font-size:clamp(18px,2.5vw,24px);
+  font-size:clamp(19px,2.6vw,26px);
 }
 .qot-roundtrip-promo .qot-promo-copy span{
   display:block;
-  margin-top:5px;
-  color:#425d5b;
+  margin-top:6px;
+  color:#76506b;
   font-size:13px;
+  font-weight:600;
   line-height:1.5;
 }
 .qot-roundtrip-promo .qot-promo-tag{
-  padding:9px 15px;
-  border-radius:24px;
-  background:#087f78;
+  padding:11px 17px;
+  border:1px solid #ffffffa6;
+  border-radius:26px;
+  background:linear-gradient(105deg,#00a7a0,#087f78);
   color:#fff;
   font-size:12px;
-  font-weight:800;
-  letter-spacing:.5px;
+  font-weight:900;
+  letter-spacing:.6px;
+  box-shadow:0 5px 14px #087f7838;
+  animation:qotPromoTag 2.8s ease-in-out infinite;
+}
+@keyframes qotPromoGlow{
+  0%,100%{box-shadow:0 10px 24px #d72d7b20,inset 0 0 0 1px #ffffffb0}
+  50%{box-shadow:0 13px 32px #d72d7b40,inset 0 0 0 1px #ffffffb0}
+}
+@keyframes qotPromoFloat{
+  0%,100%{transform:translateY(0) rotate(0deg) scale(1)}
+  50%{transform:translateY(-9px) rotate(12deg) scale(1.12)}
+}
+@keyframes qotPromoPop{
+  0%,100%{transform:scale(1)}
+  50%{transform:scale(1.055)}
+}
+@keyframes qotPromoTag{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-3px)}
 }
 @media(max-width:620px){
-  .qot-roundtrip-promo{gap:10px;margin:15px 3% 0;padding:17px 12px}
+  .qot-roundtrip-promo{gap:12px;margin:15px 3% 0;padding:19px 12px}
   .qot-roundtrip-promo .qot-promo-copy{flex-basis:100%}
   .qot-roundtrip-promo .qot-promo-tag{font-size:11px}
+}
+@media(prefers-reduced-motion:reduce){
+  .qot-roundtrip-promo,.qot-roundtrip-promo:before,.qot-roundtrip-promo:after,
+  .qot-roundtrip-promo .qot-promo-discount,.qot-roundtrip-promo .qot-promo-tag{animation:none}
 }
 </style>
 <script id="qot-location-autocomplete">
