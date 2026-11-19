@@ -264,7 +264,7 @@ const requestedDateTime=trip.date+'T'+trip.time;
 if(!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(requestedDateTime)||requestedDateTime<caboLocalDateTime(new Date())){document.getElementById('vehicleGrid').textContent='La fecha y hora del viaje deben ser futuras en horario de Los Cabos. Regresa al inicio y selecciona otro horario.';return;}
 const airportPattern=/\b(aeropuerto|airport|sjd)\b/i;
 const airportTransfer=airportPattern.test(trip.pickup)||airportPattern.test(trip.destination);
-const airportRates={Jetta:980,Hyundai:980,Atlas:1499,Tiguan:1800};
+const airportRates={Jetta:1000,Hyundai:980,Atlas:1499,Tiguan:1800};
 const multiplier=trip.trip==='Redondo'?2:1;
 const fmtDate=new Date(trip.date+'T12:00:00').toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
 document.getElementById('pickupText').textContent=trip.pickup;
