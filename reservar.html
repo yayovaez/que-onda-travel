@@ -389,7 +389,7 @@ if(mpReturn){
   if(data.ok&&data.payment_status==='paid'){
    const t=data.trip||{};
    const clientName=String(t.customer_name||data.customer_name||t.name||'').trim();
-   const nameParts=clientName.split(/\\s+/).filter(Boolean);
+   const nameParts=clientName.split(/\s+/).filter(Boolean);
    const familySurname=nameParts.length>=3?nameParts.slice(-2).join(' '):(nameParts.length>=2?nameParts[nameParts.length-1]:'');
    const isGroup=Number(t.passengers||data.passengers||1)>1;
    const welcomeText=isGroup?(familySurname?'¡Bienvenidos, familia '+familySurname+', a Los Cabos!':'¡Bienvenidos a Los Cabos!'):(clientName?'¡Bienvenido(a), '+clientName+', a Los Cabos!':'¡Bienvenido(a) a Los Cabos!');
