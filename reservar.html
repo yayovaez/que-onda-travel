@@ -173,9 +173,9 @@ input:focus{outline:0;border-color:var(--teal);box-shadow:0 0 0 3px #075b6314}
  <div><label for="customerPhone">Teléfono / WhatsApp *</label><input id="customerPhone" name="customerPhone" type="tel" autocomplete="tel" minlength="7" maxlength="30" required></div>
  
 </div>
-<fieldset class="payment-choice"><legend>¿Cómo te gustaría pagar tu traslado?</legend><div class="payment-options"><label class="payment-option"><input type="radio" name="paymentMethod" value="cash" required><span><strong>💵 Pagar al finalizar el viaje</strong><small>Realiza tu pago directamente con el conductor al concluir tu traslado.</small></span></label><label class="payment-option"><input type="radio" name="paymentMethod" value="card" required><span><strong>💳 Tarjeta</strong><small>Paga en línea de forma segura con PayPal.</small></span></label></div><p class="payment-help">Elige tu forma de pago para continuar con la solicitud.</p></fieldset>
- <button id="continuePayPal" class="submit" type="button" hidden style="background:#ffc439;color:#123047;box-shadow:none">Continuar con <strong>PayPal</strong> →</button>
-<p class="consent">Si eliges efectivo, tu solicitud llegará al panel de reservas y pagarás al finalizar el viaje. Si eliges PayPal, la reservación se enviará al equipo únicamente después de confirmar el pago. La tarifa se calculará y validará antes de cobrar.</p>
+<fieldset class="payment-choice"><legend>¿Cómo te gustaría pagar tu traslado?</legend><div class="payment-options"><label class="payment-option"><input type="radio" name="paymentMethod" value="cash" required><span><strong>💵 Pagar al finalizar el viaje</strong><small>Realiza tu pago directamente con el conductor al concluir tu traslado.</small></span></label><label class="payment-option"><input type="radio" name="paymentMethod" value="card" required><span><strong>💳 Tarjeta</strong><small>Paga en línea de forma segura con Mercado Pago.</small></span></label></div><p class="payment-help">Elige tu forma de pago para continuar con la solicitud.</p></fieldset>
+ <button id="continuePayPal" class="submit" type="button" hidden style="background:#ffc439;color:#123047;box-shadow:none">Continuar con <strong>Mercado Pago</strong> →</button>
+<p class="consent">Si eliges efectivo, tu solicitud llegará al panel de reservas y pagarás al finalizar el viaje. Si eliges tarjeta, pagarás de forma segura en Mercado Pago. Tu reservación se registrará únicamente después de confirmar el pago. La tarifa se calculará y validará antes de cobrar.</p>
 <button id="sendReservation" class="submit" type="submit">Enviar solicitud de reservación</button>
 <div id="formStatus" role="status" aria-live="polite"></div>
 </form>
@@ -303,10 +303,10 @@ form.addEventListener('submit',async function(event){
    '<div class="qot-success-kicker">'+(isPaid?'PAGO RECIBIDO · QUÉ ONDA TRAVEL':'¡QUÉ EMOCIÓN, TU VIAJE COMIENZA AQUÍ!')+'</div>',
    '<h2 class="qot-success-title">'+(isPaid?'¡Tu pago fue confirmado!':'¡Ya estamos preparando tu aventura!')+'</h2>',
    '<p class="qot-success-copy">'+(isPaid?'Recibimos tu pago correctamente. Tu reservación ya está en nuestro panel y nuestro equipo revisará disponibilidad para confirmarte los detalles.':'Tu solicitud llegó correctamente a Qué Onda Travel. Nuestro equipo revisará los detalles y se pondrá en contacto contigo para confirmar disponibilidad y precio final.')+'</p>',
-   '<div class="qot-success-pill" id="qotPaymentBadge"><i></i> '+(isPaid?'Pago completado · PayPal': 'Solicitud recibida · Efectivo al finalizar')+'</div>',
+   '<div class="qot-success-pill" id="qotPaymentBadge"><i></i> '+(isPaid?'Pago completado · Mercado Pago': 'Solicitud recibida · Efectivo al finalizar')+'</div>',
    (paymentMethod==='cash'?'<div class="qot-success-summary"><h3>Tu pago en efectivo</h3><p style="color:#6f817c;font-size:13px;line-height:1.6;margin:0">Pagarás directamente al conductor <strong>al finalizar el viaje</strong>.</p></div>':''),
    '<div class="qot-success-steps">',
-   '<div class="qot-success-step"><b>✓</b><strong>'+(isPaid?'Pago confirmado':'Solicitud recibida')+'</strong><small>'+(isPaid?'El pago fue verificado por PayPal.':'Ya tenemos los datos de tu viaje.')+'</small></div>',
+   '<div class="qot-success-step"><b>✓</b><strong>'+(isPaid?'Pago confirmado':'Solicitud recibida')+'</strong><small>'+(isPaid?'El pago fue verificado por Mercado Pago.':'Ya tenemos los datos de tu viaje.')+'</small></div>',
    '<div class="qot-success-step pending"><b>2</b><strong>Revisión del equipo</strong><small>Comprobaremos vehículo, horario y disponibilidad.</small></div>',
    '<div class="qot-success-step pending"><b>3</b><strong>Confirmación contigo</strong><small>Te contactaremos para cerrar los detalles.</small></div>',
    '</div>',
@@ -329,49 +329,32 @@ form.addEventListener('submit',async function(event){
    return;
   }
 
-  const {data:paypalConfig,error:configError}=await client.functions.invoke('paypal-checkout',{body:{action:'config'}});
-  if(configError||!paypalConfig?.client_id)throw configError||new Error('PayPal no está configurado');
-  const sdk=document.createElement('script');
-  sdk.async=true;
-  const paypalSdkHost='https://www.paypal.com';
-   sdk.src=paypalSdkHost+'/sdk/js?client-id='+encodeURIComponent(paypalConfig.client_id)+'&currency=MXN&intent=capture';
-  sdk.onload=async function(){
-   try{
-    if(!window.paypal)throw new Error('No se pudo inicializar PayPal');
-    form.classList.add('qot-success');
-    form.innerHTML='<div class="qot-celebration"><div class="qot-success-kicker">PAGO SEGURO · QUÉ ONDA TRAVEL</div><h2 class="qot-success-title">Completa tu pago para enviar tu reservación</h2><p class="qot-success-copy">Tu solicitud todavía no ha sido enviada a nuestro equipo. Se registrará únicamente cuando PayPal confirme el pago.</p><div class="qot-success-summary"><h3>Resumen de tu viaje</h3><div class="qot-success-route"><div><small>Desde</small><strong>'+safe(trip.pickup)+'</strong></div><span class="qot-success-arrow">➜</span><div><small>Hasta</small><strong>'+safe(trip.destination)+'</strong></div></div><div class="qot-success-meta"><span>📅 '+safe(dateLabel)+' · '+safe(trip.time)+'</span><span>👥 '+safe(trip.passengers)+' pasajeros</span><span>🚘 '+safe(selected.label)+'</span></div><div class="qot-success-price">Total a pagar <strong id="qotCheckoutAmount">Calculando…</strong></div><div id="qotPayPalButtons" style="margin-top:18px"></div><p id="qotPayStatus" role="status" aria-live="polite" style="color:#6f817c;font-size:12px;text-align:center;margin:12px 0 0">Conectando con PayPal…</p></div><p class="qot-success-foot">Qué Onda Travel · Los Cabos</p></div>';
-    const statusEl=document.getElementById('qotPayStatus');
-    let sessionId='';
-    window.paypal.Buttons({
-     style:{layout:'vertical',color:'gold',shape:'pill',label:'paypal',height:48},
-     createOrder:async function(){
-      const {data,error}=await client.functions.invoke('paypal-checkout',{body:{action:'create',...payload}});
-      if(error||!data?.order_id||!data?.session_id)throw error||new Error(data?.error||'No se pudo iniciar el pago');
-      sessionId=data.session_id;
-      document.getElementById('qotCheckoutAmount').textContent='$'+Number(data.amount_mxn).toLocaleString('es-MX')+' MXN';
-      return data.order_id;
-     },
-     onApprove:async function(data){
-      statusEl.textContent='Verificando tu pago con PayPal…';
-      const {data:captured,error}=await client.functions.invoke('paypal-checkout',{body:{action:'capture',session_id:sessionId,order_id:data.orderID}});
-      if(error||!captured?.ok)throw error||new Error(captured?.error||'No se pudo confirmar el pago');
-      showConfirmation(true,price(selected));
-     },
-     onCancel:function(){statusEl.textContent='El pago fue cancelado. No se envió ninguna reservación a nuestro equipo. Puedes intentarlo nuevamente.';},
-     onError:function(err){console.error('PayPal checkout error:',err);statusEl.textContent='No pudimos completar el pago. No se registró tu reservación. Inténtalo nuevamente.';}
-    }).render('#qotPayPalButtons');
-    statusEl.textContent='Elige PayPal para continuar de forma segura.';
-   }catch(err){console.error(err);form.classList.remove('qot-success');form.innerHTML='<p id="formStatus">PayPal no pudo inicializarse. No se ha enviado ninguna reservación. Regresa e inténtalo de nuevo.</p>'; }
-  };
-  sdk.onerror=function(){console.error('PayPal SDK load failed', {mode:paypalConfig.mode, sdkHost:'www.paypal.com'});status.textContent='No se pudo cargar el servicio de PayPal (QOT-PP-SDK-LOAD). Tu reservación no fue enviada ni se realizó ningún cobro. Puedes volver a intentarlo en unos minutos.';button.disabled=false;};
-  document.head.appendChild(sdk);
+  const {data:checkout,error:checkoutError}=await client.functions.invoke('mercadopago-checkout',{body:{action:'create',...payload,return_url:location.href}});
+  if(checkoutError||!checkout?.checkout_url)throw checkoutError||new Error(checkout?.error||'No se pudo iniciar Mercado Pago');
+  status.textContent='Abriendo el pago seguro de Mercado Pago…';
+  window.location.assign(checkout.checkout_url);
  }catch(error){
   console.error('Error al procesar reservación:',error);
   status.textContent='No pudimos continuar. No se registró tu reservación. Revisa tus datos e inténtalo de nuevo.';
   button.disabled=false;
  }
 });
-render();
+const mpReturn=params.get('mp_return');
+if(mpReturn){
+ form.hidden=false;
+ form.innerHTML='<div class="qot-celebration"><div class="qot-success-kicker">QUÉ ONDA TRAVEL · MERCADO PAGO</div><h2 class="qot-success-title">Verificando tu pago…</h2><p class="qot-success-copy" id="mpReturnStatus">Estamos comprobando el resultado directamente con Mercado Pago. No cierres esta página.</p></div>';
+ const sessionId=params.get('session_id')||'';
+ client.functions.invoke('mercadopago-checkout',{body:{action:'verify',session_id:sessionId}}).then(({data,error})=>{
+  const box=form.querySelector('.qot-celebration');
+  if(error||!data){box.innerHTML='<div class="qot-success-kicker">MERCADO PAGO</div><h2 class="qot-success-title">No pudimos verificar el pago todavía</h2><p class="qot-success-copy">No se registró una reservación. Contacta a Qué Onda Travel antes de volver a intentar el cobro.</p>';return;}
+  if(data.ok&&data.payment_status==='paid'){
+   const t=data.trip||{};
+   box.innerHTML='<div class="qot-success-kicker">PAGO RECIBIDO · QUÉ ONDA TRAVEL</div><h2 class="qot-success-title">¡Tu pago fue confirmado!</h2><p class="qot-success-copy">Mercado Pago confirmó tu pago y tu solicitud ya está en nuestro panel. Nuestro equipo revisará disponibilidad para confirmarte los detalles.</p><div class="qot-success-pill"><i></i> Pago completado · Mercado Pago</div><div class="qot-success-summary"><h3>Tu próxima aventura</h3><div class="qot-success-route"><div><small>Desde</small><strong>'+safe(t.pickup)+'</strong></div><span class="qot-success-arrow">➜</span><div><small>Hasta</small><strong>'+safe(t.destination)+'</strong></div></div><div class="qot-success-meta"><span>📅 '+safe(t.travel_date)+' · '+safe(t.travel_time)+'</span><span>👥 '+safe(t.passengers)+' pasajeros</span><span>🚘 '+safe(t.vehicle)+'</span></div><div class="qot-success-price">Total pagado <strong>$'+Number(data.amount_mxn).toLocaleString('es-MX')+' MXN</strong></div></div><div class="qot-success-actions"><a class="qot-success-home" href="index.html">Volver al inicio&nbsp; →</a></div><p class="qot-success-foot">Qué Onda Travel · Los Cabos<br><strong>Your journey, our pleasure.</strong></p>';
+  }else{
+   box.innerHTML='<div class="qot-success-kicker">MERCADO PAGO</div><h2 class="qot-success-title">El pago aún no está confirmado</h2><p class="qot-success-copy">'+safe(data.message||'Mercado Pago todavía no confirma el pago. Tu reservación no se ha registrado.')+'</p><p class="qot-success-copy">Si realizaste el pago, espera un momento y contacta a nuestro equipo para verificarlo antes de intentar nuevamente.</p>';
+  }
+ }).catch(err=>{console.error('Mercado Pago return verification:',err);const box=form.querySelector('.qot-celebration');if(box)box.innerHTML='<h2 class="qot-success-title">No pudimos verificar el pago</h2><p class="qot-success-copy">No se registró una reservación. Contacta a Qué Onda Travel para revisar el estado antes de volver a pagar.</p>';});
+}else{render();}
 })();
 </script>
 </body>
