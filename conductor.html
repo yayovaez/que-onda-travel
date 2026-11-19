@@ -30,6 +30,7 @@ function date(v){return v?new Date(v+'T12:00:00').toLocaleDateString('es-MX',{da
 async function load(){
  if(loadingJobs||!me)return;loadingJobs=true;
  $('msg').textContent='Actualizando tus servicios…';
+ try{
  const {data:p,error:pe}=await db.from('driver_profiles').select('display_name,active').eq('user_id',me.id).single();
  if(pe||!p||!p.active){$('msg').textContent='Tu acceso de conductor está inactivo. Contacta al administrador.';return;}
  profile=p;$('welcome').textContent='Hola, '+p.display_name;
@@ -39,8 +40,7 @@ async function load(){
  }catch(error){$('msg').textContent='No se pudieron actualizar tus servicios: '+(error?.message||'Error inesperado');}finally{loadingJobs=false;}
 }
 function render(){
- if(!jobs.length){$('jobs').innerHTML='<div class="card">Todavía no tienes servicios asignados.</div>';$('msg').textContent='';return;}
- $('msg').textContent=jobs.length+' servicio(s) asignado(s).';
+ if(!jobs.length){$('jobs').innerHTML='<div class="card">Todavía no tienes servicios asignados. Cuando el administrador te asigne uno, aparecerá aquí automáticamente.</div>';return;}
  $('jobs').innerHTML=jobs.map(x=>'<article class="job"><div class="top"><div><h2>'+esc(x.customer_name)+'</h2><div style="font-size:12px;color:#71817c">'+esc(x.customer_email)+'</div></div><span class="pill">'+(x.driverCompleted||x.status==='completed'?'Completado':x.status==='confirmed'?'Confirmado':x.status==='cancelled'?'Cancelado':'Pendiente')+'</span></div><div class="grid"><div class="item"><b>Fecha y hora</b>'+date(x.travel_date)+' · '+esc(String(x.travel_time||'').slice(0,5))+'</div><div class="item"><b>Vehículo</b>'+esc(x.vehicle)+'</div><div class="item"><b>Recoger en</b>'+esc(x.pickup)+'</div><div class="item"><b>Destino</b>'+esc(x.destination)+'</div><div class="item"><b>Pasajeros</b>'+esc(x.passengers)+'</div><div class="item"><b>Teléfono del cliente</b>'+esc(x.customer_phone)+'</div><div class="item"><b>Total del servicio</b>'+money(x.estimated_total_mxn)+'</div><div class="item"><b>Forma de pago</b>'+(x.payment_method==='cash'?'Efectivo · cobrar al finalizar':'Tarjeta · '+(x.payment_status==='paid'?'pagada':'revisar estado'))+'</div></div>'+(x.status==='confirmed'&&!x.driverCompleted?'<div class="actions"><button data-event="accepted" data-id="'+esc(x.id)+'">Aceptar servicio</button><button class="secondary" data-event="in_progress" data-id="'+esc(x.id)+'">Iniciar viaje</button></div>':'')+((x.driverCompleted||x.status==='completed')?'<p style="color:var(--green);font-weight:700">Viaje completado</p>':'')+(x.status!=='completed'&&x.status!=='cancelled'&&!x.driverCompleted?'<div class="actions"><button class="secondary" data-event="completed" data-id="'+esc(x.id)+'">Marcar viaje completado</button></div>':'')+(x.payment_method==='cash'&&(x.driverCompleted||x.status==='completed')&&x.payment_status!=='paid'?'<div class="cashbox"><b>Confirmar efectivo recibido al finalizar</b><p style="font-size:12px;color:#71817c;margin:4px 0 8px">Cuenta el efectivo antes de registrar la recepción. El administrador verificará el reporte y marcará el pago como recibido.</p><label>Cantidad recibida (MXN)</label><input type="number" min="0.01" step="0.01" data-cash="'+esc(x.id)+'" value="'+esc(x.estimated_total_mxn)+'"><button data-event="cash_received" data-id="'+esc(x.id)+'">Reportar efectivo recibido</button></div>':'')+'</article>').join('');
 }
 $('jobs').addEventListener('click',async e=>{
