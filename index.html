@@ -4910,61 +4910,50 @@ input:focus,select:focus,textarea:focus{border-color:#0b8985!important;box-shado
 @media(max-width:850px){.qot-search-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.qot-vehicle-cards{grid-template-columns:1fr 1fr}}
 @media(max-width:620px){.hero{padding:34px 4% 28px!important}.hero-copy{margin-bottom:20px!important}.hero h1{font-size:48px!important}.qot-flight-search{padding:17px 12px;border-radius:17px}.qot-search-grid{grid-template-columns:1fr 1fr;gap:8px}.qot-search-field{padding:10px 8px}.qot-search-field label{font-size:10px;padding-left:23px}.qot-search-field input,.qot-search-field select{font-size:12px!important;padding-left:23px!important}.qot-search-field:before{left:9px}.qot-search-button{width:100%;padding:14px 10px}.qot-vehicle-cards{grid-template-columns:1fr}.qot-vehicle-card{display:grid;grid-template-columns:38% 1fr}.qot-vehicle-card img{height:100%;min-height:170px}.qot-vehicle-card .qot-v-body{padding:12px}.qot-vehicle-card h4{font-size:19px}.qot-v-price{font-size:19px}}
 
-/* PROMOCIÓN ROUND TRIP — COLOR VIBRANTE */
+/* PROMOCIÓN ROUND TRIP — PALETA TROPICAL SUAVE */
 .qot-roundtrip-promo{
   position:relative;isolation:isolate;display:flex;align-items:center;justify-content:center;
-  gap:22px;flex-wrap:wrap;margin:22px 3% 0;padding:24px 28px;overflow:hidden;
-  border:2px solid #ff2d91;border-radius:22px;
-  background:linear-gradient(115deg,#ff3d9a 0%,#ff8a35 34%,#ffe34d 63%,#28d7c5 100%);
-  background-size:220% 220%;
-  box-shadow:0 12px 30px #f02b8a45,0 0 0 5px #ffcae5a8;
-  text-align:center;animation:qotPromoGradient 6s ease infinite,qotPromoGlow 2.4s ease-in-out infinite;
+  gap:22px;flex-wrap:wrap;margin:22px 3% 0;padding:22px 26px;overflow:hidden;
+  border:1.5px solid #e77aa8;border-radius:20px;
+  background:linear-gradient(110deg,#f9dce9 0%,#f8e9c8 52%,#d9efeb 100%);
+  box-shadow:0 8px 22px #9b63751c;
+  text-align:center;
 }
 .qot-roundtrip-promo:before{
-  content:"";position:absolute;inset:-70% -30%;z-index:-1;pointer-events:none;
-  background:linear-gradient(110deg,transparent 38%,#ffffffa8 48%,#ffffff18 56%,transparent 66%);
-  transform:translateX(-70%) rotate(12deg);animation:qotPromoShine 4s ease-in-out infinite;
+  content:"";position:absolute;inset:-60% -35%;z-index:-1;pointer-events:none;
+  background:linear-gradient(110deg,transparent 42%,#ffffff80 50%,transparent 58%);
+  transform:translateX(-75%) rotate(10deg);animation:qotPromoShine 6s ease-in-out infinite;
 }
-.qot-roundtrip-promo:after{
-  content:"✦  ✧  ✦";position:absolute;right:14px;top:8px;z-index:-1;
-  color:#fff;font-size:28px;letter-spacing:10px;opacity:.7;
-  text-shadow:0 2px 10px #c71d77;animation:qotPromoSparkle 2s ease-in-out infinite;
-}
+.qot-roundtrip-promo:after{content:none;display:none}
 .qot-roundtrip-promo .qot-promo-discount{
-  color:#fff;font-family:Georgia,serif;font-size:clamp(42px,6vw,62px);
-  font-weight:900;line-height:1;white-space:nowrap;
-  -webkit-text-stroke:1px #e51d83;text-shadow:3px 4px 0 #d91b79,0 0 18px #fff;
-  animation:qotPromoBounce 1.8s ease-in-out infinite;
+  color:#d72d7b;font-family:Georgia,serif;font-size:clamp(40px,5.5vw,56px);
+  font-weight:900;line-height:1;white-space:nowrap;text-shadow:1px 2px 0 #ffffffb8;
+  animation:qotPromoPulse 3s ease-in-out infinite;
 }
 .qot-roundtrip-promo .qot-promo-copy strong{
-  display:block;color:#073f4c;font-family:Georgia,serif;
-  font-size:clamp(20px,2.8vw,28px);text-shadow:0 1px 0 #ffffff9c;
+  display:block;color:#075b63;font-family:Georgia,serif;
+  font-size:clamp(19px,2.6vw,26px);
 }
 .qot-roundtrip-promo .qot-promo-copy span{
-  display:block;margin-top:6px;color:#153f4b;font-size:13px;font-weight:800;line-height:1.5;
+  display:block;margin-top:6px;color:#536b68;font-size:13px;font-weight:600;line-height:1.5;
 }
 .qot-roundtrip-promo .qot-promo-tag{
-  padding:12px 18px;border:2px solid #fff;border-radius:28px;
-  background:linear-gradient(100deg,#073f4c,#087f78);color:#fff;
-  font-size:12px;font-weight:900;letter-spacing:.7px;
-  box-shadow:0 7px 0 #075b6380,0 10px 20px #073f4c38;
-  animation:qotPromoTag 1.9s ease-in-out infinite;
+  padding:10px 16px;border:1px solid #ffffff;border-radius:26px;
+  background:linear-gradient(100deg,#168f88,#087f78);color:#fff;
+  font-size:12px;font-weight:900;letter-spacing:.5px;
+  box-shadow:0 4px 10px #087f7820;animation:qotPromoTag 3.5s ease-in-out infinite;
 }
-@keyframes qotPromoGradient{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
-@keyframes qotPromoGlow{0%,100%{box-shadow:0 12px 24px #f02b8a35,0 0 0 4px #ffcae5a0}50%{box-shadow:0 16px 36px #f02b8a70,0 0 0 8px #ffcae570}}
-@keyframes qotPromoShine{0%,25%{transform:translateX(-75%) rotate(12deg)}65%,100%{transform:translateX(75%) rotate(12deg)}}
-@keyframes qotPromoSparkle{0%,100%{transform:scale(.8) rotate(-8deg);opacity:.45}50%{transform:scale(1.2) rotate(8deg);opacity:1}}
-@keyframes qotPromoBounce{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-5px) scale(1.07)}}
-@keyframes qotPromoTag{0%,100%{transform:rotate(-1deg) translateY(0)}50%{transform:rotate(1deg) translateY(-4px)}}
+@keyframes qotPromoShine{0%,35%{transform:translateX(-75%) rotate(10deg)}75%,100%{transform:translateX(75%) rotate(10deg)}}
+@keyframes qotPromoPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.035)}}
+@keyframes qotPromoTag{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
 @media(max-width:620px){
- .qot-roundtrip-promo{gap:13px;margin:15px 3% 0;padding:22px 13px}
+ .qot-roundtrip-promo{gap:12px;margin:15px 3% 0;padding:19px 12px}
  .qot-roundtrip-promo .qot-promo-copy{flex-basis:100%}
  .qot-roundtrip-promo .qot-promo-tag{font-size:11px}
- .qot-roundtrip-promo:after{font-size:20px;letter-spacing:5px}
 }
 @media(prefers-reduced-motion:reduce){
- .qot-roundtrip-promo,.qot-roundtrip-promo:before,.qot-roundtrip-promo:after,
- .qot-roundtrip-promo .qot-promo-discount,.qot-roundtrip-promo .qot-promo-tag{animation:none}
+ .qot-roundtrip-promo:before,.qot-roundtrip-promo .qot-promo-discount,
+ .qot-roundtrip-promo .qot-promo-tag{animation:none}
 }</style>
 <script id="qot-location-autocomplete">
 (function(){
