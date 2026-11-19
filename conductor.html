@@ -64,7 +64,7 @@ $('jobs').addEventListener('click',async e=>{
  const {error}=await db.from('driver_job_updates').insert(payload);
  if(error){$('msg').textContent='No se pudo registrar: '+error.message;b.disabled=false;return;}
  $('msg').textContent=event==='cash_received'?'Reporte de efectivo enviado al administrador.': 'Actualización enviada al administrador.';
- if(event==='completed'){job.driverCompleted=true;render();}else if(event==='cash_received'){job.payment_status='pending';b.disabled=true;}
+ if(event==='accepted'){job.driverAccepted=true;render();}else if(event==='in_progress'){job.driverStarted=true;render();}else if(event==='completed'){job.driverCompleted=true;render();}else if(event==='cash_received'){job.driverCashReported=true;job.payment_status='pending';render();}
 });
 $('passwordForm').addEventListener('submit',async e=>{e.preventDefault();$('passwordMsg').textContent='Guardando…';const {error}=await db.auth.updateUser({password:$('newPassword').value});if(error){$('passwordMsg').textContent='No se pudo actualizar: '+error.message;return;}$('passwordMsg').textContent='Contraseña guardada. Ya puedes ingresar con tu correo y esta contraseña.';$('passwordForm').reset();});
 $('refresh').onclick=load;setInterval(()=>{if(me&&!document.hidden)load();},25000);document.addEventListener('visibilitychange',()=>{if(!document.hidden&&me)load();});window.addEventListener('focus',()=>{if(me)load();});
